@@ -1,0 +1,12 @@
+{
+    "java.compile.nullAnalysis.mode": "disabled",
+    "dart.lineLength": 80,
+    "editor.formatOnSave": true,
+    "editor.suggest.preview": false,
+    "github.copilot.nextEditSuggestions.enabled": false,
+    "[dart]": {
+        "editor.codeActionsOnSave": {
+            "source.fixAll": "explicit"
+        }
+    }
+}

@@ -8,7 +8,7 @@ class GridLine extends Component {
   GridLine(this.start, this.end);
 
   final Paint paint = Paint()
-    ..color = const Color.fromARGB(30, 206, 179, 241)
+    ..color = const Color.fromARGB(206, 66, 28, 115)
     ..strokeWidth = 2;
 
   @override

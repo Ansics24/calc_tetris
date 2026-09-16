@@ -1,14 +1,13 @@
 import 'dart:async';
+import 'package:calc_tetris/core/block/math_single_block_component.dart';
 import 'package:flame/components.dart';
 import 'package:flame_svg/flame_svg.dart';
 import 'package:flutter/painting.dart';
 
-class SingleBlockComponent extends PositionComponent {
+class MathNumberBlockComponent extends MathSingleBlockComponent {
   int number;
-  SingleBlockComponent({
+  MathNumberBlockComponent({
     required this.number,
-    required super.position,
-    super.size,
   });
 
   @override

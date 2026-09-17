@@ -1,19 +1,19 @@
-import 'dart:async';
 import 'package:calc_tetris/core/block/math_single_block_component.dart';
 import 'package:flame/components.dart';
 import 'package:flame_svg/flame_svg.dart';
-import 'package:flutter/painting.dart';
+import 'package:flutter/material.dart';
 
-class MathNumberBlockComponent extends MathSingleBlockComponent {
-  int number;
-  MathNumberBlockComponent({
-    required this.number,
-  });
+enum MathOperandType { plus, minus }
+
+class MathOperandBlockComponent extends MathSingleBlockComponent {
+  MathOperandType type;
+
+  MathOperandBlockComponent({required this.type});
 
   @override
   void onLoad() async {
-    super.onLoad();
-    final backgroundSvg = await Svg.load("images/block_blue.svg");
+    await super.onLoad();
+    final backgroundSvg = await Svg.load("images/block_yellow.svg");
     add(
       SvgComponent(
         svg: backgroundSvg,
@@ -24,9 +24,12 @@ class MathNumberBlockComponent extends MathSingleBlockComponent {
     add(
       TextComponent(
         textRenderer: TextPaint(
-          style: TextStyle(color: Color(0xFFFFFFFF), fontSize: 20),
+          style: TextStyle(
+            color: Color.fromARGB(255, 50, 42, 42),
+            fontSize: 20,
+          ),
         ),
-        text: number.toString(),
+        text: type == MathOperandType.plus ? '+' : '-',
         position: Vector2(size.x / 2, size.y / 2),
         anchor: Anchor.center,
       ),

@@ -8,7 +8,12 @@ class Header extends PositionComponent {
 
   @override
   FutureOr<void> onLoad() {
-    add(RectangleComponent(size: size, paint: Paint()..color = Colors.white));
+    add(
+      RectangleComponent(
+        size: size,
+        paint: Paint()..color = const Color.fromARGB(255, 38, 32, 32),
+      ),
+    );
     return super.onLoad();
   }
 }

@@ -27,7 +27,6 @@ class GridModel {
     log('Adding block at position: ${position.x} / ${position.y}');
     _model[position.x][position.y] = blockModel;
     var component = blockModel.component;
-    component.size = Vector2.all(_cellSize);
     component.position = Vector2(
       _cellSize * position.x,
       _cellSize * position.y,

@@ -3,8 +3,9 @@ import 'dart:developer' as dev;
 import 'dart:math';
 
 import 'package:calc_tetris/core/block/math_block_model.dart';
-import 'package:calc_tetris/core/block/math_block_type.dart';
+import 'package:calc_tetris/core/block/math_compound_block.dart';
 import 'package:calc_tetris/core/block/math_number_block_component.dart';
+import 'package:calc_tetris/core/block/math_operand_block_component.dart';
 import 'package:calc_tetris/core/grid/grid_line.dart';
 import 'package:calc_tetris/core/grid/grid_model.dart';
 import 'package:calc_tetris/core/grid/grid_position.dart';
@@ -64,26 +65,14 @@ class Grid extends PositionComponent {
         )
         .addBlock(
           blockModel: MathBlockModel(
-            component: MathNumberBlockComponent(number: 0),
+            component: MathOperandBlockComponent(type: MathOperandType.plus),
           ),
-          position: GridPosition(4, 5),
+          position: GridPosition(2, 0),
+        )
+        .addBlock(
+          blockModel: MathBlockModel(component: MathCompoundBlock()),
+          position: GridPosition(3, 3),
         );
-    /*
-    add(
-      SingleBlockComponent(
-        number: 5,
-        position: Vector2(100, 400),
-        size: blockSize,
-      ),
-    );
-    add(
-      SingleBlockComponent(
-        number: 2,
-        position: Vector2(80, 30),
-        size: blockSize,
-      ),
-    );
-    */
   }
 
   void addGridVisualization() {
@@ -113,4 +102,6 @@ class Grid extends PositionComponent {
       );
     }
   }
+
+  double get cellSize => _cellSize;
 }

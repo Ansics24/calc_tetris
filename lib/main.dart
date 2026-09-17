@@ -8,11 +8,7 @@ void main() {
       game: TetrisGame(),
       backgroundBuilder: (context) => Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.white70, Colors.blueAccent.withAlpha(50)],
-            begin: AlignmentGeometry.topStart,
-            end: AlignmentGeometry.bottomEnd,
-          ),
+          color: Colors.white,
         ),
       ),
     ),

@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:calc_tetris/core/block/math_single_block_component.dart';
 import 'package:flame/components.dart';
 import 'package:flame_svg/flame_svg.dart';

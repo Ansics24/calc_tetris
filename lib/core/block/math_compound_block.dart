@@ -5,6 +5,7 @@ import 'package:calc_tetris/core/block/math_block_component.dart';
 import 'package:calc_tetris/core/block/math_block_model.dart';
 import 'package:calc_tetris/core/block/math_number_block_component.dart';
 import 'package:calc_tetris/core/grid/grid.dart';
+import 'package:flame/effects.dart';
 import 'package:flame/events.dart';
 import 'package:flame/image_composition.dart';
 
@@ -23,6 +24,11 @@ class MathCompoundBlock extends MathBlockComponent
         ),
       ),
     );
+    for (var element in _model) {
+      for (var i = 0; i < element.length; i++) {
+        add(element[i]!.component);
+      }
+    }
   }
 
   @override
@@ -81,11 +87,15 @@ class MathCompoundBlock extends MathBlockComponent
         final blockModel = _model[i][j];
         if (blockModel != null) {
           var component = blockModel.component;
-          component.position = Vector2(
-            _cellSize * i,
-            _cellSize * j,
+          component.add(
+            MoveToEffect(
+              Vector2(
+                _cellSize * i,
+                _cellSize * j,
+              ),
+              EffectController(duration: 0.5),
+            ),
           );
-          add(component);
         }
       }
     }

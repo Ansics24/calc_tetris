@@ -53,24 +53,33 @@ class Grid extends PositionComponent {
           blockModel: MathBlockModel(
             component: MathNumberBlockComponent(
               number: 5,
+              gridQueryable: _gridModel,
             ),
           ),
           position: GridPosition(0, 0),
         )
         .addBlock(
           blockModel: MathBlockModel(
-            component: MathNumberBlockComponent(number: 8),
+            component: MathNumberBlockComponent(
+              number: 8,
+              gridQueryable: _gridModel,
+            ),
           ),
           position: GridPosition(1, 0),
         )
         .addBlock(
           blockModel: MathBlockModel(
-            component: MathOperandBlockComponent(type: MathOperandType.plus),
+            component: MathOperandBlockComponent(
+              type: MathOperandType.plus,
+              gridQueryable: _gridModel,
+            ),
           ),
           position: GridPosition(2, 0),
         )
         .addBlock(
-          blockModel: MathBlockModel(component: MathCompoundBlock()),
+          blockModel: MathBlockModel(
+            component: MathCompoundBlock(gridQueryable: _gridModel),
+          ),
           position: GridPosition(3, 3),
         );
   }

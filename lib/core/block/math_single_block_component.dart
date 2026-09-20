@@ -5,6 +5,8 @@ import 'package:calc_tetris/core/grid/grid.dart';
 import 'package:flame/components.dart';
 
 abstract class MathSingleBlockComponent extends MathBlockComponent {
+  MathSingleBlockComponent({required super.gridQueryable});
+
   @override
   FutureOr<void> onLoad() async {
     await super.onLoad();

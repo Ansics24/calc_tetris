@@ -14,13 +14,16 @@ class MathCompoundBlock extends MathBlockComponent
   late List<List<MathBlockModel?>> _model;
   late double _cellSize;
 
-  MathCompoundBlock() {
+  MathCompoundBlock({required super.gridQueryable}) {
     _model = List.generate(
       3,
       (_) => List.generate(
         2,
         (i) => MathBlockModel(
-          component: MathNumberBlockComponent(number: Random().nextInt(9)),
+          component: MathNumberBlockComponent(
+            number: Random().nextInt(9),
+            gridQueryable: super.gridQueryable,
+          ),
         ),
       ),
     );
@@ -103,5 +106,6 @@ class MathCompoundBlock extends MathBlockComponent
       _model.length * _cellSize,
       _model[0].length * _cellSize,
     );
+    gridQueryable.hasBlocksUnder(super.key!);
   }
 }

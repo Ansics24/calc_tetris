@@ -5,6 +5,7 @@ import 'package:calc_tetris/core/block/math_block_component.dart';
 import 'package:calc_tetris/core/block/math_block_model.dart';
 import 'package:calc_tetris/core/block/math_number_block_component.dart';
 import 'package:calc_tetris/core/grid/grid.dart';
+import 'package:calc_tetris/core/grid/int_vector_2.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/events.dart';
 import 'package:flame/image_composition.dart';
@@ -106,6 +107,8 @@ class MathCompoundBlock extends MathBlockComponent
       _model.length * _cellSize,
       _model[0].length * _cellSize,
     );
-    gridQueryable.hasBlocksUnder(super.key!);
+    gridQueryable.hasBlocksUnder(this);
   }
+
+  IntVector2 get modelSize => IntVector2(_model.length, _model[0].length);
 }

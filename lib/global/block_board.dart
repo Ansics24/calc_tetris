@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:calc_tetris/core/grid/grid.dart';
-import 'package:calc_tetris/core/grid/grid_position.dart';
+import 'package:calc_tetris/core/grid/int_vector_2.dart';
 import 'package:flame/components.dart';
 
 class BlockBoard extends PositionComponent {
@@ -9,7 +9,7 @@ class BlockBoard extends PositionComponent {
 
   @override
   FutureOr<void> onLoad() {
-    add(Grid(blockCount: GridPosition(9, 14)));
+    add(Grid(blockCount: IntVector2(9, 14)));
     return super.onLoad();
   }
 }

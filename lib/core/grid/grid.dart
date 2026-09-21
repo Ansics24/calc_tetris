@@ -8,12 +8,12 @@ import 'package:calc_tetris/core/block/math_number_block_component.dart';
 import 'package:calc_tetris/core/block/math_operand_block_component.dart';
 import 'package:calc_tetris/core/grid/grid_line.dart';
 import 'package:calc_tetris/core/grid/grid_model.dart';
-import 'package:calc_tetris/core/grid/grid_position.dart';
+import 'package:calc_tetris/core/grid/int_vector_2.dart';
 import 'package:calc_tetris/global/block_board.dart';
 import 'package:flame/components.dart';
 
 class Grid extends PositionComponent {
-  final GridPosition _blockCount;
+  final IntVector2 _blockCount;
   double _cellSize = 0;
   late final GridModel _gridModel;
 
@@ -56,7 +56,7 @@ class Grid extends PositionComponent {
               gridQueryable: _gridModel,
             ),
           ),
-          position: GridPosition(0, 0),
+          position: IntVector2(0, 0),
         )
         .addBlock(
           blockModel: MathBlockModel(
@@ -65,7 +65,7 @@ class Grid extends PositionComponent {
               gridQueryable: _gridModel,
             ),
           ),
-          position: GridPosition(1, 0),
+          position: IntVector2(1, 0),
         )
         .addBlock(
           blockModel: MathBlockModel(
@@ -74,13 +74,13 @@ class Grid extends PositionComponent {
               gridQueryable: _gridModel,
             ),
           ),
-          position: GridPosition(2, 0),
+          position: IntVector2(2, 0),
         )
         .addBlock(
           blockModel: MathBlockModel(
             component: MathCompoundBlock(gridQueryable: _gridModel),
           ),
-          position: GridPosition(3, 3),
+          position: IntVector2(3, 3),
         );
   }
 

@@ -1,9 +1,7 @@
 import 'dart:developer' as developer;
-import 'dart:math';
 
 import 'package:calc_tetris/core/block/math_block_component.dart';
-import 'package:calc_tetris/core/block/math_block_model.dart';
-import 'package:calc_tetris/core/block/math_number_block_component.dart';
+import 'package:calc_tetris/core/block/math_single_block_component.dart';
 import 'package:calc_tetris/core/grid/grid.dart';
 import 'package:calc_tetris/core/grid/int_vector_2.dart';
 import 'package:flame/effects.dart';
@@ -12,34 +10,21 @@ import 'package:flame/image_composition.dart';
 
 class MathCompoundBlock extends MathBlockComponent
     with TapCallbacks, DragCallbacks {
-  late List<List<MathBlockModel?>> _model;
+  late List<List<MathSingleBlockComponent?>> _model;
   late double _cellSize;
 
-  MathCompoundBlock({required super.gridQueryable}) {
-    _model = List.generate(
-      3,
-      (_) => List.generate(
-        2,
-        (i) => MathBlockModel(
-          component: MathNumberBlockComponent(
-            number: Random().nextInt(9),
-            gridQueryable: super.gridQueryable,
-          ),
-        ),
-      ),
-    );
-    for (var element in _model) {
-      for (var i = 0; i < element.length; i++) {
-        add(element[i]!.component);
-      }
-    }
-  }
+  MathCompoundBlock(this._model, {required super.gridQueryable});
 
   @override
   void onLoad() async {
     await super.onLoad();
     _cellSize = findParent<Grid>()!.cellSize;
-    updateSingleBlockPositions();
+    for (var component in _model) {
+      for (var i = 0; i < component.length; i++) {
+        add(component[i]!);
+      }
+    }
+    updateSingleBlockPositions(withAnimation: false);
   }
 
   @override
@@ -53,12 +38,6 @@ class MathCompoundBlock extends MathBlockComponent
       rotateClockwise();
       developer.log('Rotated clockwise');
     }
-  }
-
-  @override
-  onDragUpdate(DragUpdateEvent event) {
-    super.onDragUpdate(event);
-    position.add(event.deviceDelta);
   }
 
   void rotateCounterClockwise() {
@@ -85,19 +64,19 @@ class MathCompoundBlock extends MathBlockComponent
     updateSingleBlockPositions();
   }
 
-  void updateSingleBlockPositions() {
+  void updateSingleBlockPositions({bool withAnimation = true}) {
     for (var i = 0; i < _model.length; i++) {
       for (var j = 0; j < _model[i].length; j++) {
-        final blockModel = _model[i][j];
-        if (blockModel != null) {
-          var component = blockModel.component;
+        final blockComponent = _model[i][j];
+        if (blockComponent != null) {
+          var component = blockComponent;
           component.add(
             MoveToEffect(
               Vector2(
                 _cellSize * i,
                 _cellSize * j,
               ),
-              EffectController(duration: 0.5),
+              EffectController(duration: withAnimation ? 0.3 : 0),
             ),
           );
         }
@@ -107,8 +86,8 @@ class MathCompoundBlock extends MathBlockComponent
       _model.length * _cellSize,
       _model[0].length * _cellSize,
     );
-    gridQueryable.hasBlocksUnder(this);
   }
 
-  IntVector2 get modelSize => IntVector2(_model.length, _model[0].length);
+  List<IntVector2> get lowestLocalSingleBlockPositions =>
+      List.generate(_model.length, (x) => IntVector2(x, _model[x].length));
 }

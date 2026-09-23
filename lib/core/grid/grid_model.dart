@@ -1,15 +1,15 @@
 import 'dart:developer';
 
-import 'package:calc_tetris/core/block/math_block_model.dart';
 import 'package:calc_tetris/core/block/math_compound_block.dart';
+import 'package:calc_tetris/core/block/math_single_block_component.dart';
 import 'package:calc_tetris/core/grid/grid.dart';
-import 'package:calc_tetris/core/grid/int_vector_2.dart';
 import 'package:calc_tetris/core/grid/grid_queryable.dart';
+import 'package:calc_tetris/core/grid/int_vector_2.dart';
 import 'package:calc_tetris/core/grid/queries/position_in_grid_finder.dart';
 import 'package:flame/components.dart';
 
 class GridModel implements GridQueryable {
-  late List<List<MathBlockModel?>> _model;
+  late List<List<MathSingleBlockComponent?>> _model;
   late double _cellSize;
   final Grid gridComponent;
   late final PositionInGridFinder _positionInGridFinder;
@@ -26,17 +26,16 @@ class GridModel implements GridQueryable {
   }
 
   GridModel addBlock({
-    required MathBlockModel blockModel,
+    required MathSingleBlockComponent blockComponent,
     required IntVector2 position,
   }) {
     log('Adding block at position: ${position.x} / ${position.y}');
-    _model[position.x][position.y] = blockModel;
-    var component = blockModel.component;
-    component.position = Vector2(
+    _model[position.x][position.y] = blockComponent;
+    blockComponent.position = Vector2(
       _cellSize * position.x,
       _cellSize * position.y,
     );
-    gridComponent.add(component);
+    gridComponent.add(blockComponent);
     return this;
   }
 
@@ -44,39 +43,42 @@ class GridModel implements GridQueryable {
     _cellSize = size;
   }
 
-  @override
-  bool hasBlocksUnder(MathCompoundBlock compoundBlock) {
-    log('Detection of underlying blocks called');
-    var key = compoundBlock.key;
-    final positionInGrid = _positionInGridFinder.findPosition(
-      key!,
+  IntVector2? findPositionOfComponent(MathSingleBlockComponent component) {
+    return _positionInGridFinder.findPosition(
+      component,
     );
-    if (positionInGrid == null) {
-      return false;
-    }
-    var gridPosition = positionInGrid.gridPosition;
-    log(
-      'Result of finding component $key in Grid: ${gridPosition.x} / ${gridPosition.y}',
-    );
-    final yToCheck = gridPosition.y + compoundBlock.modelSize.y;
-
-    for (var i = 0; i < compoundBlock.modelSize.x; i++) {
-      final xToCheck = positionInGrid.gridPosition.x + i;
-      final IntVector2 positionToCheck = IntVector2(xToCheck, yToCheck);
-      bool blockUnderneath = findExistingBlockAt(positionToCheck) != null;
-      log("Is there a block at $positionToCheck ? $blockUnderneath");
-      if (blockUnderneath) {
-        return true;
-      }
-    }
-
-    return false;
   }
 
-  List<List<MathBlockModel?>> get model => _model;
+  Vector2 gridPositionToAbsolutePosition(IntVector2 targetPosition) {
+    return Vector2(targetPosition.x * _cellSize, targetPosition.y * _cellSize);
+  }
+
+  bool isPositionBlocked(IntVector2 gridPosition) {
+    log('Detection of block called with $gridPosition');
+
+    if (gridPosition.x >= _model.length) {
+      log('$gridPosition is out of grid by x');
+      return true;
+    }
+
+    if (gridPosition.y >= _model[0].length) {
+      log('$gridPosition is out of grid by y');
+      return true;
+    }
+
+    final componentAtPosition = _model[gridPosition.x][gridPosition.y];
+    if (componentAtPosition == null) {
+      log('$gridPosition is free');
+      return false;
+    }
+    log('$gridPosition is blocked by $componentAtPosition');
+    return true;
+  }
+
+  List<List<MathSingleBlockComponent?>> get model => _model;
 
   @override
-  MathBlockModel? findExistingBlockAt(IntVector2 positionInGrid) {
+  MathSingleBlockComponent? findExistingBlockAt(IntVector2 positionInGrid) {
     if (_model.isEmpty || positionInGrid.x >= _model.length) {
       return null;
     }

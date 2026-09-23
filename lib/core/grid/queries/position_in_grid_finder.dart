@@ -1,6 +1,5 @@
 import 'package:calc_tetris/core/grid/grid_model.dart';
 import 'package:calc_tetris/core/grid/int_vector_2.dart';
-import 'package:calc_tetris/core/grid/queries/position_in_grid.dart';
 import 'package:flame/components.dart';
 
 class PositionInGridFinder {
@@ -8,16 +7,16 @@ class PositionInGridFinder {
 
   PositionInGridFinder({required this._gridModel});
 
-  PositionInGrid? findPosition(ComponentKey key) {
+  IntVector2? findPosition(Component component) {
     final model = _gridModel.model;
     for (var i = 0; i < model.length; i++) {
       for (var j = 0; j < model[i].length; j++) {
-        final blockModel = model[i][j];
-        if (blockModel == null) {
+        final blockComponent = model[i][j];
+        if (blockComponent == null) {
           continue;
         }
-        if (blockModel.component.key == key) {
-          return PositionInGrid(blockModel.component, IntVector2(i, j));
+        if (blockComponent.key == component.key) {
+          return IntVector2(i, j);
         }
       }
     }

@@ -2,10 +2,7 @@ import 'dart:async';
 import 'dart:developer' as dev;
 import 'dart:math';
 
-import 'package:calc_tetris/core/block/math_block_model.dart';
-import 'package:calc_tetris/core/block/math_compound_block.dart';
-import 'package:calc_tetris/core/block/math_number_block_component.dart';
-import 'package:calc_tetris/core/block/math_operand_block_component.dart';
+import 'package:calc_tetris/core/grid/grid_controller.dart';
 import 'package:calc_tetris/core/grid/grid_line.dart';
 import 'package:calc_tetris/core/grid/grid_model.dart';
 import 'package:calc_tetris/core/grid/int_vector_2.dart';
@@ -16,9 +13,11 @@ class Grid extends PositionComponent {
   final IntVector2 _blockCount;
   double _cellSize = 0;
   late final GridModel _gridModel;
+  late final GridController _gridController;
 
   Grid({required this._blockCount}) {
     _gridModel = GridModel(size: _blockCount, gridComponent: this);
+    _gridController = GridController(gridModel: _gridModel, grid: this);
   }
 
   @override
@@ -42,46 +41,9 @@ class Grid extends PositionComponent {
     addGridVisualization();
 
     // Only for test
-    addExperimentalStuff();
+    _gridController.addExperimentalStuff();
 
     return super.onLoad();
-  }
-
-  void addExperimentalStuff() {
-    _gridModel
-        .addBlock(
-          blockModel: MathBlockModel(
-            component: MathNumberBlockComponent(
-              number: 5,
-              gridQueryable: _gridModel,
-            ),
-          ),
-          position: IntVector2(0, 0),
-        )
-        .addBlock(
-          blockModel: MathBlockModel(
-            component: MathNumberBlockComponent(
-              number: 8,
-              gridQueryable: _gridModel,
-            ),
-          ),
-          position: IntVector2(1, 0),
-        )
-        .addBlock(
-          blockModel: MathBlockModel(
-            component: MathOperandBlockComponent(
-              type: MathOperandType.plus,
-              gridQueryable: _gridModel,
-            ),
-          ),
-          position: IntVector2(2, 0),
-        )
-        .addBlock(
-          blockModel: MathBlockModel(
-            component: MathCompoundBlock(gridQueryable: _gridModel),
-          ),
-          position: IntVector2(3, 3),
-        );
   }
 
   void addGridVisualization() {

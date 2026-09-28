@@ -7,7 +7,6 @@ class MathNumberBlockComponent extends MathSingleBlockComponent {
   int number;
   MathNumberBlockComponent({
     required this.number,
-    required super.gridQueryable,
   });
 
   @override

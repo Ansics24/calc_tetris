@@ -13,7 +13,7 @@ class MathCompoundBlock extends MathBlockComponent
   late List<List<MathSingleBlockComponent?>> _model;
   late double _cellSize;
 
-  MathCompoundBlock(this._model, {required super.gridQueryable});
+  MathCompoundBlock(this._model);
 
   @override
   void onLoad() async {
@@ -90,4 +90,6 @@ class MathCompoundBlock extends MathBlockComponent
 
   List<IntVector2> get lowestLocalSingleBlockPositions =>
       List.generate(_model.length, (x) => IntVector2(x, _model[x].length));
+
+  List<List<MathSingleBlockComponent?>> get model => _model;
 }

@@ -11,11 +11,11 @@ class PositionInGridFinder {
     final model = _gridModel.model;
     for (var i = 0; i < model.length; i++) {
       for (var j = 0; j < model[i].length; j++) {
-        final blockComponent = model[i][j];
-        if (blockComponent == null) {
+        final singleBlockModel = model[i][j];
+        if (singleBlockModel == null) {
           continue;
         }
-        if (blockComponent.key == component.key) {
+        if (singleBlockModel.component.key == component.key) {
           return IntVector2(i, j);
         }
       }

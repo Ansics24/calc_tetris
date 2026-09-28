@@ -3,13 +3,16 @@ import 'dart:developer';
 import 'package:calc_tetris/core/block/math_compound_block.dart';
 import 'package:calc_tetris/core/block/math_single_block_component.dart';
 import 'package:calc_tetris/core/grid/grid.dart';
+import 'package:calc_tetris/core/grid/grid_position_occupied_exception.dart';
 import 'package:calc_tetris/core/grid/grid_queryable.dart';
+import 'package:calc_tetris/core/grid/grid_single_block_model.dart';
 import 'package:calc_tetris/core/grid/int_vector_2.dart';
 import 'package:calc_tetris/core/grid/queries/position_in_grid_finder.dart';
 import 'package:flame/components.dart';
+import 'package:uuid/uuid.dart';
 
 class GridModel implements GridQueryable {
-  late List<List<MathSingleBlockComponent?>> _model;
+  late List<List<GridSingleBlockModel?>> _model;
   late double _cellSize;
   final Grid gridComponent;
   late final PositionInGridFinder _positionInGridFinder;
@@ -25,18 +28,48 @@ class GridModel implements GridQueryable {
     _positionInGridFinder = PositionInGridFinder(gridModel: this);
   }
 
-  GridModel addBlock({
-    required MathSingleBlockComponent blockComponent,
+  void addCompoundBlock({
+    required MathCompoundBlock blockComponent,
     required IntVector2 position,
   }) {
+    final placementId = Uuid().toString();
+
+    for (var x = 0; x < blockComponent.model.length; x++) {
+      for (var y = 0; y < blockComponent.model[0].length; y++) {
+        final targetPosition = position.add(x, y);
+        if (isPositionBlocked(targetPosition)) {
+          throw GridPositionOccupiedException(position: targetPosition);
+        }
+      }
+    }
+
+    for (var x = 0; x < blockComponent.model.length; x++) {
+      for (var y = 0; y < blockComponent.model[0].length; y++) {
+        final targetPosition = position.add(x, y);
+        _addSingleBlock(
+          placementId,
+          blockComponent.model[x][y]!,
+          targetPosition,
+        );
+      }
+    }
+  }
+
+  void _addSingleBlock(
+    String placementId,
+    MathSingleBlockComponent blockComponent,
+    IntVector2 position,
+  ) {
     log('Adding block at position: ${position.x} / ${position.y}');
-    _model[position.x][position.y] = blockComponent;
+    _model[position.x][position.y] = GridSingleBlockModel(
+      blockComponent: blockComponent,
+      placementId: placementId,
+    );
     blockComponent.position = Vector2(
       _cellSize * position.x,
       _cellSize * position.y,
     );
     gridComponent.add(blockComponent);
-    return this;
   }
 
   set cellSize(double size) {
@@ -75,10 +108,10 @@ class GridModel implements GridQueryable {
     return true;
   }
 
-  List<List<MathSingleBlockComponent?>> get model => _model;
+  List<List<GridSingleBlockModel?>> get model => _model;
 
   @override
-  MathSingleBlockComponent? findExistingBlockAt(IntVector2 positionInGrid) {
+  GridSingleBlockModel? findExistingBlockAt(IntVector2 positionInGrid) {
     if (_model.isEmpty || positionInGrid.x >= _model.length) {
       return null;
     }

@@ -1,8 +1,7 @@
-import 'dart:math';
 import 'dart:developer' as dev;
 
 import 'package:calc_tetris/core/block/math_compound_block.dart';
-import 'package:calc_tetris/core/block/math_number_block_component.dart';
+import 'package:calc_tetris/core/block/seed/compoundblock_model_generator.dart';
 import 'package:calc_tetris/core/grid/grid.dart';
 import 'package:calc_tetris/core/grid/grid_model.dart';
 import 'package:calc_tetris/core/grid/int_vector_2.dart';
@@ -12,6 +11,8 @@ import 'package:flame/effects.dart';
 class GridController {
   final GridModel _gridModel;
   final Grid _grid;
+  final CompoundblockModelGenerator blockGenerator =
+      CompoundblockModelGenerator();
   MathCompoundBlock? currentBlock;
   IntVector2? currentBlockGridPosition;
 
@@ -34,6 +35,7 @@ class GridController {
 
     if (anyTargetBlocked) {
       dev.log('Cant move block down. Its blocked');
+      landCurrentBlockOnGrid();
       return;
     }
 
@@ -45,6 +47,34 @@ class GridController {
     currentBlock!.add(
       MoveToEffect(targetPosition, EffectController(duration: 0.2)),
     );
+  }
+
+  void landCurrentBlockOnGrid() {
+    currentBlock!.add(
+      ScaleEffect.by(
+        Vector2.all(1.3),
+        EffectController(duration: 0.2),
+        onComplete: () => currentBlock!.add(
+          ScaleEffect.to(
+            Vector2.all(1),
+            EffectController(duration: 0.2),
+            onComplete: onBlockLanded,
+          ),
+        ),
+      ),
+    );
+  }
+
+  void onBlockLanded() {
+    _gridModel.addCompoundBlock(
+      blockComponent: currentBlock!,
+      position: currentBlockGridPosition!,
+    );
+    currentBlock!.removeFromParent();
+    currentBlock = null;
+    currentBlockGridPosition = null;
+
+    addExperimentalStuff();
   }
 
   void startNewBlock(MathCompoundBlock block, IntVector2 startPosition) {
@@ -68,23 +98,13 @@ class GridController {
   }
 
   void addExperimentalStuff() {
-    final compoundBlockModel = List.generate(
-      3,
-      (_) => List.generate(
-        2,
-        (i) => MathNumberBlockComponent(
-          number: Random().nextInt(9),
-          gridQueryable: _gridModel,
-        ),
-      ),
-    );
+    final newBlockModel = blockGenerator.generate();
 
     startNewBlock(
       MathCompoundBlock(
-        compoundBlockModel,
-        gridQueryable: _gridModel,
+        newBlockModel,
       ),
-      IntVector2(3, 0),
+      IntVector2(3, 10),
     );
   }
 }

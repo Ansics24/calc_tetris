@@ -8,7 +8,7 @@ enum MathOperandType { plus, minus }
 class MathOperandBlockComponent extends MathSingleBlockComponent {
   MathOperandType type;
 
-  MathOperandBlockComponent({required this.type, required super.gridQueryable});
+  MathOperandBlockComponent({required this.type});
 
   @override
   void onLoad() async {

@@ -1,4 +1,5 @@
 import 'dart:developer' as dev;
+import 'dart:math';
 
 import 'package:calc_tetris/core/block/math_compound_block_component.dart';
 import 'package:calc_tetris/core/block/seed/compoundblock_model_generator.dart';
@@ -91,7 +92,7 @@ class GridController {
 
     currentBlock!.add(
       TimerComponent(
-        period: 4.0,
+        period: 1.0,
         repeat: true,
         onTick: () {
           moveBlockDownByOne();
@@ -103,11 +104,16 @@ class GridController {
   void addExperimentalStuff() {
     final newBlockModel = blockGenerator.generate();
 
+    final random = Random();
+
     startNewBlock(
       MathCompoundBlockComponent(
         newBlockModel,
       ),
-      IntVector2(3, 5),
+      IntVector2(
+        random.nextInt(_gridModel.model.length - 1 - newBlockModel.length),
+        5,
+      ),
     );
   }
 }

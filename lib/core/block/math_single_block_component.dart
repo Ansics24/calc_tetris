@@ -4,7 +4,7 @@ import 'package:calc_tetris/core/block/math_block_component.dart';
 import 'package:calc_tetris/core/grid/grid.dart';
 import 'package:flame/components.dart';
 
-abstract class MathSingleBlockComponent extends MathBlockComponent {
+abstract class MathSingleBlockComponent<BLOCK_TYPE> extends MathBlockComponent {
   MathSingleBlockComponent();
 
   @override
@@ -12,4 +12,6 @@ abstract class MathSingleBlockComponent extends MathBlockComponent {
     await super.onLoad();
     size = Vector2.all(findParent<Grid>()!.cellSize);
   }
+
+  BLOCK_TYPE get blockModel;
 }

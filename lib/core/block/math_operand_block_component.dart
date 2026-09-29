@@ -1,14 +1,15 @@
 import 'package:calc_tetris/core/block/math_single_block_component.dart';
+import 'package:calc_tetris/core/block/model/math_operant_block.dart';
+import 'package:calc_tetris/core/block/model/math_operant_type.dart';
 import 'package:flame/components.dart';
 import 'package:flame_svg/flame_svg.dart';
 import 'package:flutter/material.dart';
 
-enum MathOperandType { plus, minus }
+class MathOperandBlockComponent
+    extends MathSingleBlockComponent<MathOperantBlock> {
+  MathOperantBlock model;
 
-class MathOperandBlockComponent extends MathSingleBlockComponent {
-  MathOperandType type;
-
-  MathOperandBlockComponent({required this.type});
+  MathOperandBlockComponent({required this.model});
 
   @override
   void onLoad() async {
@@ -29,10 +30,13 @@ class MathOperandBlockComponent extends MathSingleBlockComponent {
             fontSize: 20,
           ),
         ),
-        text: type == MathOperandType.plus ? '+' : '-',
+        text: model.type == MathOperandType.plus ? '+' : '-',
         position: Vector2(size.x / 2, size.y / 2),
         anchor: Anchor.center,
       ),
     );
   }
+
+  @override
+  MathOperantBlock get blockModel => model;
 }

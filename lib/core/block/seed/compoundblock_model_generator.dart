@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:calc_tetris/core/block/math_number_block_component.dart';
 import 'package:calc_tetris/core/block/math_single_block_component.dart';
+import 'package:calc_tetris/core/block/model/math_number_block.dart';
 
 class CompoundblockModelGenerator {
   List<List<MathSingleBlockComponent>> generate() {
@@ -10,7 +11,7 @@ class CompoundblockModelGenerator {
       (_) => List.generate(
         2,
         (i) => MathNumberBlockComponent(
-          number: Random().nextInt(9),
+          model: MathNumberBlock(number: Random().nextInt(9)),
         ),
       ),
     );

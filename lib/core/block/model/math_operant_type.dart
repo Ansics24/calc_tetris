@@ -1,0 +1,1 @@
+enum MathOperandType { plus, minus }

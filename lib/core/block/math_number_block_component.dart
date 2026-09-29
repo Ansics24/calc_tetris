@@ -1,12 +1,14 @@
 import 'package:calc_tetris/core/block/math_single_block_component.dart';
+import 'package:calc_tetris/core/block/model/math_number_block.dart';
 import 'package:flame/components.dart';
 import 'package:flame_svg/flame_svg.dart';
 import 'package:flutter/painting.dart';
 
-class MathNumberBlockComponent extends MathSingleBlockComponent {
-  int number;
+class MathNumberBlockComponent
+    extends MathSingleBlockComponent<MathNumberBlock> {
+  MathNumberBlock model;
   MathNumberBlockComponent({
-    required this.number,
+    required this.model,
   });
 
   @override
@@ -25,10 +27,13 @@ class MathNumberBlockComponent extends MathSingleBlockComponent {
         textRenderer: TextPaint(
           style: TextStyle(color: Color(0xFFFFFFFF), fontSize: 20),
         ),
-        text: number.toString(),
+        text: model.number.toString(),
         position: Vector2(size.x / 2, size.y / 2),
         anchor: Anchor.center,
       ),
     );
   }
+
+  @override
+  MathNumberBlock get blockModel => model;
 }

@@ -1,6 +1,6 @@
 import 'dart:developer';
 
-import 'package:calc_tetris/core/block/math_compound_block.dart';
+import 'package:calc_tetris/core/block/math_compound_block_component.dart';
 import 'package:calc_tetris/core/block/math_single_block_component.dart';
 import 'package:calc_tetris/core/grid/grid.dart';
 import 'package:calc_tetris/core/grid/grid_position_occupied_exception.dart';
@@ -29,7 +29,7 @@ class GridModel implements GridQueryable {
   }
 
   void addCompoundBlock({
-    required MathCompoundBlock blockComponent,
+    required MathCompoundBlockComponent blockComponent,
     required IntVector2 position,
   }) {
     final placementId = Uuid().toString();
@@ -48,7 +48,9 @@ class GridModel implements GridQueryable {
         final targetPosition = position.add(x, y);
         _addSingleBlock(
           placementId,
-          blockComponent.model[x][y]!,
+          blockComponent.componentForSingleBlockModel(
+            blockComponent.model[x][y],
+          )!,
           targetPosition,
         );
       }

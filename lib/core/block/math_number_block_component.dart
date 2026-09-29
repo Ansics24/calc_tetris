@@ -4,8 +4,7 @@ import 'package:flame/components.dart';
 import 'package:flame_svg/flame_svg.dart';
 import 'package:flutter/painting.dart';
 
-class MathNumberBlockComponent
-    extends MathSingleBlockComponent<MathNumberBlock> {
+class MathNumberBlockComponent extends MathSingleBlockComponent {
   MathNumberBlock model;
   MathNumberBlockComponent({
     required this.model,
@@ -33,7 +32,4 @@ class MathNumberBlockComponent
       ),
     );
   }
-
-  @override
-  MathNumberBlock get blockModel => model;
 }

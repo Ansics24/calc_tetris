@@ -1,6 +1,6 @@
 import 'dart:developer' as dev;
 
-import 'package:calc_tetris/core/block/math_compound_block.dart';
+import 'package:calc_tetris/core/block/math_compound_block_component.dart';
 import 'package:calc_tetris/core/block/seed/compoundblock_model_generator.dart';
 import 'package:calc_tetris/core/grid/grid.dart';
 import 'package:calc_tetris/core/grid/grid_model.dart';
@@ -13,7 +13,7 @@ class GridController {
   final Grid _grid;
   final CompoundblockModelGenerator blockGenerator =
       CompoundblockModelGenerator();
-  MathCompoundBlock? currentBlock;
+  MathCompoundBlockComponent? currentBlock;
   IntVector2? currentBlockGridPosition;
 
   GridController({required this._gridModel, required this._grid});
@@ -77,7 +77,10 @@ class GridController {
     addExperimentalStuff();
   }
 
-  void startNewBlock(MathCompoundBlock block, IntVector2 startPosition) {
+  void startNewBlock(
+    MathCompoundBlockComponent block,
+    IntVector2 startPosition,
+  ) {
     currentBlock = block;
     currentBlockGridPosition = startPosition;
 
@@ -101,10 +104,10 @@ class GridController {
     final newBlockModel = blockGenerator.generate();
 
     startNewBlock(
-      MathCompoundBlock(
+      MathCompoundBlockComponent(
         newBlockModel,
       ),
-      IntVector2(3, 10),
+      IntVector2(3, 5),
     );
   }
 }

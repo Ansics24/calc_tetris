@@ -5,11 +5,10 @@ import 'package:flame/components.dart';
 import 'package:flame_svg/flame_svg.dart';
 import 'package:flutter/material.dart';
 
-class MathOperandBlockComponent
-    extends MathSingleBlockComponent<MathOperantBlock> {
+class MathOperantBlockComponent extends MathSingleBlockComponent {
   MathOperantBlock model;
 
-  MathOperandBlockComponent({required this.model});
+  MathOperantBlockComponent({required this.model});
 
   @override
   void onLoad() async {
@@ -36,7 +35,4 @@ class MathOperandBlockComponent
       ),
     );
   }
-
-  @override
-  MathOperantBlock get blockModel => model;
 }

@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:calc_tetris/core/block/math_compound_block_component.dart';
 import 'package:calc_tetris/core/block/math_single_block_component.dart';
+import 'package:calc_tetris/core/block/model/null_block.dart';
 import 'package:calc_tetris/core/grid/grid.dart';
 import 'package:calc_tetris/core/grid/grid_position_occupied_exception.dart';
 import 'package:calc_tetris/core/grid/grid_queryable.dart';
@@ -34,22 +35,32 @@ class GridModel implements GridQueryable {
   }) {
     final placementId = Uuid().toString();
 
+    final blockModel = blockComponent.model;
     for (var x = 0; x < blockComponent.model.length; x++) {
       for (var y = 0; y < blockComponent.model[0].length; y++) {
         final targetPosition = position.add(x, y);
+        if (blockModel[x][y] is NullBlock) {
+          log("Ignoring Null block at $targetPosition");
+          continue;
+        }
         if (isPositionBlocked(targetPosition)) {
           throw GridPositionOccupiedException(position: targetPosition);
         }
       }
     }
 
-    for (var x = 0; x < blockComponent.model.length; x++) {
-      for (var y = 0; y < blockComponent.model[0].length; y++) {
+    for (var x = 0; x < blockModel.length; x++) {
+      for (var y = 0; y < blockModel[x].length; y++) {
+        var blockModelAtXY = blockModel[x][y];
         final targetPosition = position.add(x, y);
+        if (blockModelAtXY is NullBlock) {
+          log("Ignoring Null block at $targetPosition");
+          continue;
+        }
         _addSingleBlock(
           placementId,
           blockComponent.componentForSingleBlockModel(
-            blockComponent.model[x][y],
+            blockModelAtXY,
           )!,
           targetPosition,
         );

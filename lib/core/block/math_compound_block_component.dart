@@ -1,6 +1,5 @@
 import 'dart:developer' as developer;
 
-import 'package:calc_tetris/core/block/exceptions/no_matching_block_component_exception.dart';
 import 'package:calc_tetris/core/block/math_block_component.dart';
 import 'package:calc_tetris/core/block/math_number_block_component.dart';
 import 'package:calc_tetris/core/block/math_operant_block_component.dart';
@@ -8,6 +7,7 @@ import 'package:calc_tetris/core/block/math_single_block_component.dart';
 import 'package:calc_tetris/core/block/model/math_number_block.dart';
 import 'package:calc_tetris/core/block/model/math_operant_block.dart';
 import 'package:calc_tetris/core/block/model/math_single_block.dart';
+import 'package:calc_tetris/core/block/model/null_block.dart';
 import 'package:calc_tetris/core/grid/grid.dart';
 import 'package:calc_tetris/core/grid/int_vector_2.dart';
 import 'package:flame/effects.dart';
@@ -31,14 +31,16 @@ class MathCompoundBlockComponent extends MathBlockComponent
       for (var j = 0; j < _model[i].length; j++) {
         var blockModel = _model[i][j];
         final component = newComponentFromBlockModel(blockModel);
-        _components.addAll({blockModel.id: component});
-        add(component);
+        if (component != null) {
+          _components.addAll({blockModel.id: component});
+          add(component);
+        }
       }
     }
     updateSingleBlockPositions(withAnimation: false);
   }
 
-  MathSingleBlockComponent newComponentFromBlockModel(
+  MathSingleBlockComponent? newComponentFromBlockModel(
     MathSingleBlock blockModel,
   ) {
     if (blockModel is MathNumberBlock) {
@@ -47,7 +49,7 @@ class MathCompoundBlockComponent extends MathBlockComponent
     if (blockModel is MathOperantBlock) {
       return MathOperantBlockComponent(model: blockModel);
     }
-    throw NoMatchingBlockComponentException();
+    return null;
   }
 
   @override
@@ -113,8 +115,19 @@ class MathCompoundBlockComponent extends MathBlockComponent
     MathSingleBlock model,
   ) => _components[model.id];
 
-  List<IntVector2> get lowestLocalSingleBlockPositions =>
-      List.generate(_model.length, (x) => IntVector2(x, _model[x].length));
+  List<IntVector2> getLowestLocalSingleBlockPositions() {
+    final result = List<IntVector2>.empty(growable: true);
+    for (var x = 0; x < _model.length; x++) {
+      for (var y = _model[x].length - 1; y >= 0; y--) {
+        if (_model[x][y] is NullBlock) {
+          continue;
+        }
+        result.add(IntVector2(x, y + 1));
+      }
+    }
+    developer.log("Lowest local block positions: $result");
+    return result;
+  }
 
   List<List<MathSingleBlock>> get model => _model;
 }

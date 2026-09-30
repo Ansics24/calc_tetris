@@ -2,7 +2,7 @@ import 'dart:developer' as dev;
 import 'dart:math';
 
 import 'package:calc_tetris/core/block/math_compound_block_component.dart';
-import 'package:calc_tetris/core/block/seed/compoundblock_model_generator.dart';
+import 'package:calc_tetris/core/block/seed/generators/random_compoundblock_model_generator.dart';
 import 'package:calc_tetris/core/grid/grid.dart';
 import 'package:calc_tetris/core/grid/grid_model.dart';
 import 'package:calc_tetris/core/grid/int_vector_2.dart';
@@ -12,8 +12,8 @@ import 'package:flame/effects.dart';
 class GridController {
   final GridModel _gridModel;
   final Grid _grid;
-  final CompoundblockModelGenerator blockGenerator =
-      CompoundblockModelGenerator();
+  final RandomCompoundblockModelGenerator blockGenerator =
+      RandomCompoundblockModelGenerator();
   MathCompoundBlockComponent? currentBlock;
   IntVector2? currentBlockGridPosition;
 
@@ -24,7 +24,8 @@ class GridController {
       return;
     }
 
-    final anyTargetBlocked = currentBlock!.lowestLocalSingleBlockPositions
+    final anyTargetBlocked = currentBlock!
+        .getLowestLocalSingleBlockPositions()
         .map(
           (vector) => vector.add(
             currentBlockGridPosition!.x,
@@ -111,7 +112,9 @@ class GridController {
         newBlockModel,
       ),
       IntVector2(
-        random.nextInt(_gridModel.model.length - 1 - newBlockModel.length),
+        random.nextInt(
+          max(_gridModel.model.length - 1 - newBlockModel.length, 0),
+        ),
         5,
       ),
     );

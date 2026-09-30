@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:calc_tetris/core/block/model/compound_block_shape.dart';
+import 'package:calc_tetris/core/block/seed/shapes/compound_block_shape.dart';
 
 class ShapeChooser {
   final Random _random = Random();

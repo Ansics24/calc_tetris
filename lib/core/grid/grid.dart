@@ -75,4 +75,9 @@ class Grid extends PositionComponent {
   }
 
   double get cellSize => _cellSize;
+
+  IntVector2 get gridSize =>
+      IntVector2(_gridModel.model.length, _gridModel.model[0].length);
+
+  GridController get controller => _gridController;
 }

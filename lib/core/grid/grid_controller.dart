@@ -42,6 +42,10 @@ class GridController {
     }
 
     currentBlockGridPosition = currentBlockGridPosition!.addY(1);
+    onPositionUpdated();
+  }
+
+  void onPositionUpdated() {
     final targetPosition = _gridModel.gridPositionToAbsolutePosition(
       currentBlockGridPosition!,
     );
@@ -93,7 +97,7 @@ class GridController {
 
     currentBlock!.add(
       TimerComponent(
-        period: 1.0,
+        period: 5.0,
         repeat: true,
         onTick: () {
           moveBlockDownByOne();
@@ -118,5 +122,25 @@ class GridController {
         5,
       ),
     );
+  }
+
+  void moveBlockRight() {
+    var targetPosition = currentBlockGridPosition!.addX(1);
+    if (targetPosition.x + currentBlock!.modelWidth > _gridModel.model.length) {
+      dev.log("Dont move block right, it's already at the very right");
+      return;
+    }
+    currentBlockGridPosition = targetPosition;
+    onPositionUpdated();
+  }
+
+  void moveBlockLeft() {
+    var targetPosition = currentBlockGridPosition!.addX(-1);
+    if (targetPosition.x < 0) {
+      dev.log("Dont move block left, it's already at the very left");
+      return;
+    }
+    currentBlockGridPosition = targetPosition;
+    onPositionUpdated();
   }
 }

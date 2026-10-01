@@ -8,6 +8,7 @@ import 'package:calc_tetris/core/block/model/math_number_block.dart';
 import 'package:calc_tetris/core/block/model/math_operant_block.dart';
 import 'package:calc_tetris/core/block/model/math_single_block.dart';
 import 'package:calc_tetris/core/block/model/null_block.dart';
+import 'package:calc_tetris/core/block/snap_to_grid_when_dragging_behaviour.dart';
 import 'package:calc_tetris/core/grid/grid.dart';
 import 'package:calc_tetris/core/grid/int_vector_2.dart';
 import 'package:flame/effects.dart';
@@ -15,8 +16,7 @@ import 'package:flame/events.dart';
 import 'package:flame/image_composition.dart';
 import 'package:uuid/uuid.dart';
 
-class MathCompoundBlockComponent extends MathBlockComponent
-    with TapCallbacks, DragCallbacks {
+class MathCompoundBlockComponent extends MathBlockComponent with TapCallbacks {
   late List<List<MathSingleBlock>> _model;
   final Map<Uuid, MathSingleBlockComponent> _components = {};
   late double _cellSize;
@@ -26,6 +26,7 @@ class MathCompoundBlockComponent extends MathBlockComponent
   @override
   void onLoad() async {
     await super.onLoad();
+    add(SnapToGridWhenDraggingBehaviour());
     _cellSize = findParent<Grid>()!.cellSize;
     for (var i = 0; i < _model.length; i++) {
       for (var j = 0; j < _model[i].length; j++) {
@@ -130,4 +131,6 @@ class MathCompoundBlockComponent extends MathBlockComponent
   }
 
   List<List<MathSingleBlock>> get model => _model;
+
+  int get modelWidth => _model.length;
 }

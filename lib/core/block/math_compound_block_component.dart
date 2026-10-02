@@ -116,14 +116,14 @@ class MathCompoundBlockComponent extends MathBlockComponent with TapCallbacks {
     MathSingleBlock model,
   ) => _components[model.id];
 
-  List<IntVector2> getLowestLocalSingleBlockPositions() {
+  List<IntVector2> getLocalSingleBlockPositions() {
     final result = List<IntVector2>.empty(growable: true);
     for (var x = 0; x < _model.length; x++) {
       for (var y = _model[x].length - 1; y >= 0; y--) {
         if (_model[x][y] is NullBlock) {
           continue;
         }
-        result.add(IntVector2(x, y + 1));
+        result.add(IntVector2(x, y));
       }
     }
     developer.log("Lowest local block positions: $result");

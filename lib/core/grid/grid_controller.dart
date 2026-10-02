@@ -24,16 +24,9 @@ class GridController {
       return;
     }
 
-    final anyTargetBlocked = currentBlock!
-        .getLowestLocalSingleBlockPositions()
-        .map(
-          (vector) => vector.add(
-            currentBlockGridPosition!.x,
-            currentBlockGridPosition!.y,
-          ),
-        )
-        .map((vector) => _gridModel.isPositionBlocked(vector))
-        .any((blocked) => blocked);
+    final anyTargetBlocked = anyTargetPositionBlockedFromCurrentLocation(
+      (vector) => vector.addY(1),
+    );
 
     if (anyTargetBlocked) {
       dev.log('Cant move block down. Its blocked');
@@ -43,6 +36,22 @@ class GridController {
 
     currentBlockGridPosition = currentBlockGridPosition!.addY(1);
     onPositionUpdated();
+  }
+
+  bool anyTargetPositionBlockedFromCurrentLocation(
+    IntVector2 Function(IntVector2) posMapper,
+  ) {
+    return _gridModel.anyPositionBlocked(
+      currentBlock!
+          .getLocalSingleBlockPositions()
+          .map(
+            (vector) => vector.add(
+              currentBlockGridPosition!.x,
+              currentBlockGridPosition!.y,
+            ),
+          )
+          .map(posMapper),
+    );
   }
 
   void onPositionUpdated() {
@@ -126,8 +135,10 @@ class GridController {
 
   void moveBlockRight() {
     var targetPosition = currentBlockGridPosition!.addX(1);
-    if (targetPosition.x + currentBlock!.modelWidth > _gridModel.model.length) {
-      dev.log("Dont move block right, it's already at the very right");
+    if (anyTargetPositionBlockedFromCurrentLocation(
+      (vector) => vector.addX(1),
+    )) {
+      dev.log("Dont move block right, it's blocked");
       return;
     }
     currentBlockGridPosition = targetPosition;
@@ -136,8 +147,10 @@ class GridController {
 
   void moveBlockLeft() {
     var targetPosition = currentBlockGridPosition!.addX(-1);
-    if (targetPosition.x < 0) {
-      dev.log("Dont move block left, it's already at the very left");
+    if (anyTargetPositionBlockedFromCurrentLocation(
+      (vector) => vector.addX(-1),
+    )) {
+      dev.log("Dont move block left, it's blocked");
       return;
     }
     currentBlockGridPosition = targetPosition;

@@ -13,6 +13,7 @@ class GridLine extends Component {
 
   @override
   void render(Canvas canvas) {
+    super.render(canvas);
     canvas.drawLine(
       start.toOffset(),
       end.toOffset(),

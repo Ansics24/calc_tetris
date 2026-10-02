@@ -63,6 +63,7 @@ flutter:
   assets:
     - assets/images/block_blue.svg
     - assets/images/block_yellow.svg
+    - assets/images/background_mittelalter.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

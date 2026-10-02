@@ -99,15 +99,19 @@ class GridModel implements GridQueryable {
     return Vector2(targetPosition.x * _cellSize, targetPosition.y * _cellSize);
   }
 
+  bool anyPositionBlocked(Iterable<IntVector2> listOfPositions) {
+    return listOfPositions.any((position) => isPositionBlocked(position));
+  }
+
   bool isPositionBlocked(IntVector2 gridPosition) {
     log('Detection of block called with $gridPosition');
 
-    if (gridPosition.x >= _model.length) {
+    if (gridPosition.x >= _model.length || gridPosition.x < 0) {
       log('$gridPosition is out of grid by x');
       return true;
     }
 
-    if (gridPosition.y >= _model[0].length) {
+    if (gridPosition.y >= _model[0].length || gridPosition.y < 0) {
       log('$gridPosition is out of grid by y');
       return true;
     }

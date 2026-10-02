@@ -126,7 +126,6 @@ class MathCompoundBlockComponent extends MathBlockComponent with TapCallbacks {
         result.add(IntVector2(x, y));
       }
     }
-    developer.log("Lowest local block positions: $result");
     return result;
   }
 

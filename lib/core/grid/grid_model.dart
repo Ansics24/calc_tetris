@@ -104,8 +104,6 @@ class GridModel implements GridQueryable {
   }
 
   bool isPositionBlocked(IntVector2 gridPosition) {
-    log('Detection of block called with $gridPosition');
-
     if (gridPosition.x >= _model.length || gridPosition.x < 0) {
       log('$gridPosition is out of grid by x');
       return true;
@@ -118,7 +116,6 @@ class GridModel implements GridQueryable {
 
     final componentAtPosition = _model[gridPosition.x][gridPosition.y];
     if (componentAtPosition == null) {
-      log('$gridPosition is free');
       return false;
     }
     log('$gridPosition is blocked by $componentAtPosition');

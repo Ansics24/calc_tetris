@@ -4,6 +4,13 @@ import 'package:flutter/material.dart';
 
 void main() {
   runApp(
-    GameWidget(game: TetrisGame()),
+    GameWidget(
+      game: TetrisGame(),
+      backgroundBuilder: (context) => Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+        ),
+      ),
+    ),
   );
 }

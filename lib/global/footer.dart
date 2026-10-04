@@ -8,7 +8,12 @@ class Footer extends PositionComponent {
 
   @override
   FutureOr<void> onLoad() {
-    add(RectangleComponent(size: size, paint: Paint()..color = Colors.grey));
+    add(
+      RectangleComponent(
+        size: size,
+        paint: Paint()..color = Colors.grey.withAlpha(50),
+      ),
+    );
     return super.onLoad();
   }
 }

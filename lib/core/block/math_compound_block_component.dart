@@ -101,7 +101,7 @@ class MathCompoundBlockComponent extends MathBlockComponent with TapCallbacks {
               _cellSize * i,
               _cellSize * j,
             ),
-            EffectController(duration: withAnimation ? 0.3 : 0),
+            EffectController(duration: withAnimation ? 0.1 : 0),
           ),
         );
       }

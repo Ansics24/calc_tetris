@@ -11,7 +11,7 @@ class Header extends PositionComponent {
     add(
       RectangleComponent(
         size: size,
-        paint: Paint()..color = const Color.fromARGB(255, 38, 32, 32),
+        paint: Paint()..color = const Color.fromARGB(180, 38, 32, 32),
       ),
     );
     return super.onLoad();

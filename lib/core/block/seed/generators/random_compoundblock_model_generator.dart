@@ -31,6 +31,10 @@ class RandomCompoundblockModelGenerator implements CompoundblockModelGenerator {
     var random = Random();
     return random.nextBool()
         ? MathNumberBlock(number: random.nextInt(9))
-        : MathOperantBlock(type: MathOperandType.plus);
+        : MathOperantBlock(
+            type: random.nextBool()
+                ? MathOperandType.plus
+                : MathOperandType.minus,
+          );
   }
 }

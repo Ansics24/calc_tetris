@@ -8,9 +8,11 @@ List<List<MathSingleBlock?>> generateB2x2() {
 List<List<MathSingleBlock?>> generateT3x2() {
   return List.generate(
     3,
-    (x) => List.generate(2, (y) {
+    (x) => List.generate(3, (y) {
       if (y == 0) {
         return null;
+      } else if (y == 2) {
+        return NullBlock();
       }
       return x == 1 ? null : NullBlock();
     }),
@@ -20,9 +22,11 @@ List<List<MathSingleBlock?>> generateT3x2() {
 List<List<MathSingleBlock?>> generateLLeft3x2() {
   return List.generate(
     3,
-    (x) => List.generate(2, (y) {
+    (x) => List.generate(3, (y) {
       if (y == 0) {
         return null;
+      } else if (y == 2) {
+        return NullBlock();
       }
       return x == 0 ? null : NullBlock();
     }),
@@ -32,9 +36,11 @@ List<List<MathSingleBlock?>> generateLLeft3x2() {
 List<List<MathSingleBlock?>> generateLRight3x2() {
   return List.generate(
     3,
-    (x) => List.generate(2, (y) {
+    (x) => List.generate(3, (y) {
       if (y == 0) {
         return null;
+      } else if (y == 2) {
+        return NullBlock();
       }
       return x == 2 ? null : NullBlock();
     }),
@@ -42,15 +48,20 @@ List<List<MathSingleBlock?>> generateLRight3x2() {
 }
 
 List<List<MathSingleBlock?>> generateI4x1() {
-  return List.generate(4, (_) => List.generate(1, (_) => null));
+  return List.generate(
+    4,
+    (_) => List.generate(4, (y) => y == 1 ? null : NullBlock()),
+  );
 }
 
 List<List<MathSingleBlock?>> generateS3x2() {
   return List.generate(
     3,
-    (x) => List.generate(2, (y) {
+    (x) => List.generate(3, (y) {
       if (y == 0) {
         return x == 0 ? NullBlock() : null;
+      } else if (y == 2) {
+        return NullBlock();
       }
       return x == 2 ? NullBlock() : null;
     }),

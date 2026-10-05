@@ -1,15 +1,17 @@
 import 'dart:developer' as dev;
 import 'dart:math';
 
+import 'package:calc_tetris/core/block/math_block_component.dart';
 import 'package:calc_tetris/core/block/math_compound_block_component.dart';
 import 'package:calc_tetris/core/block/seed/generators/random_compoundblock_model_generator.dart';
 import 'package:calc_tetris/core/grid/grid.dart';
 import 'package:calc_tetris/core/grid/grid_model.dart';
 import 'package:calc_tetris/core/grid/int_vector_2.dart';
+import 'package:calc_tetris/core/grid/queries/position_in_grid_aware.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 
-class GridController {
+class GridController implements PositionInGridAware {
   final GridModel _gridModel;
   final Grid _grid;
   final RandomCompoundblockModelGenerator blockGenerator =
@@ -123,6 +125,8 @@ class GridController {
     startNewBlock(
       MathCompoundBlockComponent(
         newBlockModel,
+        gridModelAware: _gridModel,
+        positionInGridAware: this,
       ),
       IntVector2(
         random.nextInt(
@@ -155,5 +159,13 @@ class GridController {
     }
     currentBlockGridPosition = targetPosition;
     onPositionUpdated();
+  }
+
+  @override
+  IntVector2? positionInGrid(MathBlockComponent component) {
+    if (component != currentBlock) {
+      return null;
+    }
+    return currentBlockGridPosition;
   }
 }

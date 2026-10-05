@@ -8,11 +8,12 @@ import 'package:calc_tetris/core/grid/grid_position_occupied_exception.dart';
 import 'package:calc_tetris/core/grid/grid_queryable.dart';
 import 'package:calc_tetris/core/grid/grid_single_block_model.dart';
 import 'package:calc_tetris/core/grid/int_vector_2.dart';
+import 'package:calc_tetris/core/grid/queries/grid_model_aware.dart';
 import 'package:calc_tetris/core/grid/queries/position_in_grid_finder.dart';
 import 'package:flame/components.dart';
 import 'package:uuid/uuid.dart';
 
-class GridModel implements GridQueryable {
+class GridModel implements GridQueryable, GridModelAware {
   late List<List<GridSingleBlockModel?>> _model;
   late double _cellSize;
   final Grid gridComponent;
@@ -99,6 +100,7 @@ class GridModel implements GridQueryable {
     return Vector2(targetPosition.x * _cellSize, targetPosition.y * _cellSize);
   }
 
+  @override
   bool anyPositionBlocked(Iterable<IntVector2> listOfPositions) {
     return listOfPositions.any((position) => isPositionBlocked(position));
   }

@@ -11,6 +11,8 @@ import 'package:calc_tetris/core/block/model/null_block.dart';
 import 'package:calc_tetris/core/block/snap_to_grid_when_dragging_behaviour.dart';
 import 'package:calc_tetris/core/grid/grid.dart';
 import 'package:calc_tetris/core/grid/int_vector_2.dart';
+import 'package:calc_tetris/core/grid/queries/grid_model_aware.dart';
+import 'package:calc_tetris/core/grid/queries/position_in_grid_aware.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/events.dart';
 import 'package:flame/image_composition.dart';
@@ -19,9 +21,15 @@ import 'package:uuid/uuid.dart';
 class MathCompoundBlockComponent extends MathBlockComponent with TapCallbacks {
   late List<List<MathSingleBlock>> _model;
   final Map<Uuid, MathSingleBlockComponent> _components = {};
+  final GridModelAware _gridModelAware;
+  final PositionInGridAware _positionInGridAware;
   late double _cellSize;
 
-  MathCompoundBlockComponent(this._model);
+  MathCompoundBlockComponent(
+    this._model, {
+    required this._gridModelAware,
+    required this._positionInGridAware,
+  });
 
   @override
   void onLoad() async {
@@ -56,38 +64,37 @@ class MathCompoundBlockComponent extends MathBlockComponent with TapCallbacks {
   @override
   void onTapUp(TapUpEvent event) {
     super.onTapUp(event);
-    developer.log('Local position of tap: ${event.localPosition}');
-    if (event.localPosition.x < size.x / 2) {
-      rotateCounterClockwise();
-      developer.log('Rotated counter clockwise');
-    } else {
-      rotateClockwise();
-      developer.log('Rotated clockwise');
-    }
+    rotate();
   }
 
-  void rotateCounterClockwise() {
-    final numberOfRows = _model.length;
-    final numberOfCols = _model[0].length;
-    _model = List.generate(
-      numberOfCols,
-      (i) => List.generate(
-        numberOfRows,
-        (j) => _model[numberOfRows - 1 - j][i],
-      ),
-    );
-    updateSingleBlockPositions();
-  }
-
-  void rotateClockwise() {
-    _model = List.generate(
+  void rotate() {
+    var newModel = List.generate(
       _model[0].length,
       (i) => List.generate(
         _model.length,
         (j) => _model[j][_model[0].length - 1 - i],
       ),
     );
+    if (_isAnyPositionBlocked(newModel)) {
+      developer.log("Cant rotate. There is some cell blocked");
+      return;
+    }
+
+    _model = newModel;
     updateSingleBlockPositions();
+  }
+
+  bool _isAnyPositionBlocked(List<List<MathSingleBlock>> blocks) {
+    final positionInGrid = _positionInGridAware.positionInGrid(this)!;
+    for (var x = 0; x < blocks.length; x++) {
+      for (var y = 0; y < blocks[x].length; y++) {
+        final posToCheck = positionInGrid.add(x, y);
+        if (_gridModelAware.anyPositionBlocked(List.filled(1, posToCheck))) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   void updateSingleBlockPositions({bool withAnimation = true}) {

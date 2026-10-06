@@ -1,5 +1,6 @@
 import 'dart:developer' as developer;
 
+import 'package:calc_tetris/core/block/fall_down_on_swipe_behaviour.dart';
 import 'package:calc_tetris/core/block/math_block_component.dart';
 import 'package:calc_tetris/core/block/math_number_block_component.dart';
 import 'package:calc_tetris/core/block/math_operant_block_component.dart';
@@ -35,6 +36,7 @@ class MathCompoundBlockComponent extends MathBlockComponent with TapCallbacks {
   void onLoad() async {
     await super.onLoad();
     add(SnapToGridWhenDraggingBehaviour());
+    add(FallDownOnSwipeBehaviour());
     _cellSize = findParent<Grid>()!.cellSize;
     for (var i = 0; i < _model.length; i++) {
       for (var j = 0; j < _model[i].length; j++) {
@@ -138,5 +140,56 @@ class MathCompoundBlockComponent extends MathBlockComponent with TapCallbacks {
 
   List<List<MathSingleBlock>> get model => _model;
 
-  int get modelWidth => _model.length;
+  int getEffectiveModelWidth() {
+    var minIndexFound = 1000;
+    var maxIndexFound = 0;
+    for (var x = 0; x < model.length; x++) {
+      for (var y = 0; y < model[x].length; y++) {
+        if (model[x][y] is NullBlock) {
+          continue;
+        }
+        if (x < minIndexFound) {
+          minIndexFound = x;
+        }
+        if (x > maxIndexFound) {
+          maxIndexFound = x;
+        }
+      }
+    }
+    return maxIndexFound - minIndexFound;
+  }
+
+  int getEffectiveModelHeight() {
+    var minIndexFound = 1000;
+    var maxIndexFound = 0;
+    for (var x = 0; x < model.length; x++) {
+      for (var y = 0; y < model[x].length; y++) {
+        if (model[x][y] is NullBlock) {
+          continue;
+        }
+        if (y < minIndexFound) {
+          minIndexFound = y;
+        }
+        if (y > maxIndexFound) {
+          maxIndexFound = y;
+        }
+      }
+    }
+    return maxIndexFound - minIndexFound + 1;
+  }
+
+  int getLowestLocalBlockYPosition() {
+    var maxIndexFound = 0;
+    for (var x = 0; x < model.length; x++) {
+      for (var y = 0; y < model[x].length; y++) {
+        if (model[x][y] is NullBlock) {
+          continue;
+        }
+        if (y > maxIndexFound) {
+          maxIndexFound = y;
+        }
+      }
+    }
+    return maxIndexFound;
+  }
 }

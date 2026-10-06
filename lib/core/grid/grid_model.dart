@@ -4,7 +4,7 @@ import 'package:calc_tetris/core/block/math_compound_block_component.dart';
 import 'package:calc_tetris/core/block/math_single_block_component.dart';
 import 'package:calc_tetris/core/block/model/null_block.dart';
 import 'package:calc_tetris/core/grid/grid.dart';
-import 'package:calc_tetris/core/grid/grid_position_occupied_exception.dart';
+import 'package:calc_tetris/core/grid/exception/grid_position_occupied_exception.dart';
 import 'package:calc_tetris/core/grid/grid_queryable.dart';
 import 'package:calc_tetris/core/grid/grid_single_block_model.dart';
 import 'package:calc_tetris/core/grid/int_vector_2.dart';

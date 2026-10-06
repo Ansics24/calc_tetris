@@ -1,3 +1,7 @@
+import 'dart:developer';
+
+import 'package:calc_tetris/core/block/math_compound_block_component.dart';
+import 'package:calc_tetris/core/grid/exception/grid_index_out_of_bounds_exception.dart';
 import 'package:calc_tetris/core/grid/grid_model.dart';
 import 'package:calc_tetris/core/grid/int_vector_2.dart';
 import 'package:flame/components.dart';
@@ -21,5 +25,50 @@ class PositionInGridFinder {
       }
     }
     return null;
+  }
+
+  IntVector2? findLowestPossiblePosition(
+    IntVector2 compoundBlockPositionInGrid,
+    MathCompoundBlockComponent compoundBlockComponent,
+  ) {
+    final localPositions = compoundBlockComponent
+        .getLocalSingleBlockPositions();
+    final gridPositions = localPositions.map(
+      (pos) =>
+          pos.add(compoundBlockPositionInGrid.x, compoundBlockPositionInGrid.y),
+    );
+
+    int lowestPossibleOverallY = 1000;
+    for (var posToCheck in gridPositions) {
+      final nextFreePosInColumn = nextFreePositionInColumn(posToCheck.x);
+      if (nextFreePosInColumn == null) {
+        return null;
+      }
+      if (nextFreePosInColumn < lowestPossibleOverallY) {
+        lowestPossibleOverallY = nextFreePosInColumn;
+      }
+    }
+    var lowestLocalYPos = compoundBlockComponent.getLowestLocalBlockYPosition();
+    log("Lowest local Y-Pos is $lowestLocalYPos");
+    return IntVector2(
+      compoundBlockPositionInGrid.x,
+      lowestPossibleOverallY - lowestLocalYPos,
+    );
+  }
+
+  int? nextFreePositionInColumn(int columnIndex) {
+    if (columnIndex < 0 || columnIndex >= _gridModel.model.length) {
+      throw GridIndexOutOfBoundsException();
+    }
+    for (var y = 0; y < _gridModel.model[columnIndex].length; y++) {
+      if (!_gridModel.isPositionBlocked(IntVector2(columnIndex, y))) {
+        continue;
+      }
+      if (y == 0) {
+        return null;
+      }
+      return y - 1;
+    }
+    return _gridModel.model[columnIndex].length - 1;
   }
 }

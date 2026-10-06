@@ -8,18 +8,21 @@ import 'package:calc_tetris/core/grid/grid.dart';
 import 'package:calc_tetris/core/grid/grid_model.dart';
 import 'package:calc_tetris/core/grid/int_vector_2.dart';
 import 'package:calc_tetris/core/grid/queries/position_in_grid_aware.dart';
+import 'package:calc_tetris/core/grid/queries/position_in_grid_finder.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 
 class GridController implements PositionInGridAware {
   final GridModel _gridModel;
+  final PositionInGridFinder _positionInGridFinder;
   final Grid _grid;
   final RandomCompoundblockModelGenerator blockGenerator =
       RandomCompoundblockModelGenerator();
   MathCompoundBlockComponent? currentBlock;
   IntVector2? currentBlockGridPosition;
 
-  GridController({required this._gridModel, required this._grid});
+  GridController({required this._gridModel, required this._grid})
+    : _positionInGridFinder = PositionInGridFinder(gridModel: _gridModel);
 
   void moveBlockDownByOne() {
     if (currentBlock == null) {
@@ -158,6 +161,17 @@ class GridController implements PositionInGridAware {
       return;
     }
     currentBlockGridPosition = targetPosition;
+    onPositionUpdated();
+  }
+
+  void fallBlockDown() {
+    var lowestPossiblePosition = _positionInGridFinder
+        .findLowestPossiblePosition(
+          currentBlockGridPosition!,
+          currentBlock!,
+        );
+    dev.log("Block falls down to $lowestPossiblePosition");
+    currentBlockGridPosition = lowestPossiblePosition;
     onPositionUpdated();
   }
 

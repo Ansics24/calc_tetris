@@ -1,10 +1,13 @@
 import 'dart:developer' as developer;
 
+import 'package:calc_tetris/core/block/exceptions/no_matching_block_component_exception.dart';
 import 'package:calc_tetris/core/block/fall_down_on_swipe_behaviour.dart';
 import 'package:calc_tetris/core/block/math_block_component.dart';
+import 'package:calc_tetris/core/block/math_equals_block_component.dart';
 import 'package:calc_tetris/core/block/math_number_block_component.dart';
 import 'package:calc_tetris/core/block/math_operant_block_component.dart';
 import 'package:calc_tetris/core/block/math_single_block_component.dart';
+import 'package:calc_tetris/core/block/model/math_equals_block.dart';
 import 'package:calc_tetris/core/block/model/math_number_block.dart';
 import 'package:calc_tetris/core/block/model/math_operant_block.dart';
 import 'package:calc_tetris/core/block/model/math_single_block.dart';
@@ -60,7 +63,13 @@ class MathCompoundBlockComponent extends MathBlockComponent with TapCallbacks {
     if (blockModel is MathOperantBlock) {
       return MathOperantBlockComponent(model: blockModel);
     }
-    return null;
+    if (blockModel is MathEqualsBlock) {
+      return MathEqualsBlockComponent(model: blockModel);
+    }
+    if (blockModel is NullBlock) {
+      return null;
+    }
+    throw NoMatchingBlockComponentException();
   }
 
   @override
@@ -178,16 +187,14 @@ class MathCompoundBlockComponent extends MathBlockComponent with TapCallbacks {
     return maxIndexFound - minIndexFound + 1;
   }
 
-  int getLowestLocalBlockYPosition() {
+  int getLowestLocalBlockYPosition(int columnIndex) {
     var maxIndexFound = 0;
-    for (var x = 0; x < model.length; x++) {
-      for (var y = 0; y < model[x].length; y++) {
-        if (model[x][y] is NullBlock) {
-          continue;
-        }
-        if (y > maxIndexFound) {
-          maxIndexFound = y;
-        }
+    for (var y = 0; y < model[columnIndex].length; y++) {
+      if (model[columnIndex][y] is NullBlock) {
+        continue;
+      }
+      if (y > maxIndexFound) {
+        maxIndexFound = y;
       }
     }
     return maxIndexFound;

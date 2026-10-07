@@ -23,8 +23,11 @@ class FallDownOnSwipeBehaviour extends CompoundBlockBehaviour
 
   @override
   void onDragUpdate(DragUpdateEvent event) {
-    event.continuePropagation = true;
     dragedDistanceDown += event.canvasDelta.y;
+    if (dragedDistanceDown < 10 ||
+        DateTime.now().difference(startTimestamp!).inMilliseconds > 30) {
+      event.continuePropagation = true;
+    }
   }
 
   @override

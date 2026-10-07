@@ -170,9 +170,14 @@ class GridController implements PositionInGridAware {
           currentBlockGridPosition!,
           currentBlock!,
         );
+    if (lowestPossiblePosition == null) {
+      dev.log("Block can't fall down. It's blocked");
+      return;
+    }
     dev.log("Block falls down to $lowestPossiblePosition");
     currentBlockGridPosition = lowestPossiblePosition;
     onPositionUpdated();
+    landCurrentBlockOnGrid();
   }
 
   @override

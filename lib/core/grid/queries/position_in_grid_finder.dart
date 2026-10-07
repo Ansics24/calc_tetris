@@ -38,21 +38,29 @@ class PositionInGridFinder {
           pos.add(compoundBlockPositionInGrid.x, compoundBlockPositionInGrid.y),
     );
 
-    int lowestPossibleOverallY = 1000;
+    var targetY = 1000;
     for (var posToCheck in gridPositions) {
       final nextFreePosInColumn = nextFreePositionInColumn(posToCheck.x);
       if (nextFreePosInColumn == null) {
         return null;
       }
-      if (nextFreePosInColumn < lowestPossibleOverallY) {
-        lowestPossibleOverallY = nextFreePosInColumn;
+      var yPosForColumn =
+          nextFreePosInColumn -
+          compoundBlockComponent.getLowestLocalBlockYPosition(
+            posToCheck.x - compoundBlockPositionInGrid.x,
+          );
+      if (yPosForColumn < targetY) {
+        targetY = yPosForColumn;
       }
     }
-    var lowestLocalYPos = compoundBlockComponent.getLowestLocalBlockYPosition();
-    log("Lowest local Y-Pos is $lowestLocalYPos");
+    if (targetY < compoundBlockPositionInGrid.y) {
+      return null;
+    }
+
+    log("Lowest possible Y-Pos is $targetY");
     return IntVector2(
       compoundBlockPositionInGrid.x,
-      lowestPossibleOverallY - lowestLocalYPos,
+      targetY,
     );
   }
 

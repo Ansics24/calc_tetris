@@ -41,7 +41,6 @@ class GridModel implements GridQueryable, GridModelAware {
       for (var y = 0; y < blockComponent.model[0].length; y++) {
         final targetPosition = position.add(x, y);
         if (blockModel[x][y] is NullBlock) {
-          log("Ignoring Null block at $targetPosition");
           continue;
         }
         if (isPositionBlocked(targetPosition)) {
@@ -55,7 +54,6 @@ class GridModel implements GridQueryable, GridModelAware {
         var blockModelAtXY = blockModel[x][y];
         final targetPosition = position.add(x, y);
         if (blockModelAtXY is NullBlock) {
-          log("Ignoring Null block at $targetPosition");
           continue;
         }
         _addSingleBlock(

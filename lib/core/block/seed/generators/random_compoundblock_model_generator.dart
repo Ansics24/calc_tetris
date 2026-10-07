@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'dart:developer' as dev;
 
+import 'package:calc_tetris/core/block/model/math_equals_block.dart';
 import 'package:calc_tetris/core/block/model/math_number_block.dart';
 import 'package:calc_tetris/core/block/model/math_operant_block.dart';
 import 'package:calc_tetris/core/block/model/math_operant_type.dart';
@@ -29,12 +30,15 @@ class RandomCompoundblockModelGenerator implements CompoundblockModelGenerator {
 
   MathSingleBlock generateRandomBlock() {
     var random = Random();
-    return random.nextBool()
-        ? MathNumberBlock(number: random.nextInt(9))
-        : MathOperantBlock(
-            type: random.nextBool()
-                ? MathOperandType.plus
-                : MathOperandType.minus,
-          );
+    var randomInt = random.nextInt(100);
+    if (randomInt < 60) {
+      return MathNumberBlock(number: random.nextInt(9));
+    }
+    if (randomInt < 80) {
+      return MathOperantBlock(
+        type: random.nextBool() ? MathOperandType.plus : MathOperandType.minus,
+      );
+    }
+    return MathEqualsBlock();
   }
 }

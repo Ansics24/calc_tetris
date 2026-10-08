@@ -7,13 +7,7 @@ class Equation {
   Equation.fromBlocks(this._blocks);
 
   bool isValid() {
-    if (_blocks.isEmpty) {
-      return false;
-    }
-    if (!_matchesregExp()) {
-      return false;
-    }
-    return true;
+    return _matchesregExp() ? true : false;
   }
 
   bool _matchesregExp() {

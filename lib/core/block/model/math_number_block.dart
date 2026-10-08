@@ -5,4 +5,9 @@ class MathNumberBlock extends MathSingleBlock {
   final int number;
 
   MathNumberBlock({required this.number}) : super(id: Uuid());
+
+  @override
+  String toString() {
+    return number.toString();
+  }
 }

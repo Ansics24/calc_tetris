@@ -6,4 +6,15 @@ class MathOperantBlock extends MathSingleBlock {
   final MathOperandType type;
 
   MathOperantBlock({required this.type}) : super(id: Uuid());
+
+  @override
+  String toString() {
+    if (type == MathOperandType.plus) {
+      return "+";
+    }
+    if (type == MathOperandType.minus) {
+      return "-";
+    }
+    return super.toString();
+  }
 }

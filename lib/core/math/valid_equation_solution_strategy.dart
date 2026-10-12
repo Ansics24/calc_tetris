@@ -7,7 +7,7 @@ class ValidEquationSolutionStrategy implements SolutionStrategy {
   @override
   Iterable<GridSingleBlockModel> findSolvedBlocks(
     GridModel gridModel, {
-    required List<IntVector2> positionsToCheck,
+    required List<IntVector2> triggeringPositions,
   }) {
     throw UnimplementedError();
   }

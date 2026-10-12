@@ -101,7 +101,7 @@ class GridController implements PositionInGridAware {
     currentBlockGridPosition = null;
 
     solutionStrategy
-        .findSolvedBlocks(_gridModel, positionsToCheck: newPositions)
+        .findSolvedBlocks(_gridModel, triggeringPositions: newPositions)
         .forEach((solvedBlock) {
           dev.log('Block solved: $solvedBlock');
         });

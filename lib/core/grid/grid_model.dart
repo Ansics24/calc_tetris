@@ -2,11 +2,10 @@ import 'dart:developer';
 
 import 'package:calc_tetris/core/block/math_compound_block_component.dart';
 import 'package:calc_tetris/core/block/math_single_block_component.dart';
-import 'package:calc_tetris/core/block/model/math_single_block.dart';
 import 'package:calc_tetris/core/block/model/null_block.dart';
-import 'package:calc_tetris/core/grid/grid.dart';
+import 'package:calc_tetris/core/grid/connected_blocks.dart';
 import 'package:calc_tetris/core/grid/exception/grid_position_occupied_exception.dart';
-import 'package:calc_tetris/core/grid/grid_direction.dart';
+import 'package:calc_tetris/core/grid/grid.dart';
 import 'package:calc_tetris/core/grid/grid_queryable.dart';
 import 'package:calc_tetris/core/grid/grid_single_block_model.dart';
 import 'package:calc_tetris/core/grid/int_vector_2.dart';
@@ -137,17 +136,17 @@ class GridModel implements GridQueryable, GridModelAware {
     return _model[positionInGrid.x][positionInGrid.y];
   }
 
-  List<GridSingleBlockModel> findAllConnectedBlocks(
+  ConnectedBlocks findAllConnectedBlocks(
     IntVector2 position,
-    GridDirection searchDirection,
   ) {
     final modelAtPosition = findExistingBlockAt(position);
     if (modelAtPosition == null) {
-      return List.empty();
+      return ConnectedBlocks.empty();
     }
-    return searchDirection == .horizontal
-        ? _findAllConnectedBlocksHorizontally(position)
-        : _findAllConnectedBlocksVertically(position);
+    return ConnectedBlocks(
+      horizontal: _findAllConnectedBlocksHorizontally(position),
+      vertical: _findAllConnectedBlocksVertically(position),
+    );
   }
 
   List<GridSingleBlockModel> _findAllConnectedBlocksHorizontally(

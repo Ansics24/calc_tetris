@@ -56,7 +56,6 @@ void main() {
     test("No block in row => Empty list", () {
       var blocks = gridModel.findAllConnectedBlocks(
         IntVector2(2, 2),
-        .horizontal,
       );
 
       expect(blocks, isEmpty);
@@ -65,16 +64,14 @@ void main() {
     test("two blocks in row hitted => List(2)", () {
       var blocks = gridModel.findAllConnectedBlocks(
         IntVector2(0, 0),
-        .horizontal,
       );
 
-      expect(blocks, hasLength(2));
+      expect(blocks.horizontal, hasLength(2));
     });
 
     test("two blocks in row not hitted => empty", () {
       var blocks = gridModel.findAllConnectedBlocks(
         IntVector2(2, 0),
-        .horizontal,
       );
 
       expect(blocks, isEmpty);
@@ -83,19 +80,17 @@ void main() {
     test("full row hitted left", () {
       var blocks = gridModel.findAllConnectedBlocks(
         IntVector2(1, 1),
-        .horizontal,
       );
 
-      expect(blocks, hasLength(5));
+      expect(blocks.horizontal, hasLength(5));
     });
 
     test("full row hitted right", () {
       var blocks = gridModel.findAllConnectedBlocks(
         IntVector2(4, 1),
-        .horizontal,
       );
 
-      expect(blocks, hasLength(5));
+      expect(blocks.horizontal, hasLength(5));
     });
   });
 }

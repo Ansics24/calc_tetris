@@ -5,10 +5,11 @@ import 'package:flame/components.dart';
 import 'package:flame_svg/flame_svg.dart';
 import 'package:flutter/material.dart';
 
-class MathOperantBlockComponent extends MathSingleBlockComponent {
-  MathOperantBlock model;
+class MathOperantBlockComponent
+    extends MathSingleBlockComponent<MathOperantBlock> {
+  final MathOperantBlock _model;
 
-  MathOperantBlockComponent({required this.model});
+  MathOperantBlockComponent({required this._model});
 
   @override
   void onLoad() async {
@@ -29,10 +30,13 @@ class MathOperantBlockComponent extends MathSingleBlockComponent {
             fontSize: 20,
           ),
         ),
-        text: model.type == MathOperandType.plus ? '+' : '-',
+        text: _model.type == MathOperandType.plus ? '+' : '-',
         position: Vector2(size.x / 2, size.y / 2),
         anchor: Anchor.center,
       ),
     );
   }
+
+  @override
+  MathOperantBlock get model => _model;
 }

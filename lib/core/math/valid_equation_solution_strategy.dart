@@ -9,6 +9,12 @@ class ValidEquationSolutionStrategy implements SolutionStrategy {
     GridModel gridModel, {
     required List<IntVector2> triggeringPositions,
   }) {
-    throw UnimplementedError();
+    var connectedBlocks = triggeringPositions.map(
+      (pos) => gridModel.findAllConnectedBlocks(pos),
+    );
+    if (connectedBlocks.isEmpty) {
+      return [];
+    }
+    return connectedBlocks.first.horizontal;
   }
 }

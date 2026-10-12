@@ -4,10 +4,11 @@ import 'package:flame/components.dart';
 import 'package:flame_svg/flame_svg.dart';
 import 'package:flutter/painting.dart';
 
-class MathNumberBlockComponent extends MathSingleBlockComponent {
-  MathNumberBlock model;
+class MathNumberBlockComponent
+    extends MathSingleBlockComponent<MathNumberBlock> {
+  final MathNumberBlock _model;
   MathNumberBlockComponent({
-    required this.model,
+    required this._model,
   });
 
   @override
@@ -26,10 +27,13 @@ class MathNumberBlockComponent extends MathSingleBlockComponent {
         textRenderer: TextPaint(
           style: TextStyle(color: Color(0xFFFFFFFF), fontSize: 20),
         ),
-        text: model.number.toString(),
+        text: _model.number.toString(),
         position: Vector2(size.x / 2, size.y / 2),
         anchor: Anchor.center,
       ),
     );
   }
+
+  @override
+  MathNumberBlock get model => _model;
 }

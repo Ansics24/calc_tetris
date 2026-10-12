@@ -4,10 +4,11 @@ import 'package:flame/components.dart';
 import 'package:flame_svg/flame_svg.dart';
 import 'package:flutter/material.dart';
 
-class MathEqualsBlockComponent extends MathSingleBlockComponent {
-  MathEqualsBlock model;
+class MathEqualsBlockComponent
+    extends MathSingleBlockComponent<MathEqualsBlock> {
+  final MathEqualsBlock _model;
 
-  MathEqualsBlockComponent({required this.model});
+  MathEqualsBlockComponent({required this._model});
 
   @override
   void onLoad() async {
@@ -34,4 +35,7 @@ class MathEqualsBlockComponent extends MathSingleBlockComponent {
       ),
     );
   }
+
+  @override
+  MathEqualsBlock get model => _model;
 }

@@ -31,7 +31,7 @@ class GridModel implements GridQueryable, GridModelAware {
     _positionInGridFinder = PositionInGridFinder(gridModel: this);
   }
 
-  void addCompoundBlock({
+  List<IntVector2> addCompoundBlock({
     required MathCompoundBlockComponent blockComponent,
     required IntVector2 position,
   }) {
@@ -50,6 +50,8 @@ class GridModel implements GridQueryable, GridModelAware {
       }
     }
 
+    final List<IntVector2> addedPositions = List.empty(growable: true);
+
     for (var x = 0; x < blockModel.length; x++) {
       for (var y = 0; y < blockModel[x].length; y++) {
         var blockModelAtXY = blockModel[x][y];
@@ -64,8 +66,11 @@ class GridModel implements GridQueryable, GridModelAware {
           )!,
           targetPosition,
         );
+        addedPositions.add(targetPosition);
       }
     }
+
+    return addedPositions;
   }
 
   void addSingleBlock(

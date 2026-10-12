@@ -9,6 +9,7 @@ import 'package:calc_tetris/core/grid/grid_model.dart';
 import 'package:calc_tetris/core/grid/int_vector_2.dart';
 import 'package:calc_tetris/core/grid/queries/position_in_grid_aware.dart';
 import 'package:calc_tetris/core/grid/queries/position_in_grid_finder.dart';
+import 'package:calc_tetris/core/solution_strategy.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 
@@ -16,13 +17,18 @@ class GridController implements PositionInGridAware {
   final GridModel _gridModel;
   final PositionInGridFinder _positionInGridFinder;
   final Grid _grid;
+  final SolutionStrategy solutionStrategy;
+
   final RandomCompoundblockModelGenerator blockGenerator =
       RandomCompoundblockModelGenerator();
   MathCompoundBlockComponent? currentBlock;
   IntVector2? currentBlockGridPosition;
 
-  GridController({required this._gridModel, required this._grid})
-    : _positionInGridFinder = PositionInGridFinder(gridModel: _gridModel);
+  GridController({
+    required this._gridModel,
+    required this._grid,
+    required this.solutionStrategy,
+  }) : _positionInGridFinder = PositionInGridFinder(gridModel: _gridModel);
 
   void moveBlockDownByOne() {
     if (currentBlock == null) {
@@ -86,13 +92,19 @@ class GridController implements PositionInGridAware {
   }
 
   void onBlockLanded() {
-    _gridModel.addCompoundBlock(
+    var newPositions = _gridModel.addCompoundBlock(
       blockComponent: currentBlock!,
       position: currentBlockGridPosition!,
     );
     currentBlock!.removeFromParent();
     currentBlock = null;
     currentBlockGridPosition = null;
+
+    solutionStrategy
+        .findSolvedBlocks(_gridModel, positionsToCheck: newPositions)
+        .forEach((solvedBlock) {
+          dev.log('Block solved: $solvedBlock');
+        });
 
     addExperimentalStuff();
   }

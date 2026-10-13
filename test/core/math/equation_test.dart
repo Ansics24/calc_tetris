@@ -162,5 +162,16 @@ void main() {
       ]);
       expect(equation.isCorrect(), isFalse);
     });
+
+    test("7+1=9", () {
+      final equation = Equation.fromBlocks([
+        MathNumberBlock(number: 7),
+        MathOperantBlock(type: MathOperandType.plus),
+        MathNumberBlock(number: 1),
+        MathEqualsBlock(),
+        MathNumberBlock(number: 9),
+      ]);
+      expect(equation.isCorrect(), isFalse);
+    });
   });
 }

@@ -60,7 +60,7 @@ void main() {
             .map((e) => e.component)
             .map((c) => c.model.toString())
             .join(''),
-        equals("5+3=8"),
+        equals("2+4=6"),
       );
     });
 
@@ -71,7 +71,7 @@ void main() {
           gridModel,
           triggeringPositions: [IntVector2(1, 1), IntVector2(1, 2)],
         );
-        expect(solvedBlocks, hasLength(5));
+        expect(solvedBlocks, hasLength(9));
         expect(
           solvedBlocks
               .map((e) => e.component)

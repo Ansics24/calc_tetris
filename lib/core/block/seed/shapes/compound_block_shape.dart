@@ -116,18 +116,14 @@ List<List<MathSingleBlock?>> generate1x1() {
 }
 
 enum CompoundBlockShape {
-  b2x2(generateEmptyFunction: generateB2x2),
-  t3x2(generateEmptyFunction: generateT3x2),
-  lLeft3x2(
-    generateEmptyFunction: generateLLeft3x2,
-  ),
-  lRight3x2(
-    generateEmptyFunction: generateLRight3x2,
-  ),
-  i4x1(generateEmptyFunction: generateI4x1),
-  i3x1(generateEmptyFunction: generateI3x1),
-  s3x2r(generateEmptyFunction: generateS3x2Right),
-  s3x2l(generateEmptyFunction: generateS3x2Left),
+  b2x2(generateEmptyFunction: generateB2x2, enabled: false),
+  t3x2(generateEmptyFunction: generateT3x2, enabled: false),
+  lLeft3x2(generateEmptyFunction: generateLLeft3x2, enabled: false),
+  lRight3x2(generateEmptyFunction: generateLRight3x2, enabled: false),
+  i4x1(generateEmptyFunction: generateI4x1, enabled: false),
+  i3x1(generateEmptyFunction: generateI3x1, enabled: false),
+  s3x2r(generateEmptyFunction: generateS3x2Right, enabled: false),
+  s3x2l(generateEmptyFunction: generateS3x2Left, enabled: false),
   l2x2l(generateEmptyFunction: generatel2x2Left),
   l2x2r(generateEmptyFunction: generatel2x2Right),
   i2x1(generateEmptyFunction: generateI2x1),
@@ -135,9 +131,11 @@ enum CompoundBlockShape {
   ;
 
   final List<List<MathSingleBlock?>> Function() _generateEmptyFunction;
+  final bool enabled;
 
   const CompoundBlockShape({
     required this._generateEmptyFunction,
+    this.enabled = true,
   });
 
   List<List<MathSingleBlock?>> get maskedModel => _generateEmptyFunction();

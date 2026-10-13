@@ -12,4 +12,9 @@ class GridSingleBlockModel {
   MathSingleBlockComponent get component => _blockComponent;
 
   String get placementId => _placementId;
+
+  @override
+  toString() {
+    return '$placementId mit Model "${_blockComponent.model}"';
+  }
 }

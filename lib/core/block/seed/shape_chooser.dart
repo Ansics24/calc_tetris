@@ -6,8 +6,11 @@ class ShapeChooser {
   final Random _random = Random();
 
   CompoundBlockShape next() {
-    return CompoundBlockShape.values[_random.nextInt(
-      CompoundBlockShape.values.length,
+    var choosableShapes = CompoundBlockShape.values
+        .where((shape) => shape.enabled)
+        .toList();
+    return choosableShapes[_random.nextInt(
+      choosableShapes.length,
     )];
   }
 }

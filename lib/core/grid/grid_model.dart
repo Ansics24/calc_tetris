@@ -181,6 +181,24 @@ class GridModel implements GridQueryable, GridModelAware {
   List<GridSingleBlockModel> _findAllConnectedBlocksVertically(
     IntVector2 position,
   ) {
-    return List.empty();
+    var yStarting = 0;
+    for (var y = position.y; y >= 0; y--) {
+      if (findExistingBlockAt(IntVector2(position.x, y)) != null) {
+        yStarting = y;
+      } else {
+        break;
+      }
+    }
+
+    final List<GridSingleBlockModel> result = List.empty(growable: true);
+    GridSingleBlockModel? found;
+    do {
+      found = findExistingBlockAt(IntVector2(position.x, yStarting));
+      if (found != null) {
+        result.add(found);
+      }
+      yStarting++;
+    } while (found != null && yStarting < model[position.x].length);
+    return result;
   }
 }

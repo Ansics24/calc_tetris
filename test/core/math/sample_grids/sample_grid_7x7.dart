@@ -22,7 +22,7 @@ import 'package:calc_tetris/core/grid/int_vector_2.dart';
 ///---+---+---+---+---+---+---+
 ///   | = |   |   |   |   | 9 |
 ///---+---+---+---+---+---+---+
-///   | 6 | + |   |   |   |   |
+///   | 6 | + |   |   |   | = |
 ///---+---+---+---+---+---+---+
 ///   |   | 9 | - | 4 | = | 6 |
 ///---+---+---+---+---+---+---+
@@ -57,6 +57,7 @@ GridModel get7x7SampleModel() {
   _addEquals(IntVector2(6, 3), gridModel);
   _addEquals(IntVector2(1, 4), gridModel);
   _addEquals(IntVector2(5, 6), gridModel);
+  _addEquals(IntVector2(6, 5), gridModel);
 
   return gridModel;
 }

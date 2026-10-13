@@ -123,7 +123,7 @@ class GridController implements PositionInGridAware {
 
     currentBlock!.add(
       TimerComponent(
-        period: 5.0,
+        period: 1.0,
         repeat: true,
         onTick: () {
           moveBlockDownByOne();

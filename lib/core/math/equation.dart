@@ -2,7 +2,8 @@ import 'package:calc_tetris/core/block/model/math_single_block.dart';
 
 class Equation {
   static final regExp = RegExp(r'^\d+(?:[+-]\d+)*=\d+(?:[+-]\d+)*$');
-  final List<MathSingleBlock> _blocks;
+  final Iterable<MathSingleBlock> _blocks;
+  static final minLength = 3;
 
   Equation.fromBlocks(this._blocks);
 

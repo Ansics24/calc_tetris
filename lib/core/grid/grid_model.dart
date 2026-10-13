@@ -78,7 +78,6 @@ class GridModel implements GridQueryable, GridModelAware {
     MathSingleBlockComponent blockComponent,
     IntVector2 position,
   ) {
-    log('Adding block at position: ${position.x} / ${position.y}');
     _model[position.x][position.y] = GridSingleBlockModel(
       blockComponent: blockComponent,
       placementId: placementId,

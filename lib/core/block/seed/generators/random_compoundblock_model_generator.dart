@@ -1,5 +1,4 @@
 import 'dart:math';
-import 'dart:developer' as dev;
 
 import 'package:calc_tetris/core/block/model/math_equals_block.dart';
 import 'package:calc_tetris/core/block/model/math_number_block.dart';
@@ -15,7 +14,6 @@ class RandomCompoundblockModelGenerator implements CompoundblockModelGenerator {
   @override
   List<List<MathSingleBlock>> generate() {
     var nextShape = _shapeChooser.next();
-    dev.log("Next shape is  $nextShape");
 
     final maskedModel = nextShape.maskedModel;
     final compoundBlockModel = List.generate(

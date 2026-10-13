@@ -2,11 +2,12 @@ import 'package:calc_tetris/core/grid/grid_model.dart';
 import 'package:calc_tetris/core/grid/grid_single_block_model.dart';
 import 'package:calc_tetris/core/grid/int_vector_2.dart';
 import 'package:calc_tetris/core/math/equation.dart';
-import 'package:calc_tetris/core/solution_strategy.dart';
+import 'package:calc_tetris/core/solution/solution_strategy.dart';
+import 'package:calc_tetris/core/solution/solution_strategy_singlerun_result.dart';
 
 class ValidEquationSolutionStrategy implements SolutionStrategy {
   @override
-  Iterable<GridSingleBlockModel> findSolvedBlocks(
+  SolutionStrategySinglerunResult execute(
     GridModel gridModel, {
     required List<IntVector2> triggeringPositions,
   }) {
@@ -14,7 +15,7 @@ class ValidEquationSolutionStrategy implements SolutionStrategy {
       (pos) => gridModel.findAllConnectedBlocks(pos),
     );
     if (connectedBlocks.isEmpty) {
-      return [];
+      return SolutionStrategySinglerunResult.empty();
     }
     final eqBlocksHorizonal = connectedBlocks.expand(
       (cb) => findBiggestValidEquation(cb.horizontal),
@@ -22,7 +23,13 @@ class ValidEquationSolutionStrategy implements SolutionStrategy {
     final eqBlocksVertical = connectedBlocks.expand(
       (cb) => findBiggestValidEquation(cb.vertical),
     );
-    return eqBlocksHorizonal.followedBy(eqBlocksVertical).toSet().toList();
+    return SolutionStrategySinglerunResult(
+      solvedBlocks: eqBlocksHorizonal
+          .followedBy(eqBlocksVertical)
+          .toSet()
+          .toList(),
+      pointsEarned: 0,
+    );
   }
 
   Iterable<GridSingleBlockModel> findBiggestValidEquation(

@@ -11,37 +11,37 @@ void main() {
 
   group('no valid equation', () {
     test('too few blocks', () {
-      var solvedBlocks = strategy.findSolvedBlocks(
+      var solvedBlocks = strategy.execute(
         gridModel,
         triggeringPositions: [IntVector2(2, 5)],
       );
-      expect(solvedBlocks, isEmpty);
+      expect(solvedBlocks.solvedBlocks, isEmpty);
     });
 
     test('invalid horizontal equation', () {
-      var solvedBlocks = strategy.findSolvedBlocks(
+      var solvedBlocks = strategy.execute(
         gridModel,
         triggeringPositions: [IntVector2(2, 3)],
       );
-      expect(solvedBlocks, isEmpty);
+      expect(solvedBlocks.solvedBlocks, isEmpty);
     });
 
     test('invalid vertical equation', () {
-      var solvedBlocks = strategy.findSolvedBlocks(
+      var solvedBlocks = strategy.execute(
         gridModel,
         triggeringPositions: [IntVector2(6, 1)],
       );
-      expect(solvedBlocks, isEmpty);
+      expect(solvedBlocks.solvedBlocks, isEmpty);
     });
 
     test('detects horizonal 5+3=8 on single target block', () {
-      var solvedBlocks = strategy.findSolvedBlocks(
+      var solvedBlocks = strategy.execute(
         gridModel,
         triggeringPositions: [IntVector2(2, 2)],
       );
-      expect(solvedBlocks, hasLength(5));
+      expect(solvedBlocks.solvedBlocks, hasLength(5));
       expect(
-        solvedBlocks
+        solvedBlocks.solvedBlocks
             .map((e) => e.component)
             .map((c) => c.model.toString())
             .join(''),
@@ -50,13 +50,13 @@ void main() {
     });
 
     test('detects vertical 2+4=6 on single target block', () {
-      var solvedBlocks = strategy.findSolvedBlocks(
+      var solvedBlocks = strategy.execute(
         gridModel,
         triggeringPositions: [IntVector2(1, 1)],
       );
-      expect(solvedBlocks, hasLength(5));
+      expect(solvedBlocks.solvedBlocks, hasLength(5));
       expect(
-        solvedBlocks
+        solvedBlocks.solvedBlocks
             .map((e) => e.component)
             .map((c) => c.model.toString())
             .join(''),
@@ -67,13 +67,13 @@ void main() {
     test(
       'detects vertical 2+4=6 and horizontal 5+3=8 on two target blocks',
       () {
-        var solvedBlocks = strategy.findSolvedBlocks(
+        var solvedBlocks = strategy.execute(
           gridModel,
           triggeringPositions: [IntVector2(1, 1), IntVector2(1, 2)],
         );
-        expect(solvedBlocks, hasLength(9));
+        expect(solvedBlocks.solvedBlocks, hasLength(9));
         expect(
-          solvedBlocks
+          solvedBlocks.solvedBlocks
               .map((e) => e.component)
               .map((c) => c.model.toString())
               .join(''),

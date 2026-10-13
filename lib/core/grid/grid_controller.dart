@@ -4,12 +4,15 @@ import 'dart:math';
 import 'package:calc_tetris/core/block/math_block_component.dart';
 import 'package:calc_tetris/core/block/math_compound_block_component.dart';
 import 'package:calc_tetris/core/block/seed/generators/random_compoundblock_model_generator.dart';
+import 'package:calc_tetris/core/game_settings.dart';
 import 'package:calc_tetris/core/grid/grid.dart';
 import 'package:calc_tetris/core/grid/grid_model.dart';
 import 'package:calc_tetris/core/grid/int_vector_2.dart';
 import 'package:calc_tetris/core/grid/queries/position_in_grid_aware.dart';
 import 'package:calc_tetris/core/grid/queries/position_in_grid_finder.dart';
-import 'package:calc_tetris/core/solution_strategy.dart';
+import 'package:calc_tetris/core/solution/solution_strategy.dart';
+import 'package:calc_tetris/core/solution/solution_strategy_executor.dart';
+import 'package:calc_tetris/core/solution/solution_strategy_singlerun_result.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 
@@ -17,7 +20,7 @@ class GridController implements PositionInGridAware {
   final GridModel _gridModel;
   final PositionInGridFinder _positionInGridFinder;
   final Grid _grid;
-  final SolutionStrategy solutionStrategy;
+  final SolutionStrategy _solutionStrategy;
 
   final RandomCompoundblockModelGenerator blockGenerator =
       RandomCompoundblockModelGenerator();
@@ -27,7 +30,7 @@ class GridController implements PositionInGridAware {
   GridController({
     required this._gridModel,
     required this._grid,
-    required this.solutionStrategy,
+    required this._solutionStrategy,
   }) : _positionInGridFinder = PositionInGridFinder(gridModel: _gridModel);
 
   void moveBlockDownByOne() {
@@ -65,14 +68,18 @@ class GridController implements PositionInGridAware {
     );
   }
 
-  void onPositionUpdated() {
+  void onPositionUpdated({bool withAnimation = true}) {
     final targetPosition = _gridModel.gridPositionToAbsolutePosition(
       currentBlockGridPosition!,
     );
 
-    currentBlock!.add(
-      MoveToEffect(targetPosition, EffectController(duration: 0.2)),
-    );
+    if (withAnimation) {
+      currentBlock!.add(
+        MoveToEffect(targetPosition, EffectController(duration: 0.2)),
+      );
+    } else {
+      currentBlock!.position = targetPosition;
+    }
   }
 
   void landCurrentBlockOnGrid() {
@@ -100,12 +107,24 @@ class GridController implements PositionInGridAware {
     currentBlock = null;
     currentBlockGridPosition = null;
 
-    solutionStrategy
-        .findSolvedBlocks(_gridModel, triggeringPositions: newPositions)
-        .forEach((solvedBlock) {
-          dev.log('Block solved: $solvedBlock');
-        });
+    final executor = SolutionStrategyExecutor(
+      solutionStrategy: _solutionStrategy,
+      gridModel: _gridModel,
+    );
+    executor.streamOfResults().listen(
+      onStrategyResult,
+      onError: (error) => dev.log("Solution strategy executor error: $error"),
+      onDone: onStrategyDone,
+    );
+    executor.runWithTriggeringPositions(newPositions);
+  }
 
+  void onStrategyResult(SolutionStrategySinglerunResult result) async {
+    dev.log("Got result from solution strategy executor: $result");
+  }
+
+  void onStrategyDone() {
+    dev.log("Solution strategy executor done");
     addExperimentalStuff();
   }
 
@@ -123,7 +142,7 @@ class GridController implements PositionInGridAware {
 
     currentBlock!.add(
       TimerComponent(
-        period: 1.0,
+        period: durationForBlockToMoveDownInSeconds,
         repeat: true,
         onTick: () {
           moveBlockDownByOne();
@@ -161,7 +180,7 @@ class GridController implements PositionInGridAware {
       return;
     }
     currentBlockGridPosition = targetPosition;
-    onPositionUpdated();
+    onPositionUpdated(withAnimation: false);
   }
 
   void moveBlockLeft() {
@@ -173,7 +192,7 @@ class GridController implements PositionInGridAware {
       return;
     }
     currentBlockGridPosition = targetPosition;
-    onPositionUpdated();
+    onPositionUpdated(withAnimation: false);
   }
 
   void fallBlockDown() {

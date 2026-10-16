@@ -89,6 +89,22 @@ class GridModel implements GridQueryable, GridModelAware {
     gridComponent.add(blockComponent);
   }
 
+  void removeAll(Iterable<GridSingleBlockModel> blocks) {
+    for (var b in blocks) {
+      remove(b);
+    }
+  }
+
+  void remove(GridSingleBlockModel block) {
+    for (int x = 0; x < _model.length; x++) {
+      for (int y = 0; y < _model[x].length; y++) {
+        if (_model[x][y] == block) {
+          _model[x][y] = null;
+        }
+      }
+    }
+  }
+
   set cellSize(double size) {
     _cellSize = size;
   }

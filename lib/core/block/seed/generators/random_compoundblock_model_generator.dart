@@ -30,7 +30,7 @@ class RandomCompoundblockModelGenerator implements CompoundblockModelGenerator {
     var random = Random();
     var randomInt = random.nextInt(100);
     if (randomInt < 60) {
-      return MathNumberBlock(number: random.nextInt(9));
+      return MathNumberBlock(number: random.nextInt(3));
     }
     if (randomInt < 80) {
       return MathOperantBlock(

@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:calc_tetris/core/block/math_compound_block_component.dart';
 import 'package:calc_tetris/core/block/math_single_block_component.dart';
 import 'package:calc_tetris/core/block/model/null_block.dart';
+import 'package:calc_tetris/core/grid/block_move.dart';
 import 'package:calc_tetris/core/grid/connected_blocks.dart';
 import 'package:calc_tetris/core/grid/exception/grid_position_occupied_exception.dart';
 import 'package:calc_tetris/core/grid/grid.dart';
@@ -102,6 +103,17 @@ class GridModel implements GridQueryable, GridModelAware {
           _model[x][y] = null;
         }
       }
+    }
+  }
+
+  /// Moves blocks to their target cells. Only the model is changed,
+  /// animating the components is up to the caller.
+  void applyMoves(Iterable<BlockMove> moves) {
+    for (final move in moves) {
+      _model[move.from.x][move.from.y] = null;
+    }
+    for (final move in moves) {
+      _model[move.to.x][move.to.y] = move.block;
     }
   }
 

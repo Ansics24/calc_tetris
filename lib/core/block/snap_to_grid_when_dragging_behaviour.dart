@@ -25,12 +25,12 @@ class SnapToGridWhenDraggingBehaviour extends CompoundBlockBehaviour
     event.continuePropagation = true;
     final localDelta = event.localDelta;
     dragPosition.add(localDelta);
-    if (dragPosition.x > cellSize) {
+    while (dragPosition.x > cellSize) {
       log("Draged to right on dragPosition: $dragPosition");
       gridController.moveBlockRight();
       dragPosition.add(Vector2(-cellSize, 0));
     }
-    if (dragPosition.x < -cellSize) {
+    while (dragPosition.x < -cellSize) {
       log("Draged to left on dragPosition: $dragPosition");
       gridController.moveBlockLeft();
       dragPosition.add(Vector2(cellSize, 0));

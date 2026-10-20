@@ -73,6 +73,12 @@ class GridController implements PositionInGridAware {
       currentBlockGridPosition!,
     );
 
+    // A running effect targets an outdated column and would pull the block
+    // back, so it must never overlap with a newer position update.
+    currentBlock!.children.whereType<MoveToEffect>().toList().forEach(
+      (effect) => effect.removeFromParent(),
+    );
+
     if (withAnimation) {
       currentBlock!.add(
         MoveToEffect(targetPosition, EffectController(duration: 0.2)),

@@ -2,6 +2,9 @@ import 'dart:async';
 import 'dart:developer' as dev;
 import 'dart:math';
 
+import 'package:calc_tetris/core/block/seed/generators/random_compoundblock_model_generator.dart';
+import 'package:calc_tetris/core/block/seed/next_block_planner.dart';
+import 'package:calc_tetris/core/block/seed/spawn_origin.dart';
 import 'package:calc_tetris/core/grid/grid_controller.dart';
 import 'package:calc_tetris/core/grid/grid_line.dart';
 import 'package:calc_tetris/core/grid/grid_model.dart';
@@ -17,7 +20,12 @@ class Grid extends PositionComponent {
   late final GridModel _gridModel;
   late final GridController _gridController;
 
-  Grid({required this._blockCount, ScoreRecorder? scoreRecorder}) {
+  Grid({
+    required this._blockCount,
+    NextBlockPlanner? nextBlockPlanner,
+    SpawnOrigin? spawnOrigin,
+    ScoreRecorder? scoreRecorder,
+  }) {
     _gridModel = GridModel(
       size: _blockCount,
       gridComponent: this,
@@ -26,6 +34,10 @@ class Grid extends PositionComponent {
       gridModel: _gridModel,
       grid: this,
       solutionStrategy: ValidEquationSolutionStrategy(),
+      nextBlockPlanner:
+          nextBlockPlanner ??
+          NextBlockPlanner(generator: RandomCompoundblockModelGenerator()),
+      spawnOrigin: spawnOrigin,
       scoreRecorder: scoreRecorder,
     );
   }
@@ -50,8 +62,7 @@ class Grid extends PositionComponent {
 
     addGridVisualization();
 
-    // Only for test
-    _gridController.addExperimentalStuff();
+    _gridController.spawnNextBlock();
 
     return super.onLoad();
   }

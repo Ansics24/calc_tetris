@@ -11,6 +11,7 @@
 * Write the code afterward
 * Run `flutter test` to verify all tests pass
 * Code, names and comments: Everything in english
+* The game interface is in german language
 
 # Architecture
 

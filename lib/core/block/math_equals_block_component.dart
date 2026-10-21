@@ -8,7 +8,7 @@ class MathEqualsBlockComponent
     extends MathSingleBlockComponent<MathEqualsBlock> {
   final MathEqualsBlock _model;
 
-  MathEqualsBlockComponent({required this._model});
+  MathEqualsBlockComponent({required this._model, super.cellSize});
 
   @override
   void onLoad() async {

@@ -1,9 +1,10 @@
 import 'dart:developer' as dev;
-import 'dart:math';
 
 import 'package:calc_tetris/core/block/math_block_component.dart';
 import 'package:calc_tetris/core/block/math_compound_block_component.dart';
-import 'package:calc_tetris/core/block/seed/generators/random_compoundblock_model_generator.dart';
+import 'package:calc_tetris/core/block/seed/next_block_planner.dart';
+import 'package:calc_tetris/core/block/seed/spawn_origin.dart';
+import 'package:calc_tetris/core/block/seed/start_column_chooser.dart';
 import 'package:calc_tetris/core/game_settings.dart';
 import 'package:calc_tetris/core/grid/grid.dart';
 import 'package:calc_tetris/core/grid/grid_model.dart';
@@ -16,6 +17,7 @@ import 'package:calc_tetris/core/solution/solution_strategy_executor.dart';
 import 'package:calc_tetris/core/solution/solution_strategy_singlerun_result.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
+import 'package:flutter/animation.dart';
 
 class GridController implements PositionInGridAware {
   final GridModel _gridModel;
@@ -24,17 +26,26 @@ class GridController implements PositionInGridAware {
   final SolutionStrategy _solutionStrategy;
   final ScoreRecorder? _scoreRecorder;
 
-  final RandomCompoundblockModelGenerator blockGenerator =
-      RandomCompoundblockModelGenerator();
+  final NextBlockPlanner _nextBlockPlanner;
+  final StartColumnChooser _startColumnChooser;
+  final SpawnOrigin? _spawnOrigin;
   MathCompoundBlockComponent? currentBlock;
   IntVector2? currentBlockGridPosition;
+
+  /// True while the new block flies from the preview into the grid. It can
+  /// not be controlled and does not fall until it has arrived.
+  bool _spawning = false;
 
   GridController({
     required this._gridModel,
     required this._grid,
     required this._solutionStrategy,
+    required this._nextBlockPlanner,
+    StartColumnChooser? startColumnChooser,
+    this._spawnOrigin,
     this._scoreRecorder,
-  }) : _positionInGridFinder = PositionInGridFinder(gridModel: _gridModel);
+  }) : _startColumnChooser = startColumnChooser ?? RandomStartColumnChooser(),
+       _positionInGridFinder = PositionInGridFinder(gridModel: _gridModel);
 
   void moveBlockDownByOne() {
     if (currentBlock == null) {
@@ -135,7 +146,7 @@ class GridController implements PositionInGridAware {
 
   void onStrategyDone() {
     dev.log("Solution strategy executor done");
-    addExperimentalStuff();
+    spawnNextBlock();
   }
 
   void startNewBlock(
@@ -145,12 +156,48 @@ class GridController implements PositionInGridAware {
     currentBlock = block;
     currentBlockGridPosition = startPosition;
 
-    currentBlock!.position = _gridModel.gridPositionToAbsolutePosition(
+    final targetPosition = _gridModel.gridPositionToAbsolutePosition(
       startPosition,
     );
-    _grid.add(currentBlock!);
+    final spawnOrigin = _spawnOrigin;
+    if (spawnOrigin == null) {
+      block.position = targetPosition;
+      _grid.add(block);
+      _startFalling(block);
+      return;
+    }
 
-    currentBlock!.add(
+    block.position = _grid.absoluteToLocal(spawnOrigin.absoluteTopLeft);
+    block.scale = Vector2.all(spawnOrigin.cellSize / _grid.cellSize);
+    _grid.add(block);
+    _spawning = true;
+    final spawnController = EffectController(
+      duration: spawnDurationInSeconds,
+      curve: Curves.easeInOutCubic,
+    );
+    block.add(
+      MoveToEffect(
+        targetPosition,
+        spawnController,
+        onComplete: () {
+          _spawning = false;
+          _startFalling(block);
+        },
+      ),
+    );
+    block.add(
+      ScaleEffect.to(
+        Vector2.all(1),
+        EffectController(
+          duration: spawnDurationInSeconds,
+          curve: Curves.easeInOutCubic,
+        ),
+      ),
+    );
+  }
+
+  void _startFalling(MathCompoundBlockComponent block) {
+    block.add(
       TimerComponent(
         period: durationForBlockToMoveDownInSeconds,
         repeat: true,
@@ -161,27 +208,29 @@ class GridController implements PositionInGridAware {
     );
   }
 
-  void addExperimentalStuff() {
-    final newBlockModel = blockGenerator.generate();
-
-    final random = Random();
+  /// Takes the planned block, puts it into a random column at the top of the
+  /// grid and plans the next one.
+  void spawnNextBlock() {
+    final blockModel = _nextBlockPlanner.take();
+    final column = _startColumnChooser.choose(
+      blockWidth: blockModel.length,
+      gridWidth: _gridModel.model.length,
+    );
 
     startNewBlock(
       MathCompoundBlockComponent(
-        newBlockModel,
+        blockModel,
         gridModelAware: _gridModel,
         positionInGridAware: this,
       ),
-      IntVector2(
-        random.nextInt(
-          max(_gridModel.model.length - 1 - newBlockModel.length, 0),
-        ),
-        5,
-      ),
+      IntVector2(column, 0),
     );
   }
 
   void moveBlockRight() {
+    if (_spawning) {
+      return;
+    }
     var targetPosition = currentBlockGridPosition!.addX(1);
     if (anyTargetPositionBlockedFromCurrentLocation(
       (vector) => vector.addX(1),
@@ -194,6 +243,9 @@ class GridController implements PositionInGridAware {
   }
 
   void moveBlockLeft() {
+    if (_spawning) {
+      return;
+    }
     var targetPosition = currentBlockGridPosition!.addX(-1);
     if (anyTargetPositionBlockedFromCurrentLocation(
       (vector) => vector.addX(-1),
@@ -206,6 +258,9 @@ class GridController implements PositionInGridAware {
   }
 
   void fallBlockDown() {
+    if (_spawning) {
+      return;
+    }
     var lowestPossiblePosition = _positionInGridFinder
         .findLowestPossiblePosition(
           currentBlockGridPosition!,

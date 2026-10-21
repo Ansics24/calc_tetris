@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:calc_tetris/core/block/seed/generators/random_compoundblock_model_generator.dart';
+import 'package:calc_tetris/core/block/seed/next_block_planner.dart';
 import 'package:calc_tetris/core/scoring/score_keeper.dart';
 import 'package:calc_tetris/global/block_board.dart';
 import 'package:calc_tetris/global/footer.dart';
@@ -11,6 +13,9 @@ import 'package:flame/game.dart';
 class TetrisGame extends FlameGame {
   final GameDimensions _gameDimensions = GameDimensions();
   final ScoreKeeper _scoreKeeper = ScoreKeeper();
+  final NextBlockPlanner _nextBlockPlanner = NextBlockPlanner(
+    generator: RandomCompoundblockModelGenerator(),
+  );
 
   @override
   FutureOr<void> onLoad() async {
@@ -30,16 +35,19 @@ class TetrisGame extends FlameGame {
   @override
   void onMount() {
     super.onMount();
-    add(
-      Header(
-        scoreKeeper: _scoreKeeper,
-        size: _gameDimensions.sizeHeader,
-        position: Vector2.zero(),
-      ),
+    final header = Header(
+      scoreKeeper: _scoreKeeper,
+      nextBlockPlanner: _nextBlockPlanner,
+      gridCellSize: _gameDimensions.gridCellSize,
+      size: _gameDimensions.sizeHeader,
+      position: Vector2.zero(),
     );
+    add(header);
     add(
       BlockBoard(
         scoreRecorder: _scoreKeeper,
+        nextBlockPlanner: _nextBlockPlanner,
+        spawnOrigin: header.nextBlockDisplay,
         size: _gameDimensions.sizeBlockBoard,
         position: Vector2(0, _gameDimensions.sizeHeader.y),
       ),

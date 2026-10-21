@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:calc_tetris/core/scoring/score_keeper.dart';
 import 'package:calc_tetris/global/block_board.dart';
 import 'package:calc_tetris/global/footer.dart';
 import 'package:calc_tetris/global/game_dimensions.dart';
@@ -9,6 +10,7 @@ import 'package:flame/game.dart';
 
 class TetrisGame extends FlameGame {
   final GameDimensions _gameDimensions = GameDimensions();
+  final ScoreKeeper _scoreKeeper = ScoreKeeper();
 
   @override
   FutureOr<void> onLoad() async {
@@ -28,9 +30,16 @@ class TetrisGame extends FlameGame {
   @override
   void onMount() {
     super.onMount();
-    add(Header(size: _gameDimensions.sizeHeader, position: Vector2.zero()));
+    add(
+      Header(
+        scoreKeeper: _scoreKeeper,
+        size: _gameDimensions.sizeHeader,
+        position: Vector2.zero(),
+      ),
+    );
     add(
       BlockBoard(
+        scoreRecorder: _scoreKeeper,
         size: _gameDimensions.sizeBlockBoard,
         position: Vector2(0, _gameDimensions.sizeHeader.y),
       ),

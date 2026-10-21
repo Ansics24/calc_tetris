@@ -7,6 +7,7 @@ import 'package:calc_tetris/core/grid/grid_line.dart';
 import 'package:calc_tetris/core/grid/grid_model.dart';
 import 'package:calc_tetris/core/grid/int_vector_2.dart';
 import 'package:calc_tetris/core/math/valid_equation_solution_strategy.dart';
+import 'package:calc_tetris/core/scoring/score_keeper.dart';
 import 'package:calc_tetris/global/block_board.dart';
 import 'package:flame/components.dart';
 
@@ -16,7 +17,7 @@ class Grid extends PositionComponent {
   late final GridModel _gridModel;
   late final GridController _gridController;
 
-  Grid({required this._blockCount}) {
+  Grid({required this._blockCount, ScoreRecorder? scoreRecorder}) {
     _gridModel = GridModel(
       size: _blockCount,
       gridComponent: this,
@@ -25,6 +26,7 @@ class Grid extends PositionComponent {
       gridModel: _gridModel,
       grid: this,
       solutionStrategy: ValidEquationSolutionStrategy(),
+      scoreRecorder: scoreRecorder,
     );
   }
 

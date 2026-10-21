@@ -10,6 +10,7 @@ import 'package:calc_tetris/core/grid/grid_model.dart';
 import 'package:calc_tetris/core/grid/int_vector_2.dart';
 import 'package:calc_tetris/core/grid/queries/position_in_grid_aware.dart';
 import 'package:calc_tetris/core/grid/queries/position_in_grid_finder.dart';
+import 'package:calc_tetris/core/scoring/score_keeper.dart';
 import 'package:calc_tetris/core/solution/solution_strategy.dart';
 import 'package:calc_tetris/core/solution/solution_strategy_executor.dart';
 import 'package:calc_tetris/core/solution/solution_strategy_singlerun_result.dart';
@@ -21,6 +22,7 @@ class GridController implements PositionInGridAware {
   final PositionInGridFinder _positionInGridFinder;
   final Grid _grid;
   final SolutionStrategy _solutionStrategy;
+  final ScoreRecorder? _scoreRecorder;
 
   final RandomCompoundblockModelGenerator blockGenerator =
       RandomCompoundblockModelGenerator();
@@ -31,6 +33,7 @@ class GridController implements PositionInGridAware {
     required this._gridModel,
     required this._grid,
     required this._solutionStrategy,
+    this._scoreRecorder,
   }) : _positionInGridFinder = PositionInGridFinder(gridModel: _gridModel);
 
   void moveBlockDownByOne() {
@@ -127,6 +130,7 @@ class GridController implements PositionInGridAware {
 
   void onStrategyResult(SolutionStrategySinglerunResult result) async {
     dev.log("Got result from solution strategy executor: $result");
+    _scoreRecorder?.add(result.pointsEarned);
   }
 
   void onStrategyDone() {

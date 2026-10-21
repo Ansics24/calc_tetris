@@ -1,6 +1,11 @@
+import 'dart:math';
+
+import 'package:calc_tetris/core/grid/int_vector_2.dart';
 import 'package:flame/game.dart';
 
 class GameDimensions {
+  static final IntVector2 gridBlockCount = IntVector2(9, 14);
+
   static final double _borderLeftRightPercentage = 0.1;
   static final double _borderTopPercentage = 0.3;
   static final double _borderBottomPercentage = 0.1;
@@ -54,7 +59,15 @@ class GameDimensions {
 
   int get borderBottom => _borderBottom;
 
+  /// Edge length of a grid cell, derived from the space the grid gets.
+  double get gridCellSize => min(
+    _sizeBlockBoard.x / gridBlockCount.x,
+    _sizeBlockBoard.y / gridBlockCount.y,
+  );
+
   Vector2 get sizeHeader => _sizeHeader;
+
   Vector2 get sizeFooter => _sizeFooter;
+
   Vector2 get sizeBlockBoard => _sizeBlockBoard;
 }

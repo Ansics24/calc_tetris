@@ -9,7 +9,7 @@ class MathOperantBlockComponent
     extends MathSingleBlockComponent<MathOperantBlock> {
   final MathOperantBlock _model;
 
-  MathOperantBlockComponent({required this._model});
+  MathOperantBlockComponent({required this._model, super.cellSize});
 
   @override
   void onLoad() async {

@@ -1,15 +1,9 @@
 import 'dart:developer' as developer;
 
-import 'package:calc_tetris/core/block/exceptions/no_matching_block_component_exception.dart';
 import 'package:calc_tetris/core/block/fall_down_on_swipe_behaviour.dart';
 import 'package:calc_tetris/core/block/math_block_component.dart';
-import 'package:calc_tetris/core/block/math_equals_block_component.dart';
-import 'package:calc_tetris/core/block/math_number_block_component.dart';
-import 'package:calc_tetris/core/block/math_operant_block_component.dart';
 import 'package:calc_tetris/core/block/math_single_block_component.dart';
-import 'package:calc_tetris/core/block/model/math_equals_block.dart';
-import 'package:calc_tetris/core/block/model/math_number_block.dart';
-import 'package:calc_tetris/core/block/model/math_operant_block.dart';
+import 'package:calc_tetris/core/block/math_single_block_component_factory.dart';
 import 'package:calc_tetris/core/block/model/math_single_block.dart';
 import 'package:calc_tetris/core/block/model/null_block.dart';
 import 'package:calc_tetris/core/block/snap_to_grid_when_dragging_behaviour.dart';
@@ -52,24 +46,6 @@ class MathCompoundBlockComponent extends MathBlockComponent with TapCallbacks {
       }
     }
     updateSingleBlockPositions(withAnimation: false);
-  }
-
-  MathSingleBlockComponent? newComponentFromBlockModel(
-    MathSingleBlock blockModel,
-  ) {
-    if (blockModel is MathNumberBlock) {
-      return MathNumberBlockComponent(model: blockModel);
-    }
-    if (blockModel is MathOperantBlock) {
-      return MathOperantBlockComponent(model: blockModel);
-    }
-    if (blockModel is MathEqualsBlock) {
-      return MathEqualsBlockComponent(model: blockModel);
-    }
-    if (blockModel is NullBlock) {
-      return null;
-    }
-    throw NoMatchingBlockComponentException();
   }
 
   @override

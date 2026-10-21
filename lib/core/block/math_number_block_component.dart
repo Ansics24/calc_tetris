@@ -9,6 +9,7 @@ class MathNumberBlockComponent
   final MathNumberBlock _model;
   MathNumberBlockComponent({
     required this._model,
+    super.cellSize,
   });
 
   @override

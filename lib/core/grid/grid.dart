@@ -9,6 +9,7 @@ import 'package:calc_tetris/core/grid/grid_controller.dart';
 import 'package:calc_tetris/core/grid/grid_line.dart';
 import 'package:calc_tetris/core/grid/grid_model.dart';
 import 'package:calc_tetris/core/grid/int_vector_2.dart';
+import 'package:calc_tetris/core/grid/queries/grid_content_holder.dart';
 import 'package:calc_tetris/core/math/valid_equation_solution_strategy.dart';
 import 'package:calc_tetris/core/scoring/score_keeper.dart';
 import 'package:calc_tetris/global/block_board.dart';
@@ -23,6 +24,7 @@ class Grid extends PositionComponent {
   Grid({
     required this._blockCount,
     NextBlockPlanner? nextBlockPlanner,
+    GridContentHolder? gridContentHolder,
     SpawnOrigin? spawnOrigin,
     ScoreRecorder? scoreRecorder,
   }) {
@@ -30,6 +32,7 @@ class Grid extends PositionComponent {
       size: _blockCount,
       gridComponent: this,
     );
+    gridContentHolder?.attach(_gridModel);
     _gridController = GridController(
       gridModel: _gridModel,
       grid: this,

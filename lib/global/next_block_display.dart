@@ -4,6 +4,8 @@ import 'package:calc_tetris/core/block/math_single_block_component_factory.dart'
 import 'package:calc_tetris/core/block/model/math_single_block.dart';
 import 'package:calc_tetris/core/block/seed/spawn_origin.dart';
 import 'package:flame/components.dart';
+import 'package:calc_tetris/global/next_block_display_style.dart';
+import 'package:calc_tetris/global/theme/light_theme.dart';
 import 'package:flutter/painting.dart';
 
 /// Shows the upcoming compound block, a bit smaller than it will be in the
@@ -16,6 +18,10 @@ class NextBlockDisplay extends PositionComponent implements SpawnOrigin {
   final double _gridCellSize;
   List<List<MathSingleBlock>> _model;
   final PositionComponent _content = PositionComponent();
+  final NextBlockDisplayStyle style;
+  late final BoxPainter _decorationPainter = style.decoration.createBoxPainter(
+    () {},
+  );
 
   NextBlockDisplay({
     required double cellSize,
@@ -23,7 +29,9 @@ class NextBlockDisplay extends PositionComponent implements SpawnOrigin {
     super.size,
     super.position,
     super.anchor,
-  }) : _gridCellSize = cellSize,
+    NextBlockDisplayStyle? style,
+  }) : style = style ?? NextBlockDisplayStyle.fromColorScheme(colorScheme),
+       _gridCellSize = cellSize,
        _model = model {
     _content.scale = Vector2.all(previewScale);
     _layoutContent();
@@ -35,15 +43,25 @@ class NextBlockDisplay extends PositionComponent implements SpawnOrigin {
       TextComponent(
         text: labelText,
         textRenderer: TextPaint(
-          style: const TextStyle(color: Color(0xFFFFFFFF), fontSize: 16),
+          style: style.labelStyle,
         ),
-        position: Vector2(size.x / 2, 0),
+        position: Vector2(size.x / 2, 6),
         anchor: Anchor.topCenter,
       ),
     );
     add(_content);
     _populateContent();
     return super.onLoad();
+  }
+
+  @override
+  void render(Canvas canvas) {
+    _decorationPainter.paint(
+      canvas,
+      Offset.zero,
+      ImageConfiguration(size: Size(size.x, size.y)),
+    );
+    super.render(canvas);
   }
 
   set model(List<List<MathSingleBlock>> model) {

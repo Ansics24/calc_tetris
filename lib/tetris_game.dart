@@ -60,7 +60,9 @@ class TetrisGame extends FlameGame implements GameOverListener {
   @override
   void onMount() {
     super.onMount();
+    late final BlockBoard board;
     final header = Header(
+      onDropPressed: () => board.dropCurrentBlock(),
       scoreKeeper: _scoreKeeper,
       nextBlockPlanner: _nextBlockPlanner,
       gridCellSize: _gameDimensions.gridCellSize,
@@ -68,19 +70,18 @@ class TetrisGame extends FlameGame implements GameOverListener {
       position: Vector2.zero(),
     );
     add(header);
-    add(
-      BlockBoard(
-        scoreRecorder: _scoreKeeper,
-        solutionStrategy: ValidEquationSolutionStrategy(),
-        singleBlockComponentFactory: newComponentFromBlockModel,
-        nextBlockPlanner: _nextBlockPlanner,
-        gridContentHolder: _gridContentHolder,
-        spawnOrigin: header.nextBlockDisplay,
-        gameOverListener: this,
-        size: _gameDimensions.sizeBlockBoard,
-        position: Vector2(0, _gameDimensions.sizeHeader.y),
-      ),
+    board = BlockBoard(
+      scoreRecorder: _scoreKeeper,
+      solutionStrategy: ValidEquationSolutionStrategy(),
+      singleBlockComponentFactory: newComponentFromBlockModel,
+      nextBlockPlanner: _nextBlockPlanner,
+      gridContentHolder: _gridContentHolder,
+      spawnOrigin: header.nextBlockDisplay,
+      gameOverListener: this,
+      size: _gameDimensions.sizeBlockBoard,
+      position: Vector2(0, _gameDimensions.sizeHeader.y),
     );
+    add(board);
     add(
       Footer(
         size: _gameDimensions.sizeFooter,

@@ -1,7 +1,7 @@
 import 'package:flame/components.dart';
 
 /// Where the parts of the header sit inside its size: the score card on the
-/// left, the next-block card on the right.
+/// left, the next-block card on the right and the drop button in between.
 class HeaderLayout {
   final Vector2 size;
 
@@ -18,4 +18,12 @@ class HeaderLayout {
 
   Vector2 get nextBlockCardPosition =>
       Vector2(size.x * (1 - _margin - _cardWidth), _cardTop);
+
+  Vector2 get dropButtonSize =>
+      Vector2.all(size.x * (1 - 2 * (_margin + _cardWidth)) * 0.75);
+
+  Vector2 get dropButtonPosition => Vector2(
+    (size.x - dropButtonSize.x) / 2,
+    (size.y - dropButtonSize.y) / 2,
+  );
 }

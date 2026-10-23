@@ -210,6 +210,9 @@ class GridController implements PositionInGridAware {
   }
 
   void _startFalling(CompoundBlockComponent block) {
+    if (!blockFallsDownAutomatically) {
+      return;
+    }
     block.add(
       TimerComponent(
         period: durationForBlockToMoveDownInSeconds,
@@ -256,33 +259,41 @@ class GridController implements PositionInGridAware {
     );
   }
 
-  void moveBlockRight() {
+  void moveBlockRight() => _moveBlockHorizontally(1);
+
+  void moveBlockLeft() => _moveBlockHorizontally(-1);
+
+  void _moveBlockHorizontally(int deltaX) {
     if (_spawning || currentBlock == null) {
       return;
     }
-    var targetPosition = currentBlockGridPosition!.addX(1);
     if (anyTargetPositionBlockedFromCurrentLocation(
-      (vector) => vector.addX(1),
+      (vector) => vector.addX(deltaX),
     )) {
-      dev.log("Dont move block right, it's blocked");
+      dev.log("Dont move block horizontally by $deltaX, it's blocked");
       return;
     }
-    currentBlockGridPosition = targetPosition;
+    currentBlockGridPosition = currentBlockGridPosition!.addX(deltaX);
     onPositionUpdated(withAnimation: false);
   }
 
-  void moveBlockLeft() {
+  /// Moves the block one cell down on player request. Unlike
+  /// [moveBlockDownByOne] a blocked block does not land.
+  void moveBlockDown() => _moveBlockVertically(1);
+
+  void moveBlockUp() => _moveBlockVertically(-1);
+
+  void _moveBlockVertically(int deltaY) {
     if (_spawning || currentBlock == null) {
       return;
     }
-    var targetPosition = currentBlockGridPosition!.addX(-1);
     if (anyTargetPositionBlockedFromCurrentLocation(
-      (vector) => vector.addX(-1),
+      (vector) => vector.addY(deltaY),
     )) {
-      dev.log("Dont move block left, it's blocked");
+      dev.log("Dont move block vertically by $deltaY, it's blocked");
       return;
     }
-    currentBlockGridPosition = targetPosition;
+    currentBlockGridPosition = currentBlockGridPosition!.addY(deltaY);
     onPositionUpdated(withAnimation: false);
   }
 

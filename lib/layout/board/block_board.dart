@@ -19,6 +19,7 @@ class BlockBoard extends PositionComponent {
   final SpawnOrigin? _spawnOrigin;
   final GridContentHolder? _gridContentHolder;
   final GameOverListener? _gameOverListener;
+  late final Grid _grid;
 
   BlockBoard({
     this._scoreRecorder,
@@ -35,17 +36,19 @@ class BlockBoard extends PositionComponent {
   @override
   FutureOr<void> onLoad() async {
     super.onLoad();
-    add(
-      Grid(
-        blockCount: GameDimensions.gridBlockCount,
-        solutionStrategy: _solutionStrategy,
-        nextBlockPlanner: _nextBlockPlanner,
-        singleBlockComponentFactory: _singleBlockComponentFactory,
-        gridContentHolder: _gridContentHolder,
-        spawnOrigin: _spawnOrigin,
-        scoreRecorder: _scoreRecorder,
-        gameOverListener: _gameOverListener,
-      ),
+    _grid = Grid(
+      blockCount: GameDimensions.gridBlockCount,
+      solutionStrategy: _solutionStrategy,
+      nextBlockPlanner: _nextBlockPlanner,
+      singleBlockComponentFactory: _singleBlockComponentFactory,
+      gridContentHolder: _gridContentHolder,
+      spawnOrigin: _spawnOrigin,
+      scoreRecorder: _scoreRecorder,
+      gameOverListener: _gameOverListener,
     );
+    add(_grid);
   }
+
+  /// Lets the block currently controlled by the player fall down.
+  void dropCurrentBlock() => _grid.controller.fallBlockDown();
 }

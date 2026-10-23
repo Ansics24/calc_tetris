@@ -1,6 +1,5 @@
 import 'dart:developer' as developer;
 
-import 'package:calc_tetris/block/behaviour/fall_down_on_swipe_behaviour.dart';
 import 'package:calc_tetris/block/behaviour/snap_to_grid_when_dragging_behaviour.dart';
 import 'package:calc_tetris/block/block_component.dart';
 import 'package:calc_tetris/block/model/null_block.dart';
@@ -35,7 +34,6 @@ class CompoundBlockComponent extends BlockComponent with TapCallbacks {
   void onLoad() async {
     await super.onLoad();
     add(SnapToGridWhenDraggingBehaviour());
-    add(FallDownOnSwipeBehaviour());
     _cellSize = findParent<Grid>()!.cellSize;
     for (var i = 0; i < _model.length; i++) {
       for (var j = 0; j < _model[i].length; j++) {

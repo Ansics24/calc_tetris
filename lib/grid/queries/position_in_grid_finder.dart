@@ -27,56 +27,54 @@ class PositionInGridFinder {
     return null;
   }
 
+  /// The position the block reaches when it falls straight down from
+  /// [compoundBlockPositionInGrid]. Only cells below the block count, so
+  /// blocks above it (overhangs) do not matter.
   IntVector2? findLowestPossiblePosition(
     IntVector2 compoundBlockPositionInGrid,
     CompoundBlockComponent compoundBlockComponent,
   ) {
-    final localPositions = compoundBlockComponent
-        .getLocalSingleBlockPositions();
-    final gridPositions = localPositions.map(
-      (pos) =>
-          pos.add(compoundBlockPositionInGrid.x, compoundBlockPositionInGrid.y),
-    );
+    final columns = compoundBlockComponent
+        .getLocalSingleBlockPositions()
+        .map((pos) => pos.x)
+        .toSet();
 
-    var targetY = 1000;
-    for (var posToCheck in gridPositions) {
-      final nextFreePosInColumn = nextFreePositionInColumn(posToCheck.x);
-      if (nextFreePosInColumn == null) {
-        return null;
-      }
-      var yPosForColumn =
-          nextFreePosInColumn -
-          compoundBlockComponent.getLowestLocalBlockYPosition(
-            posToCheck.x - compoundBlockPositionInGrid.x,
-          );
-      if (yPosForColumn < targetY) {
-        targetY = yPosForColumn;
+    int? fallDistance;
+    for (final localX in columns) {
+      final lowestY =
+          compoundBlockPositionInGrid.y +
+          compoundBlockComponent.getLowestLocalBlockYPosition(localX);
+      final distance =
+          lastFreePositionBelow(
+            compoundBlockPositionInGrid.x + localX,
+            lowestY,
+          ) -
+          lowestY;
+      if (fallDistance == null || distance < fallDistance) {
+        fallDistance = distance;
       }
     }
-    if (targetY < compoundBlockPositionInGrid.y) {
+    if (fallDistance == null) {
       return null;
     }
 
+    final targetY = compoundBlockPositionInGrid.y + fallDistance;
     log("Lowest possible Y-Pos is $targetY");
-    return IntVector2(
-      compoundBlockPositionInGrid.x,
-      targetY,
-    );
+    return IntVector2(compoundBlockPositionInGrid.x, targetY);
   }
 
-  int? nextFreePositionInColumn(int columnIndex) {
+  /// The lowest y a block can reach in [columnIndex] when it falls from
+  /// [fromY]: the cell above the first blocked one below it, or the floor.
+  int lastFreePositionBelow(int columnIndex, int fromY) {
     if (columnIndex < 0 || columnIndex >= _gridModel.model.length) {
       throw GridIndexOutOfBoundsException();
     }
-    for (var y = 0; y < _gridModel.model[columnIndex].length; y++) {
-      if (!_gridModel.isPositionBlocked(IntVector2(columnIndex, y))) {
-        continue;
+    final columnHeight = _gridModel.model[columnIndex].length;
+    for (var y = fromY + 1; y < columnHeight; y++) {
+      if (_gridModel.isPositionBlocked(IntVector2(columnIndex, y))) {
+        return y - 1;
       }
-      if (y == 0) {
-        return null;
-      }
-      return y - 1;
     }
-    return _gridModel.model[columnIndex].length - 1;
+    return columnHeight - 1;
   }
 }

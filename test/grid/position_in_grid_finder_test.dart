@@ -1,0 +1,108 @@
+import 'package:calc_tetris/block/math/math_number_block_component.dart';
+import 'package:calc_tetris/block/math/math_single_block_component_factory.dart';
+import 'package:calc_tetris/block/math/model/math_number_block.dart';
+import 'package:calc_tetris/block/math/model/math_single_block.dart';
+import 'package:calc_tetris/block/math/seed/compoundblock_model_generator.dart';
+import 'package:calc_tetris/block/math/seed/next_block_planner.dart';
+import 'package:calc_tetris/block/math/seed/start_column_chooser.dart';
+import 'package:calc_tetris/grid/grid_controller.dart';
+import 'package:calc_tetris/grid/model/grid_model.dart';
+import 'package:calc_tetris/grid/queries/position_in_grid_finder.dart';
+import 'package:calc_tetris/util/int_vector_2.dart';
+import 'package:test/test.dart';
+import 'package:uuid/uuid.dart';
+
+import '../support/test_grid.dart';
+
+class _TwoWideGenerator implements CompoundblockModelGenerator {
+  @override
+  List<List<MathSingleBlock>> generate() => [
+    [MathNumberBlock(number: 1)],
+    [MathNumberBlock(number: 2)],
+  ];
+}
+
+class _FirstColumnChooser implements StartColumnChooser {
+  @override
+  int choose({
+    required int blockWidth,
+    required int gridWidth,
+    List<int>? candidates,
+  }) => candidates!.first;
+}
+
+/// A 5x5 grid with the given blocked cells and a 2x1 block that was moved
+/// to [blockPosition] (as the player can do by dragging it freely).
+IntVector2? _lowestPositionFor({
+  required Set<(int, int)> blocked,
+  required IntVector2 blockPosition,
+}) {
+  final size = IntVector2(5, 5);
+  final grid = newTestGrid(size);
+  final model = GridModel(size: size, gridComponent: grid)..cellSize = 50;
+  for (final (x, y) in blocked) {
+    model.addSingleBlock(
+      Uuid().toString(),
+      MathNumberBlockComponent(model: MathNumberBlock(number: 9)),
+      IntVector2(x, y),
+    );
+  }
+  final controller = GridController(
+    gridModel: model,
+    grid: grid,
+    solutionStrategy: UnusedStrategy(),
+    nextBlockPlanner: NextBlockPlanner(generator: _TwoWideGenerator()),
+    singleBlockComponentFactory: newComponentFromBlockModel,
+    startColumnChooser: _FirstColumnChooser(),
+  )..spawnNextBlock();
+  return PositionInGridFinder(
+    gridModel: model,
+  ).findLowestPossiblePosition(blockPosition, controller.currentBlock!);
+}
+
+void main() {
+  test('falls to the floor on a free way', () {
+    final position = _lowestPositionFor(
+      blocked: {},
+      blockPosition: IntVector2(0, 1),
+    );
+
+    expect((position?.x, position?.y), (0, 4));
+  });
+
+  test('falls onto blocks below it', () {
+    final position = _lowestPositionFor(
+      blocked: {(0, 4), (1, 4)},
+      blockPosition: IntVector2(0, 1),
+    );
+
+    expect((position?.x, position?.y), (0, 3));
+  });
+
+  test('falls to the floor when moved below an overhang', () {
+    final position = _lowestPositionFor(
+      blocked: {(0, 1), (1, 1)},
+      blockPosition: IntVector2(0, 2),
+    );
+
+    expect((position?.x, position?.y), (0, 4));
+  });
+
+  test('falls onto blocks below it when moved below an overhang', () {
+    final position = _lowestPositionFor(
+      blocked: {(0, 0), (1, 1), (1, 4)},
+      blockPosition: IntVector2(0, 2),
+    );
+
+    expect((position?.x, position?.y), (0, 3));
+  });
+
+  test('stays in place when resting directly on a block', () {
+    final position = _lowestPositionFor(
+      blocked: {(0, 0), (0, 3)},
+      blockPosition: IntVector2(0, 2),
+    );
+
+    expect((position?.x, position?.y), (0, 2));
+  });
+}

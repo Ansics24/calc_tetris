@@ -1,24 +1,24 @@
 import 'package:calc_tetris/block/math/model/math_number_block.dart';
-import 'package:calc_tetris/block/math/model/math_single_block.dart';
-import 'package:calc_tetris/block/math/model/null_block.dart';
 import 'package:calc_tetris/block/math/seed/free_start_columns.dart';
+import 'package:calc_tetris/block/model/null_block.dart';
+import 'package:calc_tetris/block/model/single_block.dart';
 import 'package:calc_tetris/util/int_vector_2.dart';
 import 'package:test/test.dart';
 
-MathSingleBlock _n() => MathNumberBlock(number: 1);
+SingleBlock _n() => MathNumberBlock(number: 1);
 
 /// A block that is [width] columns wide and one row high.
-List<List<MathSingleBlock>> _horizontal(int width) =>
+List<List<SingleBlock>> _horizontal(int width) =>
     List.generate(width, (_) => [_n()]);
 
 /// A block that is one column wide and [height] rows high.
-List<List<MathSingleBlock>> _vertical(int height) => [
+List<List<SingleBlock>> _vertical(int height) => [
   List.generate(height, (_) => _n()),
 ];
 
 /// Model is indexed [x][y], like the grid.
 List<int> _free(
-  List<List<MathSingleBlock>> block, {
+  List<List<SingleBlock>> block, {
   int gridWidth = 5,
   Set<(int, int)> blocked = const {},
 }) => freeStartColumns(

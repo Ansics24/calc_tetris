@@ -5,12 +5,13 @@ import 'package:calc_tetris/block/math/model/math_equals_block.dart';
 import 'package:calc_tetris/block/solution_strategy.dart';
 import 'package:calc_tetris/block/solution_strategy_executor.dart';
 import 'package:calc_tetris/block/solution_strategy_singlerun_result.dart';
-import 'package:calc_tetris/grid/grid.dart';
 import 'package:calc_tetris/grid/model/block_move.dart';
 import 'package:calc_tetris/grid/model/grid_model.dart';
 import 'package:calc_tetris/grid/model/grid_single_block_model.dart';
 import 'package:calc_tetris/util/int_vector_2.dart';
 import 'package:test/test.dart';
+
+import '../support/test_grid.dart';
 
 /// Grid coordinates: x = column, y = row (top to bottom). Blocks fall to
 /// higher y. In a 5x5 grid the bottom row is y = 4.
@@ -69,7 +70,7 @@ void main() {
   setUp(() {
     grid = GridModel(
       size: IntVector2(5, 5),
-      gridComponent: Grid(blockCount: IntVector2(5, 5)),
+      gridComponent: newTestGrid(IntVector2(5, 5)),
     );
     grid.cellSize = 50;
     events = [];

@@ -3,10 +3,10 @@ import 'dart:developer' as dev;
 import 'dart:math';
 
 import 'package:calc_tetris/block/math/scoring/score_keeper.dart';
-import 'package:calc_tetris/block/math/seed/generators/random_compoundblock_model_generator.dart';
 import 'package:calc_tetris/block/math/seed/next_block_planner.dart';
 import 'package:calc_tetris/block/math/seed/spawn_origin.dart';
-import 'package:calc_tetris/block/math/valid_equation_solution_strategy.dart';
+import 'package:calc_tetris/block/single_block_component_factory.dart';
+import 'package:calc_tetris/block/solution_strategy.dart';
 import 'package:calc_tetris/grid/grid_controller.dart';
 import 'package:calc_tetris/grid/model/grid_model.dart';
 import 'package:calc_tetris/grid/queries/grid_content_holder.dart';
@@ -25,7 +25,9 @@ class Grid extends PositionComponent {
 
   Grid({
     required this._blockCount,
-    NextBlockPlanner? nextBlockPlanner,
+    required SolutionStrategy solutionStrategy,
+    required NextBlockPlanner nextBlockPlanner,
+    required SingleBlockComponentFactory singleBlockComponentFactory,
     GridContentHolder? gridContentHolder,
     SpawnOrigin? spawnOrigin,
     ScoreRecorder? scoreRecorder,
@@ -39,10 +41,9 @@ class Grid extends PositionComponent {
     _gridController = GridController(
       gridModel: _gridModel,
       grid: this,
-      solutionStrategy: ValidEquationSolutionStrategy(),
-      nextBlockPlanner:
-          nextBlockPlanner ??
-          NextBlockPlanner(generator: RandomCompoundblockModelGenerator()),
+      solutionStrategy: solutionStrategy,
+      nextBlockPlanner: nextBlockPlanner,
+      singleBlockComponentFactory: singleBlockComponentFactory,
       spawnOrigin: spawnOrigin,
       scoreRecorder: scoreRecorder,
       gameOverListener: gameOverListener,

@@ -1,11 +1,12 @@
 import 'package:calc_tetris/block/block_fall_planner.dart';
 import 'package:calc_tetris/block/math/math_equals_block_component.dart';
 import 'package:calc_tetris/block/math/model/math_equals_block.dart';
-import 'package:calc_tetris/grid/grid.dart';
 import 'package:calc_tetris/grid/model/grid_model.dart';
 import 'package:calc_tetris/grid/model/grid_single_block_model.dart';
 import 'package:calc_tetris/util/int_vector_2.dart';
 import 'package:test/test.dart';
+
+import '../support/test_grid.dart';
 
 /// Grid coordinates: x = column (left to right), y = row (top to bottom).
 /// Blocks fall towards higher y. The bottom row of a 5x5 grid is y = 4.
@@ -16,7 +17,7 @@ void main() {
   setUp(() {
     grid = GridModel(
       size: IntVector2(5, 5),
-      gridComponent: Grid(blockCount: IntVector2(5, 5)),
+      gridComponent: newTestGrid(IntVector2(5, 5)),
     );
     grid.cellSize = 50;
   });

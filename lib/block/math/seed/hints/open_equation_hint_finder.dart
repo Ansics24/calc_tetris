@@ -1,13 +1,13 @@
 import 'package:calc_tetris/block/math/model/equation.dart';
-import 'package:calc_tetris/block/math/model/math_single_block.dart';
 import 'package:calc_tetris/block/math/seed/block_tokens.dart';
 import 'package:calc_tetris/block/math/seed/hints/open_equation_hints.dart';
+import 'package:calc_tetris/block/model/single_block.dart';
 
 /// Looks for empty cells next to existing blocks and finds out which tokens
 /// would help to finish an equation there.
 class OpenEquationHintFinder {
   /// [grid] is indexed `[x][y]`, y grows downwards.
-  OpenEquationHints find(List<List<MathSingleBlock?>> grid) {
+  OpenEquationHints find(List<List<SingleBlock?>> grid) {
     final completions = <String>{};
     final partials = <String>{};
     final extensions = <String>{};
@@ -30,7 +30,7 @@ class OpenEquationHintFinder {
     );
   }
 
-  Iterable<List<MathSingleBlock?>> _rows(List<List<MathSingleBlock?>> grid) {
+  Iterable<List<SingleBlock?>> _rows(List<List<SingleBlock?>> grid) {
     return List.generate(
       grid.first.length,
       (y) => List.generate(grid.length, (x) => grid[x][y]),
@@ -38,7 +38,7 @@ class OpenEquationHintFinder {
   }
 
   void _scan(
-    List<MathSingleBlock?> line,
+    List<SingleBlock?> line,
     Set<String> completions,
     Set<String> partialCompletions,
     Set<String> extensions, {
@@ -65,7 +65,7 @@ class OpenEquationHintFinder {
     }
   }
 
-  int _runStart(List<MathSingleBlock?> line, int index) {
+  int _runStart(List<SingleBlock?> line, int index) {
     var start = index;
     while (start > 0 && line[start - 1] != null) {
       start--;
@@ -73,14 +73,14 @@ class OpenEquationHintFinder {
     return start;
   }
 
-  bool _touchesBlock(List<MathSingleBlock?> line, int i) {
+  bool _touchesBlock(List<SingleBlock?> line, int i) {
     return (i > 0 && line[i - 1] != null) ||
         (i + 1 < line.length && line[i + 1] != null);
   }
 
   /// The connected blocks around [index] if [token] were placed there.
   List<String> _runWith(
-    List<MathSingleBlock?> line,
+    List<SingleBlock?> line,
     int index,
     String token,
   ) {

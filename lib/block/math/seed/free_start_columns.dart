@@ -1,12 +1,12 @@
-import 'package:calc_tetris/block/math/model/math_single_block.dart';
-import 'package:calc_tetris/block/math/model/null_block.dart';
+import 'package:calc_tetris/block/model/null_block.dart';
+import 'package:calc_tetris/block/model/single_block.dart';
 import 'package:calc_tetris/util/int_vector_2.dart';
 
 /// Returns the leftmost columns in which the block can enter the grid at the
 /// top without overlapping an already blocked cell. [block] is indexed
 /// `[x][y]`, like the grid.
 List<int> freeStartColumns({
-  required List<List<MathSingleBlock>> block,
+  required List<List<SingleBlock>> block,
   required int gridWidth,
   required bool Function(IntVector2 position) isBlocked,
 }) {
@@ -18,7 +18,7 @@ List<int> freeStartColumns({
 }
 
 bool _fitsAt(
-  List<List<MathSingleBlock>> block,
+  List<List<SingleBlock>> block,
   int column,
   bool Function(IntVector2 position) isBlocked,
 ) {

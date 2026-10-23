@@ -1,11 +1,11 @@
-import 'package:calc_tetris/block/math/model/math_single_block.dart';
-import 'package:calc_tetris/block/math/model/null_block.dart';
+import 'package:calc_tetris/block/model/null_block.dart';
+import 'package:calc_tetris/block/model/single_block.dart';
 
-List<List<MathSingleBlock?>> generateB2x2() {
+List<List<SingleBlock?>> generateB2x2() {
   return List.generate(2, (_) => List.generate(2, (_) => null));
 }
 
-List<List<MathSingleBlock?>> generateT3x2() {
+List<List<SingleBlock?>> generateT3x2() {
   return List.generate(
     3,
     (x) => List.generate(3, (y) {
@@ -19,7 +19,7 @@ List<List<MathSingleBlock?>> generateT3x2() {
   );
 }
 
-List<List<MathSingleBlock?>> generateLLeft3x2() {
+List<List<SingleBlock?>> generateLLeft3x2() {
   return List.generate(
     3,
     (x) => List.generate(3, (y) {
@@ -33,7 +33,7 @@ List<List<MathSingleBlock?>> generateLLeft3x2() {
   );
 }
 
-List<List<MathSingleBlock?>> generateLRight3x2() {
+List<List<SingleBlock?>> generateLRight3x2() {
   return List.generate(
     3,
     (x) => List.generate(3, (y) {
@@ -47,21 +47,21 @@ List<List<MathSingleBlock?>> generateLRight3x2() {
   );
 }
 
-List<List<MathSingleBlock?>> generateI4x1() {
+List<List<SingleBlock?>> generateI4x1() {
   return List.generate(
     4,
     (_) => List.generate(4, (y) => y == 1 ? null : NullBlock()),
   );
 }
 
-List<List<MathSingleBlock?>> generateI3x1() {
+List<List<SingleBlock?>> generateI3x1() {
   return List.generate(
     3,
     (_) => List.generate(3, (y) => y == 1 ? null : NullBlock()),
   );
 }
 
-List<List<MathSingleBlock?>> generateS3x2Right() {
+List<List<SingleBlock?>> generateS3x2Right() {
   return List.generate(
     3,
     (x) => List.generate(3, (y) {
@@ -75,7 +75,7 @@ List<List<MathSingleBlock?>> generateS3x2Right() {
   );
 }
 
-List<List<MathSingleBlock?>> generateS3x2Left() {
+List<List<SingleBlock?>> generateS3x2Left() {
   return List.generate(
     3,
     (x) => List.generate(3, (y) {
@@ -89,7 +89,7 @@ List<List<MathSingleBlock?>> generateS3x2Left() {
   );
 }
 
-List<List<MathSingleBlock?>> generatel2x2Left() {
+List<List<SingleBlock?>> generatel2x2Left() {
   return List.generate(
     2,
     (x) => List.generate(2, (y) {
@@ -98,7 +98,7 @@ List<List<MathSingleBlock?>> generatel2x2Left() {
   );
 }
 
-List<List<MathSingleBlock?>> generatel2x2Right() {
+List<List<SingleBlock?>> generatel2x2Right() {
   return List.generate(
     2,
     (x) => List.generate(2, (y) {
@@ -107,11 +107,11 @@ List<List<MathSingleBlock?>> generatel2x2Right() {
   );
 }
 
-List<List<MathSingleBlock?>> generateI2x1() {
+List<List<SingleBlock?>> generateI2x1() {
   return List.generate(2, (_) => List.filled(1, null));
 }
 
-List<List<MathSingleBlock?>> generate1x1() {
+List<List<SingleBlock?>> generate1x1() {
   return List.generate(1, (_) => List.filled(1, null));
 }
 
@@ -130,7 +130,7 @@ enum CompoundBlockShape {
   i1x1(generateEmptyFunction: generate1x1),
   ;
 
-  final List<List<MathSingleBlock?>> Function() _generateEmptyFunction;
+  final List<List<SingleBlock?>> Function() _generateEmptyFunction;
   final bool enabled;
 
   const CompoundBlockShape({
@@ -138,5 +138,5 @@ enum CompoundBlockShape {
     this.enabled = true,
   });
 
-  List<List<MathSingleBlock?>> get maskedModel => _generateEmptyFunction();
+  List<List<SingleBlock?>> get maskedModel => _generateEmptyFunction();
 }

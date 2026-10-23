@@ -1,12 +1,12 @@
 import 'dart:developer' as developer;
 
-import 'package:calc_tetris/block/math/fall_down_on_swipe_behaviour.dart';
-import 'package:calc_tetris/block/math/math_block_component.dart';
-import 'package:calc_tetris/block/math/math_single_block_component.dart';
-import 'package:calc_tetris/block/math/math_single_block_component_factory.dart';
-import 'package:calc_tetris/block/math/model/math_single_block.dart';
-import 'package:calc_tetris/block/math/model/null_block.dart';
-import 'package:calc_tetris/block/math/snap_to_grid_when_dragging_behaviour.dart';
+import 'package:calc_tetris/block/behaviour/fall_down_on_swipe_behaviour.dart';
+import 'package:calc_tetris/block/behaviour/snap_to_grid_when_dragging_behaviour.dart';
+import 'package:calc_tetris/block/block_component.dart';
+import 'package:calc_tetris/block/model/null_block.dart';
+import 'package:calc_tetris/block/model/single_block.dart';
+import 'package:calc_tetris/block/single_block_component.dart';
+import 'package:calc_tetris/block/single_block_component_factory.dart';
 import 'package:calc_tetris/grid/grid.dart';
 import 'package:calc_tetris/grid/queries/grid_model_aware.dart';
 import 'package:calc_tetris/grid/queries/position_in_grid_aware.dart';
@@ -16,18 +16,20 @@ import 'package:flame/events.dart';
 import 'package:flame/image_composition.dart';
 import 'package:uuid/uuid.dart';
 
-class MathCompoundBlockComponent extends MathBlockComponent with TapCallbacks {
-  late List<List<MathSingleBlock>> _model;
-  final Map<Uuid, MathSingleBlockComponent> _components = {};
+class CompoundBlockComponent extends BlockComponent with TapCallbacks {
+  late List<List<SingleBlock>> _model;
+  final Map<Uuid, SingleBlockComponent> _components = {};
   final GridModelAware _gridModelAware;
   final PositionInGridAware _positionInGridAware;
+  final SingleBlockComponentFactory _componentFactory;
   late double _cellSize;
 
-  MathCompoundBlockComponent(
+  CompoundBlockComponent(
     this._model, {
     required this._gridModelAware,
     required this._positionInGridAware,
-  });
+    required SingleBlockComponentFactory singleBlockComponentFactory,
+  }) : _componentFactory = singleBlockComponentFactory;
 
   @override
   void onLoad() async {
@@ -38,7 +40,7 @@ class MathCompoundBlockComponent extends MathBlockComponent with TapCallbacks {
     for (var i = 0; i < _model.length; i++) {
       for (var j = 0; j < _model[i].length; j++) {
         var blockModel = _model[i][j];
-        final component = newComponentFromBlockModel(blockModel);
+        final component = _componentFactory(blockModel);
         if (component != null) {
           _components.addAll({blockModel.id: component});
           add(component);
@@ -71,7 +73,7 @@ class MathCompoundBlockComponent extends MathBlockComponent with TapCallbacks {
     updateSingleBlockPositions();
   }
 
-  bool _isAnyPositionBlocked(List<List<MathSingleBlock>> blocks) {
+  bool _isAnyPositionBlocked(List<List<SingleBlock>> blocks) {
     final positionInGrid = _positionInGridAware.positionInGrid(this)!;
     for (var x = 0; x < blocks.length; x++) {
       for (var y = 0; y < blocks[x].length; y++) {
@@ -106,8 +108,8 @@ class MathCompoundBlockComponent extends MathBlockComponent with TapCallbacks {
     );
   }
 
-  MathSingleBlockComponent? componentForSingleBlockModel(
-    MathSingleBlock model,
+  SingleBlockComponent? componentForSingleBlockModel(
+    SingleBlock model,
   ) => _components[model.id];
 
   List<IntVector2> getLocalSingleBlockPositions() {
@@ -123,7 +125,7 @@ class MathCompoundBlockComponent extends MathBlockComponent with TapCallbacks {
     return result;
   }
 
-  List<List<MathSingleBlock>> get model => _model;
+  List<List<SingleBlock>> get model => _model;
 
   int getEffectiveModelWidth() {
     var minIndexFound = 1000;

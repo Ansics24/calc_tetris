@@ -1,8 +1,8 @@
 import 'dart:developer';
 
-import 'package:calc_tetris/block/math/math_compound_block_component.dart';
-import 'package:calc_tetris/block/math/math_single_block_component.dart';
-import 'package:calc_tetris/block/math/model/null_block.dart';
+import 'package:calc_tetris/block/compound_block_component.dart';
+import 'package:calc_tetris/block/model/null_block.dart';
+import 'package:calc_tetris/block/single_block_component.dart';
 import 'package:calc_tetris/grid/exception/grid_position_occupied_exception.dart';
 import 'package:calc_tetris/grid/grid.dart';
 import 'package:calc_tetris/grid/model/block_move.dart';
@@ -32,7 +32,7 @@ class GridModel implements GridModelAware {
   }
 
   List<IntVector2> addCompoundBlock({
-    required MathCompoundBlockComponent blockComponent,
+    required CompoundBlockComponent blockComponent,
     required IntVector2 position,
   }) {
     final placementId = Uuid().toString();
@@ -75,7 +75,7 @@ class GridModel implements GridModelAware {
 
   void addSingleBlock(
     String placementId,
-    MathSingleBlockComponent blockComponent,
+    SingleBlockComponent blockComponent,
     IntVector2 position,
   ) {
     _model[position.x][position.y] = GridSingleBlockModel(
@@ -120,7 +120,7 @@ class GridModel implements GridModelAware {
     _cellSize = size;
   }
 
-  IntVector2? findPositionOfComponent(MathSingleBlockComponent component) {
+  IntVector2? findPositionOfComponent(SingleBlockComponent component) {
     return _positionInGridFinder.findPosition(
       component,
     );

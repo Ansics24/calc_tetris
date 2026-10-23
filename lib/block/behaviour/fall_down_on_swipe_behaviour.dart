@@ -1,4 +1,4 @@
-import 'package:calc_tetris/block/math/compound_block_behaviour.dart';
+import 'package:calc_tetris/block/behaviour/compound_block_behaviour.dart';
 import 'package:flame/events.dart';
 
 class FallDownOnSwipeBehaviour extends CompoundBlockBehaviour

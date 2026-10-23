@@ -1,13 +1,13 @@
-import 'package:calc_tetris/block/math/model/math_single_block.dart';
+import 'package:calc_tetris/block/model/single_block.dart';
 import 'package:calc_tetris/grid/model/grid_model.dart';
 
 /// Gives access to the blocks of a grid that does not exist yet when the
 /// holder is created. Until a grid is attached the content is empty.
 class GridContentHolder {
-  List<List<MathSingleBlock?>> Function() _source = () => [];
+  List<List<SingleBlock?>> Function() _source = () => [];
 
   /// The blocks of the grid, indexed `[x][y]`.
-  List<List<MathSingleBlock?>> call() => _source();
+  List<List<SingleBlock?>> call() => _source();
 
   void attach(GridModel gridModel) {
     _source = () => [

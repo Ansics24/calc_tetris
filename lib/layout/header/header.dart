@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:calc_tetris/block/math/model/math_single_block.dart';
 import 'package:calc_tetris/block/math/scoring/score_keeper.dart';
 import 'package:calc_tetris/block/math/seed/next_block_planner.dart';
+import 'package:calc_tetris/block/model/single_block.dart';
 import 'package:calc_tetris/layout/header/hud/header_layout.dart';
 import 'package:calc_tetris/layout/header/hud/hud_bar.dart';
 import 'package:calc_tetris/layout/header/next_block_display.dart';
@@ -16,7 +16,7 @@ class Header extends PositionComponent {
   final NextBlockPlanner _nextBlockPlanner;
   final NextBlockDisplay nextBlockDisplay;
   final HeaderLayout _layout;
-  StreamSubscription<List<List<MathSingleBlock>>>? _nextBlockSubscription;
+  StreamSubscription<List<List<SingleBlock>>>? _nextBlockSubscription;
 
   Header({
     required this._scoreKeeper,

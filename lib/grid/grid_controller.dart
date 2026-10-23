@@ -1,12 +1,13 @@
 import 'dart:developer' as dev;
 
-import 'package:calc_tetris/block/math/math_block_component.dart';
-import 'package:calc_tetris/block/math/math_compound_block_component.dart';
+import 'package:calc_tetris/block/block_component.dart';
+import 'package:calc_tetris/block/compound_block_component.dart';
 import 'package:calc_tetris/block/math/scoring/score_keeper.dart';
 import 'package:calc_tetris/block/math/seed/free_start_columns.dart';
 import 'package:calc_tetris/block/math/seed/next_block_planner.dart';
 import 'package:calc_tetris/block/math/seed/spawn_origin.dart';
 import 'package:calc_tetris/block/math/seed/start_column_chooser.dart';
+import 'package:calc_tetris/block/single_block_component_factory.dart';
 import 'package:calc_tetris/block/solution_strategy.dart';
 import 'package:calc_tetris/block/solution_strategy_executor.dart';
 import 'package:calc_tetris/block/solution_strategy_singlerun_result.dart';
@@ -26,12 +27,13 @@ class GridController implements PositionInGridAware {
   final PositionInGridFinder _positionInGridFinder;
   final Grid _grid;
   final SolutionStrategy _solutionStrategy;
+  final SingleBlockComponentFactory _singleBlockComponentFactory;
   final ScoreRecorder? _scoreRecorder;
 
   final NextBlockPlanner _nextBlockPlanner;
   final StartColumnChooser _startColumnChooser;
   final SpawnOrigin? _spawnOrigin;
-  MathCompoundBlockComponent? currentBlock;
+  CompoundBlockComponent? currentBlock;
   IntVector2? currentBlockGridPosition;
 
   /// True while the new block flies from the preview into the grid. It can
@@ -50,6 +52,7 @@ class GridController implements PositionInGridAware {
     required this._grid,
     required this._solutionStrategy,
     required this._nextBlockPlanner,
+    required this._singleBlockComponentFactory,
     StartColumnChooser? startColumnChooser,
     this._spawnOrigin,
     this._scoreRecorder,
@@ -160,7 +163,7 @@ class GridController implements PositionInGridAware {
   }
 
   void startNewBlock(
-    MathCompoundBlockComponent block,
+    CompoundBlockComponent block,
     IntVector2 startPosition,
   ) {
     currentBlock = block;
@@ -206,7 +209,7 @@ class GridController implements PositionInGridAware {
     );
   }
 
-  void _startFalling(MathCompoundBlockComponent block) {
+  void _startFalling(CompoundBlockComponent block) {
     block.add(
       TimerComponent(
         period: durationForBlockToMoveDownInSeconds,
@@ -243,10 +246,11 @@ class GridController implements PositionInGridAware {
     );
 
     startNewBlock(
-      MathCompoundBlockComponent(
+      CompoundBlockComponent(
         blockModel,
         gridModelAware: _gridModel,
         positionInGridAware: this,
+        singleBlockComponentFactory: _singleBlockComponentFactory,
       ),
       IntVector2(column, 0),
     );
@@ -302,7 +306,7 @@ class GridController implements PositionInGridAware {
   }
 
   @override
-  IntVector2? positionInGrid(MathBlockComponent component) {
+  IntVector2? positionInGrid(BlockComponent component) {
     if (component != currentBlock) {
       return null;
     }

@@ -6,13 +6,14 @@ import 'package:calc_tetris/block/math/model/math_operant_block.dart';
 import 'package:calc_tetris/block/math/model/math_operant_type.dart';
 import 'package:calc_tetris/block/math/model/math_single_block.dart';
 import 'package:calc_tetris/block/math/seed/compoundblock_model_generator.dart';
-import 'package:calc_tetris/block/math/seed/shape_chooser.dart';
+import 'package:calc_tetris/block/model/single_block.dart';
+import 'package:calc_tetris/block/shapes/shape_chooser.dart';
 
 class RandomCompoundblockModelGenerator implements CompoundblockModelGenerator {
   final ShapeChooser _shapeChooser = ShapeChooser();
 
   @override
-  List<List<MathSingleBlock>> generate() {
+  List<List<SingleBlock>> generate() {
     var nextShape = _shapeChooser.next();
 
     final maskedModel = nextShape.maskedModel;

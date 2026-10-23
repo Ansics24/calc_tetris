@@ -1,10 +1,10 @@
 import 'dart:math';
 
-import 'package:calc_tetris/block/math/model/math_single_block.dart';
-import 'package:calc_tetris/block/math/model/null_block.dart';
 import 'package:calc_tetris/block/math/seed/generators/guided_compoundblock_model_generator.dart';
-import 'package:calc_tetris/block/math/seed/shape_chooser.dart';
-import 'package:calc_tetris/block/math/seed/shapes/compound_block_shape.dart';
+import 'package:calc_tetris/block/model/null_block.dart';
+import 'package:calc_tetris/block/model/single_block.dart';
+import 'package:calc_tetris/block/shapes/compound_block_shape.dart';
+import 'package:calc_tetris/block/shapes/shape_chooser.dart';
 import 'package:test/test.dart';
 
 import '../support/grid_fixtures.dart';
@@ -18,7 +18,7 @@ class _FixedShapeChooser implements ShapeChooser {
   CompoundBlockShape next() => shape;
 }
 
-List<String> _tokensOf(List<List<MathSingleBlock>> model) => model
+List<String> _tokensOf(List<List<SingleBlock>> model) => model
     .expand((column) => column)
     .where((block) => block is! NullBlock)
     .map((block) => block.toString())

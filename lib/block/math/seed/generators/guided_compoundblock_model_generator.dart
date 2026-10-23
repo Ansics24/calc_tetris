@@ -4,12 +4,13 @@ import 'package:calc_tetris/block/math/model/math_single_block.dart';
 import 'package:calc_tetris/block/math/seed/block_tokens.dart';
 import 'package:calc_tetris/block/math/seed/compoundblock_model_generator.dart';
 import 'package:calc_tetris/block/math/seed/hints/open_equation_hint_finder.dart';
-import 'package:calc_tetris/block/math/seed/shape_chooser.dart';
+import 'package:calc_tetris/block/model/single_block.dart';
+import 'package:calc_tetris/block/shapes/shape_chooser.dart';
 
 /// Generates blocks that are balanced (mostly digits, few symbols) and that
 /// often help to complete equations which already exist on the grid.
 class GuidedCompoundblockModelGenerator implements CompoundblockModelGenerator {
-  final List<List<MathSingleBlock?>> Function() _gridContent;
+  final List<List<SingleBlock?>> Function() _gridContent;
   final ShapeChooser _shapeChooser;
   final Random _random;
   final OpenEquationHintFinder _hintFinder;
@@ -26,7 +27,7 @@ class GuidedCompoundblockModelGenerator implements CompoundblockModelGenerator {
        _hintFinder = hintFinder ?? OpenEquationHintFinder();
 
   @override
-  List<List<MathSingleBlock>> generate() {
+  List<List<SingleBlock>> generate() {
     final maskedModel = _shapeChooser.next().maskedModel;
     final slotCount = maskedModel
         .expand((column) => column)

@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:calc_tetris/block/math/math_single_block_component_factory.dart';
 import 'package:calc_tetris/block/math/scoring/score_keeper.dart';
 import 'package:calc_tetris/block/math/seed/generators/guided_compoundblock_model_generator.dart';
 import 'package:calc_tetris/block/math/seed/next_block_planner.dart';
+import 'package:calc_tetris/block/math/valid_equation_solution_strategy.dart';
 import 'package:calc_tetris/grid/queries/grid_content_holder.dart';
 import 'package:calc_tetris/layout/board/block_board.dart';
 import 'package:calc_tetris/layout/footer/footer.dart';
@@ -69,6 +71,8 @@ class TetrisGame extends FlameGame implements GameOverListener {
     add(
       BlockBoard(
         scoreRecorder: _scoreKeeper,
+        solutionStrategy: ValidEquationSolutionStrategy(),
+        singleBlockComponentFactory: newComponentFromBlockModel,
         nextBlockPlanner: _nextBlockPlanner,
         gridContentHolder: _gridContentHolder,
         spawnOrigin: header.nextBlockDisplay,

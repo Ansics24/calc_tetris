@@ -1,17 +1,19 @@
 import 'package:calc_tetris/block/math/math_number_block_component.dart';
+import 'package:calc_tetris/block/math/math_single_block_component_factory.dart';
 import 'package:calc_tetris/block/math/model/math_number_block.dart';
 import 'package:calc_tetris/block/math/model/math_single_block.dart';
 import 'package:calc_tetris/block/math/seed/compoundblock_model_generator.dart';
 import 'package:calc_tetris/block/math/seed/next_block_planner.dart';
 import 'package:calc_tetris/block/math/seed/start_column_chooser.dart';
 import 'package:calc_tetris/block/solution_strategy.dart';
-import 'package:calc_tetris/grid/grid.dart';
 import 'package:calc_tetris/grid/grid_controller.dart';
 import 'package:calc_tetris/grid/model/grid_model.dart';
 import 'package:calc_tetris/screens/gameover/game_over_listener.dart';
 import 'package:calc_tetris/util/int_vector_2.dart';
 import 'package:test/test.dart';
 import 'package:uuid/uuid.dart';
+
+import '../support/test_grid.dart';
 
 class _TwoWideGenerator implements CompoundblockModelGenerator {
   @override
@@ -57,7 +59,7 @@ _setUp({
   Set<(int, int)> blocked = const {},
 }) {
   final size = IntVector2(5, 5);
-  final grid = Grid(blockCount: size);
+  final grid = newTestGrid(size);
   final model = GridModel(size: size, gridComponent: grid)..cellSize = 50;
   for (final (x, y) in blocked) {
     model.addSingleBlock(
@@ -72,6 +74,7 @@ _setUp({
     grid: grid,
     solutionStrategy: _UnusedStrategy(),
     nextBlockPlanner: planner,
+    singleBlockComponentFactory: newComponentFromBlockModel,
     startColumnChooser: chooser,
     gameOverListener: listener,
   );

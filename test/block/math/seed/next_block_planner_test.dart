@@ -1,14 +1,14 @@
 import 'package:calc_tetris/block/math/model/math_number_block.dart';
-import 'package:calc_tetris/block/math/model/math_single_block.dart';
 import 'package:calc_tetris/block/math/seed/compoundblock_model_generator.dart';
 import 'package:calc_tetris/block/math/seed/next_block_planner.dart';
+import 'package:calc_tetris/block/model/single_block.dart';
 import 'package:test/test.dart';
 
 class _SequenceGenerator implements CompoundblockModelGenerator {
   int generated = 0;
 
   @override
-  List<List<MathSingleBlock>> generate() {
+  List<List<SingleBlock>> generate() {
     generated++;
     return [
       [MathNumberBlock(number: generated)],
@@ -16,7 +16,7 @@ class _SequenceGenerator implements CompoundblockModelGenerator {
   }
 }
 
-int _numberOf(List<List<MathSingleBlock>> model) =>
+int _numberOf(List<List<SingleBlock>> model) =>
     (model[0][0] as MathNumberBlock).number;
 
 void main() {

@@ -1,14 +1,16 @@
 import 'dart:async';
 
-import 'package:calc_tetris/block/math/math_block_component.dart';
+import 'package:calc_tetris/block/block_component.dart';
+import 'package:calc_tetris/block/model/single_block.dart';
 import 'package:calc_tetris/grid/grid.dart';
 import 'package:flame/components.dart';
 
-abstract class MathSingleBlockComponent<M> extends MathBlockComponent {
+abstract class SingleBlockComponent<M extends SingleBlock>
+    extends BlockComponent {
   final double? _cellSize;
 
   /// Without a [cellSize] the block takes the cell size of its [Grid] parent.
-  MathSingleBlockComponent({this._cellSize});
+  SingleBlockComponent({this._cellSize});
 
   @override
   FutureOr<void> onLoad() async {

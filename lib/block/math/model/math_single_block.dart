@@ -1,7 +1,5 @@
-import 'package:uuid/uuid.dart';
+import 'package:calc_tetris/block/model/single_block.dart';
 
-class MathSingleBlock {
-  final Uuid id;
-
-  MathSingleBlock({required this.id});
+class MathSingleBlock extends SingleBlock {
+  MathSingleBlock({required super.id});
 }

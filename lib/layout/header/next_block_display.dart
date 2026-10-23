@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:calc_tetris/block/math/math_single_block_component_factory.dart';
-import 'package:calc_tetris/block/math/model/math_single_block.dart';
 import 'package:calc_tetris/block/math/seed/spawn_origin.dart';
+import 'package:calc_tetris/block/model/single_block.dart';
 import 'package:calc_tetris/layout/header/next_block_display_style.dart';
 import 'package:calc_tetris/theme/light_theme.dart';
 import 'package:flame/components.dart';
@@ -16,7 +16,7 @@ class NextBlockDisplay extends PositionComponent implements SpawnOrigin {
 
   /// Edge length of a cell as it is in the grid, i.e. before scaling.
   final double _gridCellSize;
-  List<List<MathSingleBlock>> _model;
+  List<List<SingleBlock>> _model;
   final PositionComponent _content = PositionComponent();
   final NextBlockDisplayStyle style;
   late final BoxPainter _decorationPainter = style.decoration.createBoxPainter(
@@ -63,7 +63,7 @@ class NextBlockDisplay extends PositionComponent implements SpawnOrigin {
     super.render(canvas);
   }
 
-  set model(List<List<MathSingleBlock>> model) {
+  set model(List<List<SingleBlock>> model) {
     _model = model;
     _layoutContent();
     if (isLoaded) {

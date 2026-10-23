@@ -1,16 +1,17 @@
 import 'package:calc_tetris/block/math/math_equals_block_component.dart';
 import 'package:calc_tetris/block/math/model/math_equals_block.dart';
-import 'package:calc_tetris/grid/grid.dart';
 import 'package:calc_tetris/grid/model/grid_model.dart';
 import 'package:calc_tetris/util/int_vector_2.dart';
 import 'package:test/test.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../support/test_grid.dart';
+
 void main() {
   group("Adjacent blocks in row", () {
     final gridModel = GridModel(
       size: IntVector2(5, 5),
-      gridComponent: Grid(blockCount: IntVector2(5, 5)),
+      gridComponent: newTestGrid(IntVector2(5, 5)),
     );
     gridModel.cellSize = 50;
 

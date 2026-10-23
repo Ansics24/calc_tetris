@@ -1,7 +1,7 @@
-import 'package:calc_tetris/block/math/math_single_block_component.dart';
+import 'package:calc_tetris/block/single_block_component.dart';
 
 class GridSingleBlockModel {
-  final MathSingleBlockComponent _blockComponent;
+  final SingleBlockComponent _blockComponent;
   final String _placementId;
 
   GridSingleBlockModel({
@@ -9,7 +9,7 @@ class GridSingleBlockModel {
     required this._placementId,
   });
 
-  MathSingleBlockComponent get component => _blockComponent;
+  SingleBlockComponent get component => _blockComponent;
 
   String get placementId => _placementId;
 

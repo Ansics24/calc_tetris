@@ -5,9 +5,10 @@ import 'package:calc_tetris/block/math/model/math_equals_block.dart';
 import 'package:calc_tetris/block/math/model/math_number_block.dart';
 import 'package:calc_tetris/block/math/model/math_operant_block.dart';
 import 'package:calc_tetris/block/math/model/math_operant_type.dart';
-import 'package:calc_tetris/grid/grid.dart';
 import 'package:calc_tetris/grid/model/grid_model.dart';
 import 'package:calc_tetris/util/int_vector_2.dart';
+
+import '../../../support/test_grid.dart';
 
 /// Gridmodel looks like this
 ///
@@ -29,7 +30,7 @@ import 'package:calc_tetris/util/int_vector_2.dart';
 GridModel get7x7SampleModel() {
   final GridModel gridModel = GridModel(
     size: IntVector2(7, 7),
-    gridComponent: Grid(blockCount: IntVector2(0, 6)),
+    gridComponent: newTestGrid(IntVector2(0, 6)),
   );
   gridModel.cellSize = 0;
   _addNumber(IntVector2(6, 0), 7, gridModel);

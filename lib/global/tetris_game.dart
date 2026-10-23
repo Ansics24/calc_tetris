@@ -2,16 +2,18 @@ import 'dart:async';
 
 import 'package:calc_tetris/core/block/seed/generators/guided_compoundblock_model_generator.dart';
 import 'package:calc_tetris/core/block/seed/next_block_planner.dart';
+import 'package:calc_tetris/core/game_over/game_over_listener.dart';
 import 'package:calc_tetris/core/grid/queries/grid_content_holder.dart';
 import 'package:calc_tetris/core/scoring/score_keeper.dart';
 import 'package:calc_tetris/global/block_board.dart';
 import 'package:calc_tetris/global/footer.dart';
 import 'package:calc_tetris/global/game_dimensions.dart';
+import 'package:calc_tetris/global/game_over/game_over_hint.dart';
 import 'package:calc_tetris/global/header.dart';
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 
-class TetrisGame extends FlameGame {
+class TetrisGame extends FlameGame implements GameOverListener {
   final GameDimensions _gameDimensions = GameDimensions();
   final ScoreKeeper _scoreKeeper = ScoreKeeper();
   final GridContentHolder _gridContentHolder = GridContentHolder();
@@ -53,6 +55,7 @@ class TetrisGame extends FlameGame {
         nextBlockPlanner: _nextBlockPlanner,
         gridContentHolder: _gridContentHolder,
         spawnOrigin: header.nextBlockDisplay,
+        gameOverListener: this,
         size: _gameDimensions.sizeBlockBoard,
         position: Vector2(0, _gameDimensions.sizeHeader.y),
       ),
@@ -67,6 +70,9 @@ class TetrisGame extends FlameGame {
       ),
     );
   }
+
+  @override
+  void onGameOver() => add(GameOverHint(size: size));
 
   @override
   void onGameResize(Vector2 size) {

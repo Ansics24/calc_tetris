@@ -11,7 +11,7 @@ class BlockFaller {
 
   final GridModel _gridModel;
 
-  BlockFaller({required GridModel gridModel}) : _gridModel = gridModel;
+  BlockFaller({required this._gridModel});
 
   Future<void> fallAll(Iterable<BlockMove> moves) {
     final futures = moves.map((move) {

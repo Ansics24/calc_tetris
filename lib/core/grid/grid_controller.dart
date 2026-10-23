@@ -2,9 +2,11 @@ import 'dart:developer' as dev;
 
 import 'package:calc_tetris/core/block/math_block_component.dart';
 import 'package:calc_tetris/core/block/math_compound_block_component.dart';
+import 'package:calc_tetris/core/block/seed/free_start_columns.dart';
 import 'package:calc_tetris/core/block/seed/next_block_planner.dart';
 import 'package:calc_tetris/core/block/seed/spawn_origin.dart';
 import 'package:calc_tetris/core/block/seed/start_column_chooser.dart';
+import 'package:calc_tetris/core/game_over/game_over_listener.dart';
 import 'package:calc_tetris/core/game_settings.dart';
 import 'package:calc_tetris/core/grid/grid.dart';
 import 'package:calc_tetris/core/grid/grid_model.dart';
@@ -36,6 +38,13 @@ class GridController implements PositionInGridAware {
   /// not be controlled and does not fall until it has arrived.
   bool _spawning = false;
 
+  /// True once the upcoming block found no room. The controller does nothing
+  /// from then on.
+  bool _gameOver = false;
+  final GameOverListener? _gameOverListener;
+
+  bool get isGameOver => _gameOver;
+
   GridController({
     required this._gridModel,
     required this._grid,
@@ -44,6 +53,7 @@ class GridController implements PositionInGridAware {
     StartColumnChooser? startColumnChooser,
     this._spawnOrigin,
     this._scoreRecorder,
+    this._gameOverListener,
   }) : _startColumnChooser = startColumnChooser ?? RandomStartColumnChooser(),
        _positionInGridFinder = PositionInGridFinder(gridModel: _gridModel);
 
@@ -211,10 +221,25 @@ class GridController implements PositionInGridAware {
   /// Takes the planned block, puts it into a random column at the top of the
   /// grid and plans the next one.
   void spawnNextBlock() {
+    if (_gameOver) {
+      return;
+    }
+    final freeColumns = freeStartColumns(
+      block: _nextBlockPlanner.upcoming,
+      gridWidth: _gridModel.model.length,
+      isBlocked: _gridModel.isPositionBlocked,
+    );
+    if (freeColumns.isEmpty) {
+      _gameOver = true;
+      _gameOverListener?.onGameOver();
+      return;
+    }
+
     final blockModel = _nextBlockPlanner.take();
     final column = _startColumnChooser.choose(
       blockWidth: blockModel.length,
       gridWidth: _gridModel.model.length,
+      candidates: freeColumns,
     );
 
     startNewBlock(
@@ -228,7 +253,7 @@ class GridController implements PositionInGridAware {
   }
 
   void moveBlockRight() {
-    if (_spawning) {
+    if (_spawning || currentBlock == null) {
       return;
     }
     var targetPosition = currentBlockGridPosition!.addX(1);
@@ -243,7 +268,7 @@ class GridController implements PositionInGridAware {
   }
 
   void moveBlockLeft() {
-    if (_spawning) {
+    if (_spawning || currentBlock == null) {
       return;
     }
     var targetPosition = currentBlockGridPosition!.addX(-1);
@@ -258,7 +283,7 @@ class GridController implements PositionInGridAware {
   }
 
   void fallBlockDown() {
-    if (_spawning) {
+    if (_spawning || currentBlock == null) {
       return;
     }
     var lowestPossiblePosition = _positionInGridFinder

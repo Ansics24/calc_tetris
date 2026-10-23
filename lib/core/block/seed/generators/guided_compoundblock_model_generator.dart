@@ -16,16 +16,14 @@ class GuidedCompoundblockModelGenerator implements CompoundblockModelGenerator {
   final double _hintChance;
 
   GuidedCompoundblockModelGenerator({
-    required List<List<MathSingleBlock?>> Function() gridContent,
+    required this._gridContent,
     ShapeChooser? shapeChooser,
     Random? random,
     OpenEquationHintFinder? hintFinder,
-    double hintChance = 0.9,
-  }) : _gridContent = gridContent,
-       _shapeChooser = shapeChooser ?? ShapeChooser(),
+    this._hintChance = 0.9,
+  }) : _shapeChooser = shapeChooser ?? ShapeChooser(),
        _random = random ?? Random(),
-       _hintFinder = hintFinder ?? OpenEquationHintFinder(),
-       _hintChance = hintChance;
+       _hintFinder = hintFinder ?? OpenEquationHintFinder();
 
   @override
   List<List<MathSingleBlock>> generate() {

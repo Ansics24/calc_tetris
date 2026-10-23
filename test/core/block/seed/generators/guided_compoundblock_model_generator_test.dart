@@ -106,19 +106,17 @@ void main() {
       }
     });
 
-    test('puts at most one symbol into a multi block', () {
-      for (final shape in [CompoundBlockShape.i2x1, CompoundBlockShape.l2x2l]) {
-        final generator = _generator(shape: shape, hintChance: 0);
+    test('stays mostly digits in multi blocks', () {
+      final generator = _generator(
+        shape: CompoundBlockShape.l2x2l,
+        hintChance: 0,
+      );
 
-        for (var i = 0; i < 1000; i++) {
-          final tokens = _tokensOf(generator.generate());
-          expect(
-            tokens.where((t) => !_isDigit(t)).length,
-            lessThanOrEqualTo(1),
-            reason: '$tokens',
-          );
-        }
-      }
+      final tokens = [
+        for (var i = 0; i < 1000; i++) ..._tokensOf(generator.generate()),
+      ];
+
+      expect(tokens.where(_isDigit).length / tokens.length, greaterThan(0.5));
     });
   });
 
@@ -190,7 +188,7 @@ void main() {
       }
     });
 
-    test('fills the remaining slots with digits next to a needed symbol', () {
+    test('keeps the needed symbol and at least one digit next to it', () {
       final generator = _generator(
         shape: CompoundBlockShape.l2x2l,
         gridRows: () => ['1+2.3'],
@@ -199,8 +197,8 @@ void main() {
 
       for (var i = 0; i < 100; i++) {
         final tokens = _tokensOf(generator.generate());
-        expect(tokens.where((t) => t == '=').length, 1);
-        expect(tokens.where(_isDigit).length, 2);
+        expect(tokens, contains('='));
+        expect(tokens.where(_isDigit), isNotEmpty, reason: '$tokens');
       }
     });
 

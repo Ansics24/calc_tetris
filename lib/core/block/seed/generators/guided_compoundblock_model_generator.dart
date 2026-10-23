@@ -56,6 +56,10 @@ class GuidedCompoundblockModelGenerator implements CompoundblockModelGenerator {
       // replace a generated digit, never the hint
       tokens[tokens.length - 1] = _randomSymbol();
     }
+    if (!tokens.any(BlockTokens.isDigit)) {
+      // a block of only symbols can never help; replace a filler, not the hint
+      tokens[tokens.length - 1] = _randomDigit();
+    }
     return tokens..shuffle(_random);
   }
 

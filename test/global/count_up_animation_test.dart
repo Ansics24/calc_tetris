@@ -1,4 +1,4 @@
-import 'package:calc_tetris/global/score/count_up_animation.dart';
+import 'package:calc_tetris/layout/header/score/count_up_animation.dart';
 import 'package:test/test.dart';
 
 void main() {

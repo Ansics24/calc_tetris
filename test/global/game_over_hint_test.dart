@@ -1,4 +1,4 @@
-import 'package:calc_tetris/global/game_over/game_over_hint.dart';
+import 'package:calc_tetris/screens/gameover/game_over_hint.dart';
 import 'package:flame/components.dart';
 import 'package:test/test.dart';
 

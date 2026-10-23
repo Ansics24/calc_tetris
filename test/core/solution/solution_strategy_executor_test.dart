@@ -1,15 +1,15 @@
+import 'package:calc_tetris/block/block_remover.dart';
+import 'package:calc_tetris/block/solution_strategy.dart';
+import 'package:calc_tetris/block/solution_strategy_executor.dart';
 import 'package:calc_tetris/core/block/math_equals_block_component.dart';
 import 'package:calc_tetris/core/block/model/math_equals_block.dart';
-import 'package:calc_tetris/core/grid/block_move.dart';
-import 'package:calc_tetris/core/grid/grid.dart';
-import 'package:calc_tetris/core/grid/grid_model.dart';
-import 'package:calc_tetris/core/grid/grid_single_block_model.dart';
-import 'package:calc_tetris/core/grid/int_vector_2.dart';
 import 'package:calc_tetris/core/solution/blockfall/block_faller.dart';
-import 'package:calc_tetris/core/solution/blockremove/block_remover.dart';
-import 'package:calc_tetris/core/solution/solution_strategy.dart';
-import 'package:calc_tetris/core/solution/solution_strategy_executor.dart';
 import 'package:calc_tetris/core/solution/solution_strategy_singlerun_result.dart';
+import 'package:calc_tetris/grid/grid.dart';
+import 'package:calc_tetris/grid/model/block_move.dart';
+import 'package:calc_tetris/grid/model/grid_model.dart';
+import 'package:calc_tetris/grid/model/grid_single_block_model.dart';
+import 'package:calc_tetris/util/int_vector_2.dart';
 import 'package:test/test.dart';
 
 /// Grid coordinates: x = column, y = row (top to bottom). Blocks fall to

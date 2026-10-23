@@ -1,7 +1,7 @@
-import 'package:calc_tetris/core/block/model/math_number_block.dart';
+import 'package:calc_tetris/block/math/seed/compoundblock_model_generator.dart';
+import 'package:calc_tetris/block/math/seed/next_block_planner.dart';
+import 'package:calc_tetris/block/model/math_number_block.dart';
 import 'package:calc_tetris/core/block/model/math_single_block.dart';
-import 'package:calc_tetris/core/block/seed/compoundblock_model_generator.dart';
-import 'package:calc_tetris/core/block/seed/next_block_planner.dart';
 import 'package:test/test.dart';
 
 class _SequenceGenerator implements CompoundblockModelGenerator {

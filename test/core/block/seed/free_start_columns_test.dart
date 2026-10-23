@@ -1,8 +1,8 @@
-import 'package:calc_tetris/core/block/model/math_number_block.dart';
+import 'package:calc_tetris/block/model/math_number_block.dart';
+import 'package:calc_tetris/block/model/null_block.dart';
 import 'package:calc_tetris/core/block/model/math_single_block.dart';
-import 'package:calc_tetris/core/block/model/null_block.dart';
 import 'package:calc_tetris/core/block/seed/free_start_columns.dart';
-import 'package:calc_tetris/core/grid/int_vector_2.dart';
+import 'package:calc_tetris/util/int_vector_2.dart';
 import 'package:test/test.dart';
 
 MathSingleBlock _n() => MathNumberBlock(number: 1);

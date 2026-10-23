@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:calc_tetris/core/block/seed/start_column_chooser.dart';
+import 'package:calc_tetris/block/math/seed/start_column_chooser.dart';
 import 'package:test/test.dart';
 
 /// Returns the scripted values and records the bounds it was asked for.

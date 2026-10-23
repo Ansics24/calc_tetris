@@ -1,10 +1,10 @@
 import 'dart:math';
 
+import 'package:calc_tetris/block/model/null_block.dart';
+import 'package:calc_tetris/block/seed/shapes/compound_block_shape.dart';
 import 'package:calc_tetris/core/block/model/math_single_block.dart';
-import 'package:calc_tetris/core/block/model/null_block.dart';
 import 'package:calc_tetris/core/block/seed/generators/guided_compoundblock_model_generator.dart';
 import 'package:calc_tetris/core/block/seed/shape_chooser.dart';
-import 'package:calc_tetris/core/block/seed/shapes/compound_block_shape.dart';
 import 'package:test/test.dart';
 
 import '../support/grid_fixtures.dart';

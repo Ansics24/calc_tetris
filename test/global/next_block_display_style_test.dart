@@ -1,7 +1,7 @@
-import 'package:calc_tetris/global/hud/hud_panel.dart';
-import 'package:calc_tetris/global/next_block_display_style.dart';
-import 'package:calc_tetris/global/theme/game_palette.dart';
 import 'package:calc_tetris/global/theme/light_theme.dart';
+import 'package:calc_tetris/layout/header/hud/hud_panel.dart';
+import 'package:calc_tetris/layout/header/next_block_display_style.dart';
+import 'package:calc_tetris/theme/game_palette.dart';
 import 'package:flutter/material.dart';
 import 'package:test/test.dart';
 

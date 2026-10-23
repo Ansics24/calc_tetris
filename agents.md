@@ -8,11 +8,11 @@
 
 * For now never create a feature branche. Work on the current branch
 * TDD: Always write tests first and show them to me before continuing
-* Write the code afterward
 * Run `flutter test` to verify all tests pass
 * Code, names and comments: Everything in english
 * The game interface is in german language
 * Run `dart analyze` when finished and fix any issues
+* Ask before changing the directory layout
 
 # Architecture
 

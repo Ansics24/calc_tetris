@@ -1,16 +1,19 @@
+import 'package:calc_tetris/block/math/model/equation.dart';
+import 'package:calc_tetris/block/math/scoring/digit_multiplier_score_calculator.dart';
+import 'package:calc_tetris/block/model/math_number_block.dart';
+import 'package:calc_tetris/block/model/math_operant_block.dart';
 import 'package:calc_tetris/core/block/model/math_equals_block.dart';
-import 'package:calc_tetris/core/block/model/math_number_block.dart';
-import 'package:calc_tetris/core/block/model/math_operant_block.dart';
 import 'package:calc_tetris/core/block/model/math_operant_type.dart';
 import 'package:calc_tetris/core/block/model/math_single_block.dart';
-import 'package:calc_tetris/core/math/equation.dart';
-import 'package:calc_tetris/core/scoring/digit_multiplier_score_calculator.dart';
 import 'package:calc_tetris/core/scoring/score_calculator.dart';
 import 'package:test/test.dart';
 
 MathNumberBlock n(int digit) => MathNumberBlock(number: digit);
+
 MathOperantBlock plus() => MathOperantBlock(type: MathOperandType.plus);
+
 MathOperantBlock minus() => MathOperantBlock(type: MathOperandType.minus);
+
 MathEqualsBlock eq() => MathEqualsBlock();
 
 Equation equationOf(List<MathSingleBlock> blocks) =>

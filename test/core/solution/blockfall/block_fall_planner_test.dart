@@ -1,10 +1,10 @@
+import 'package:calc_tetris/block/block_fall_planner.dart';
 import 'package:calc_tetris/core/block/math_equals_block_component.dart';
 import 'package:calc_tetris/core/block/model/math_equals_block.dart';
-import 'package:calc_tetris/core/grid/grid.dart';
-import 'package:calc_tetris/core/grid/grid_model.dart';
-import 'package:calc_tetris/core/grid/grid_single_block_model.dart';
-import 'package:calc_tetris/core/grid/int_vector_2.dart';
-import 'package:calc_tetris/core/solution/blockfall/block_fall_planner.dart';
+import 'package:calc_tetris/grid/grid.dart';
+import 'package:calc_tetris/grid/model/grid_model.dart';
+import 'package:calc_tetris/grid/model/grid_single_block_model.dart';
+import 'package:calc_tetris/util/int_vector_2.dart';
 import 'package:test/test.dart';
 
 /// Grid coordinates: x = column (left to right), y = row (top to bottom).

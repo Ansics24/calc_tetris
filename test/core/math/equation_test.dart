@@ -1,8 +1,8 @@
+import 'package:calc_tetris/block/math/model/equation.dart';
+import 'package:calc_tetris/block/model/math_number_block.dart';
+import 'package:calc_tetris/block/model/math_operant_block.dart';
 import 'package:calc_tetris/core/block/model/math_equals_block.dart';
-import 'package:calc_tetris/core/block/model/math_number_block.dart';
-import 'package:calc_tetris/core/block/model/math_operant_block.dart';
 import 'package:calc_tetris/core/block/model/math_operant_type.dart';
-import 'package:calc_tetris/core/math/equation.dart';
 import 'package:test/test.dart';
 
 void main() {

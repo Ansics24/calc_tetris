@@ -1,4 +1,4 @@
-import 'package:calc_tetris/core/scoring/score_keeper.dart';
+import 'package:calc_tetris/block/math/scoring/score_keeper.dart';
 import 'package:test/test.dart';
 
 void main() {

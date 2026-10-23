@@ -1,7 +1,7 @@
-import 'package:calc_tetris/core/grid/int_vector_2.dart';
-import 'package:calc_tetris/core/math/equation.dart';
-import 'package:calc_tetris/core/math/valid_equation_solution_strategy.dart';
+import 'package:calc_tetris/block/math/model/equation.dart';
+import 'package:calc_tetris/block/math/valid_equation_solution_strategy.dart';
 import 'package:calc_tetris/core/scoring/score_calculator.dart';
+import 'package:calc_tetris/util/int_vector_2.dart';
 import 'package:test/test.dart';
 
 import 'sample_grids/sample_grid_7x7.dart';

@@ -4,7 +4,10 @@ import 'package:calc_tetris/core/block/model/math_single_block.dart';
 import 'package:calc_tetris/core/block/seed/next_block_planner.dart';
 import 'package:calc_tetris/core/scoring/score_keeper.dart';
 import 'package:calc_tetris/global/next_block_display.dart';
+import 'package:calc_tetris/global/next_block_display_style.dart';
 import 'package:calc_tetris/global/score/score_display.dart';
+import 'package:calc_tetris/global/score/score_display_style.dart';
+import 'package:calc_tetris/global/theme/light_theme.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 
@@ -28,6 +31,7 @@ class Header extends PositionComponent {
          size: Vector2(size!.x * 0.4, size.y * 0.8),
          position: Vector2(size.x * 0.97, size.y / 2),
          anchor: Anchor.centerRight,
+         style: NextBlockDisplayStyle.fromColorScheme(colorScheme),
        );
 
   @override
@@ -35,13 +39,14 @@ class Header extends PositionComponent {
     add(
       RectangleComponent(
         size: size,
-        paint: Paint()..color = const Color.fromARGB(180, 38, 32, 32),
+        paint: Paint()..color = colorScheme.surfaceContainerHighest,
       ),
     );
     _scoreDisplay = ScoreDisplay(
-      size: Vector2(size.x * 0.4, size.y * 0.4),
+      size: Vector2(size.x * 0.4, size.y * 0.8),
       position: Vector2(size.x * 0.03, size.y / 2),
       anchor: Anchor.centerLeft,
+      style: ScoreDisplayStyle.fromColorScheme(colorScheme),
     )..score = _scoreKeeper.total;
     add(_scoreDisplay);
     _scoreSubscription = _scoreKeeper.totals.listen(

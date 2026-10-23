@@ -11,6 +11,9 @@ class ScoreDisplay extends PositionComponent {
     () {},
   );
   late final TextPaint _textPaint = TextPaint(style: style.textStyle);
+  late final TextPaint _labelPaint = TextPaint(style: style.labelStyle);
+
+  static const String labelText = 'Punkte';
 
   ScoreDisplay({
     super.size,
@@ -41,7 +44,13 @@ class ScoreDisplay extends PositionComponent {
     _textPaint.render(
       canvas,
       displayedScore.toString(),
-      size / 2,
+      Vector2(size.x / 2, size.y * 0.62),
+      anchor: Anchor.center,
+    );
+    _labelPaint.render(
+      canvas,
+      labelText,
+      Vector2(size.x / 2, size.y * 0.2),
       anchor: Anchor.center,
     );
   }

@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:calc_tetris/block/math/scoring/score_keeper.dart';
+import 'package:calc_tetris/block/math/seed/generators/guided_compoundblock_model_generator.dart';
 import 'package:calc_tetris/block/math/seed/next_block_planner.dart';
-import 'package:calc_tetris/core/block/seed/generators/guided_compoundblock_model_generator.dart';
 import 'package:calc_tetris/grid/queries/grid_content_holder.dart';
 import 'package:calc_tetris/layout/board/block_board.dart';
 import 'package:calc_tetris/layout/footer/footer.dart';

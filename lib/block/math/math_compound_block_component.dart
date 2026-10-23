@@ -1,15 +1,15 @@
 import 'dart:developer' as developer;
 
 import 'package:calc_tetris/block/math/fall_down_on_swipe_behaviour.dart';
-import 'package:calc_tetris/block/math_single_block_component_factory.dart';
-import 'package:calc_tetris/block/model/null_block.dart';
-import 'package:calc_tetris/block/snap_to_grid_when_dragging_behaviour.dart';
-import 'package:calc_tetris/core/block/math_block_component.dart';
-import 'package:calc_tetris/core/block/math_single_block_component.dart';
-import 'package:calc_tetris/core/block/model/math_single_block.dart';
-import 'package:calc_tetris/core/grid/queries/position_in_grid_aware.dart';
+import 'package:calc_tetris/block/math/math_block_component.dart';
+import 'package:calc_tetris/block/math/math_single_block_component.dart';
+import 'package:calc_tetris/block/math/math_single_block_component_factory.dart';
+import 'package:calc_tetris/block/math/model/math_single_block.dart';
+import 'package:calc_tetris/block/math/model/null_block.dart';
+import 'package:calc_tetris/block/math/snap_to_grid_when_dragging_behaviour.dart';
 import 'package:calc_tetris/grid/grid.dart';
 import 'package:calc_tetris/grid/queries/grid_model_aware.dart';
+import 'package:calc_tetris/grid/queries/position_in_grid_aware.dart';
 import 'package:calc_tetris/util/int_vector_2.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/events.dart';

@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:calc_tetris/block/math/scoring/score_keeper.dart';
 import 'package:calc_tetris/block/math/seed/next_block_planner.dart';
-import 'package:calc_tetris/core/block/seed/spawn_origin.dart';
+import 'package:calc_tetris/block/math/seed/spawn_origin.dart';
 import 'package:calc_tetris/grid/grid.dart';
 import 'package:calc_tetris/grid/queries/grid_content_holder.dart';
 import 'package:calc_tetris/layout/game_dimensions.dart';

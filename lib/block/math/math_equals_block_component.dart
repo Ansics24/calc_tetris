@@ -1,7 +1,7 @@
 import 'package:calc_tetris/block/math/appearance/block_tile.dart';
-import 'package:calc_tetris/core/block/appearance/tile_colors.dart';
-import 'package:calc_tetris/core/block/math_single_block_component.dart';
-import 'package:calc_tetris/core/block/model/math_equals_block.dart';
+import 'package:calc_tetris/block/math/appearance/tile_colors.dart';
+import 'package:calc_tetris/block/math/math_single_block_component.dart';
+import 'package:calc_tetris/block/math/model/math_equals_block.dart';
 
 class MathEqualsBlockComponent
     extends MathSingleBlockComponent<MathEqualsBlock> {

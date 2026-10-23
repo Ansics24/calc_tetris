@@ -1,5 +1,5 @@
-import 'package:calc_tetris/block/model/null_block.dart';
-import 'package:calc_tetris/core/block/model/math_single_block.dart';
+import 'package:calc_tetris/block/math/model/math_single_block.dart';
+import 'package:calc_tetris/block/math/model/null_block.dart';
 import 'package:calc_tetris/util/int_vector_2.dart';
 
 /// Returns the leftmost columns in which the block can enter the grid at the

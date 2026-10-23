@@ -1,5 +1,5 @@
 import 'package:calc_tetris/block/math/model/equation.dart';
-import 'package:calc_tetris/core/scoring/score_calculator.dart';
+import 'package:calc_tetris/block/math/scoring/score_calculator.dart';
 
 /// Every number earns [basePointsPerNumber]. Numbers with more than one digit
 /// add their digit count to a shared multiplier (1 if there are none).

@@ -1,4 +1,4 @@
-import 'package:calc_tetris/block/math_compound_block_component.dart';
+import 'package:calc_tetris/block/math/math_compound_block_component.dart';
 import 'package:calc_tetris/grid/grid.dart';
 import 'package:calc_tetris/grid/grid_controller.dart';
 import 'package:flame/components.dart';

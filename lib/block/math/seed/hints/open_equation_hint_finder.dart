@@ -1,7 +1,7 @@
 import 'package:calc_tetris/block/math/model/equation.dart';
+import 'package:calc_tetris/block/math/model/math_single_block.dart';
 import 'package:calc_tetris/block/math/seed/block_tokens.dart';
-import 'package:calc_tetris/core/block/model/math_single_block.dart';
-import 'package:calc_tetris/core/block/seed/hints/open_equation_hints.dart';
+import 'package:calc_tetris/block/math/seed/hints/open_equation_hints.dart';
 
 /// Looks for empty cells next to existing blocks and finds out which tokens
 /// would help to finish an equation there.

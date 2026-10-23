@@ -1,4 +1,4 @@
-import 'package:calc_tetris/core/solution/solution_strategy_singlerun_result.dart';
+import 'package:calc_tetris/block/solution_strategy_singlerun_result.dart';
 import 'package:calc_tetris/grid/model/grid_model.dart';
 import 'package:calc_tetris/util/int_vector_2.dart';
 

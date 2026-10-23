@@ -1,4 +1,4 @@
-import 'package:calc_tetris/block/model/math_single_block.dart';
+import 'package:calc_tetris/block/math/model/math_single_block.dart';
 import 'package:uuid/uuid.dart';
 
 class MathNumberBlock extends MathSingleBlock {

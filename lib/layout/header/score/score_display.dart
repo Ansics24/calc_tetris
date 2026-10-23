@@ -1,5 +1,5 @@
-import 'package:calc_tetris/global/score/score_display_style.dart';
 import 'package:calc_tetris/layout/header/score/count_up_animation.dart';
+import 'package:calc_tetris/layout/header/score/score_display_style.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/painting.dart';
 

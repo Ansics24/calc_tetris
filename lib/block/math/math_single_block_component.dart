@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:calc_tetris/core/block/math_block_component.dart';
+import 'package:calc_tetris/block/math/math_block_component.dart';
 import 'package:calc_tetris/grid/grid.dart';
 import 'package:flame/components.dart';
 

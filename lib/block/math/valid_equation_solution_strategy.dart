@@ -1,8 +1,8 @@
 import 'package:calc_tetris/block/math/model/equation.dart';
 import 'package:calc_tetris/block/math/scoring/digit_multiplier_score_calculator.dart';
+import 'package:calc_tetris/block/math/scoring/score_calculator.dart';
 import 'package:calc_tetris/block/solution_strategy.dart';
-import 'package:calc_tetris/core/scoring/score_calculator.dart';
-import 'package:calc_tetris/core/solution/solution_strategy_singlerun_result.dart';
+import 'package:calc_tetris/block/solution_strategy_singlerun_result.dart';
 import 'package:calc_tetris/grid/model/grid_model.dart';
 import 'package:calc_tetris/grid/model/grid_single_block_model.dart';
 import 'package:calc_tetris/util/int_vector_2.dart';

@@ -1,10 +1,10 @@
 import 'dart:math';
 
+import 'package:calc_tetris/block/math/model/math_single_block.dart';
 import 'package:calc_tetris/block/math/seed/block_tokens.dart';
 import 'package:calc_tetris/block/math/seed/compoundblock_model_generator.dart';
-import 'package:calc_tetris/core/block/model/math_single_block.dart';
-import 'package:calc_tetris/core/block/seed/hints/open_equation_hint_finder.dart';
-import 'package:calc_tetris/core/block/seed/shape_chooser.dart';
+import 'package:calc_tetris/block/math/seed/hints/open_equation_hint_finder.dart';
+import 'package:calc_tetris/block/math/seed/shape_chooser.dart';
 
 /// Generates blocks that are balanced (mostly digits, few symbols) and that
 /// often help to complete equations which already exist on the grid.

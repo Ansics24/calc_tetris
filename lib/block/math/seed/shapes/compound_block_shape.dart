@@ -1,5 +1,5 @@
-import 'package:calc_tetris/block/model/null_block.dart';
-import 'package:calc_tetris/core/block/model/math_single_block.dart';
+import 'package:calc_tetris/block/math/model/math_single_block.dart';
+import 'package:calc_tetris/block/math/model/null_block.dart';
 
 List<List<MathSingleBlock?>> generateB2x2() {
   return List.generate(2, (_) => List.generate(2, (_) => null));

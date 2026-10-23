@@ -1,10 +1,10 @@
 import 'dart:async';
 
 import 'package:calc_tetris/block/block_fall_planner.dart';
+import 'package:calc_tetris/block/block_faller.dart';
 import 'package:calc_tetris/block/block_remover.dart';
 import 'package:calc_tetris/block/solution_strategy.dart';
-import 'package:calc_tetris/core/solution/blockfall/block_faller.dart';
-import 'package:calc_tetris/core/solution/solution_strategy_singlerun_result.dart';
+import 'package:calc_tetris/block/solution_strategy_singlerun_result.dart';
 import 'package:calc_tetris/grid/model/grid_model.dart';
 import 'package:calc_tetris/util/int_vector_2.dart';
 

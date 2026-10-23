@@ -1,15 +1,15 @@
 import 'dart:developer';
 
-import 'package:calc_tetris/block/math_compound_block_component.dart';
-import 'package:calc_tetris/block/model/null_block.dart';
-import 'package:calc_tetris/core/block/math_single_block_component.dart';
-import 'package:calc_tetris/core/grid/queries/position_in_grid_finder.dart';
+import 'package:calc_tetris/block/math/math_compound_block_component.dart';
+import 'package:calc_tetris/block/math/math_single_block_component.dart';
+import 'package:calc_tetris/block/math/model/null_block.dart';
 import 'package:calc_tetris/grid/exception/grid_position_occupied_exception.dart';
 import 'package:calc_tetris/grid/grid.dart';
 import 'package:calc_tetris/grid/model/block_move.dart';
 import 'package:calc_tetris/grid/model/connected_blocks.dart';
 import 'package:calc_tetris/grid/model/grid_single_block_model.dart';
 import 'package:calc_tetris/grid/queries/grid_model_aware.dart';
+import 'package:calc_tetris/grid/queries/position_in_grid_finder.dart';
 import 'package:calc_tetris/util/int_vector_2.dart';
 import 'package:flame/components.dart';
 import 'package:uuid/uuid.dart';
@@ -156,7 +156,6 @@ class GridModel implements GridModelAware {
 
   List<List<GridSingleBlockModel?>> get model => _model;
 
-  @override
   GridSingleBlockModel? findExistingBlockAt(IntVector2 positionInGrid) {
     if (_model.isEmpty || positionInGrid.x >= _model.length) {
       return null;

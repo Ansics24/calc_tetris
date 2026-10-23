@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:calc_tetris/block/math_single_block_component_factory.dart';
-import 'package:calc_tetris/core/block/model/math_single_block.dart';
-import 'package:calc_tetris/core/block/seed/spawn_origin.dart';
-import 'package:calc_tetris/global/theme/light_theme.dart';
+import 'package:calc_tetris/block/math/math_single_block_component_factory.dart';
+import 'package:calc_tetris/block/math/model/math_single_block.dart';
+import 'package:calc_tetris/block/math/seed/spawn_origin.dart';
 import 'package:calc_tetris/layout/header/next_block_display_style.dart';
+import 'package:calc_tetris/theme/light_theme.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/painting.dart';
 

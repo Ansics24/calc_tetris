@@ -1,8 +1,8 @@
 import 'package:calc_tetris/block/math/appearance/block_tile.dart';
+import 'package:calc_tetris/block/math/appearance/tile_colors.dart';
+import 'package:calc_tetris/block/math/math_single_block_component.dart';
+import 'package:calc_tetris/block/math/model/math_operant_block.dart';
 import 'package:calc_tetris/block/math/model/math_operant_type.dart';
-import 'package:calc_tetris/block/model/math_operant_block.dart';
-import 'package:calc_tetris/core/block/appearance/tile_colors.dart';
-import 'package:calc_tetris/core/block/math_single_block_component.dart';
 
 class MathOperantBlockComponent
     extends MathSingleBlockComponent<MathOperantBlock> {

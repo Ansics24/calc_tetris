@@ -1,6 +1,6 @@
 import 'dart:developer';
 
-import 'package:calc_tetris/core/block/math_compound_block_component.dart';
+import 'package:calc_tetris/block/math/math_compound_block_component.dart';
 import 'package:calc_tetris/grid/exception/grid_index_out_of_bounds_exception.dart';
 import 'package:calc_tetris/grid/model/grid_model.dart';
 import 'package:calc_tetris/util/int_vector_2.dart';

@@ -1,20 +1,20 @@
 import 'dart:developer' as dev;
 
+import 'package:calc_tetris/block/math/math_block_component.dart';
+import 'package:calc_tetris/block/math/math_compound_block_component.dart';
 import 'package:calc_tetris/block/math/scoring/score_keeper.dart';
+import 'package:calc_tetris/block/math/seed/free_start_columns.dart';
 import 'package:calc_tetris/block/math/seed/next_block_planner.dart';
+import 'package:calc_tetris/block/math/seed/spawn_origin.dart';
 import 'package:calc_tetris/block/math/seed/start_column_chooser.dart';
-import 'package:calc_tetris/block/math_compound_block_component.dart';
 import 'package:calc_tetris/block/solution_strategy.dart';
 import 'package:calc_tetris/block/solution_strategy_executor.dart';
-import 'package:calc_tetris/core/block/math_block_component.dart';
-import 'package:calc_tetris/core/block/seed/free_start_columns.dart';
-import 'package:calc_tetris/core/block/seed/spawn_origin.dart';
-import 'package:calc_tetris/core/grid/queries/position_in_grid_aware.dart';
-import 'package:calc_tetris/core/grid/queries/position_in_grid_finder.dart';
-import 'package:calc_tetris/core/solution/solution_strategy_singlerun_result.dart';
+import 'package:calc_tetris/block/solution_strategy_singlerun_result.dart';
 import 'package:calc_tetris/grid/grid.dart';
 import 'package:calc_tetris/grid/grid_behaviour_settings.dart';
 import 'package:calc_tetris/grid/model/grid_model.dart';
+import 'package:calc_tetris/grid/queries/position_in_grid_aware.dart';
+import 'package:calc_tetris/grid/queries/position_in_grid_finder.dart';
 import 'package:calc_tetris/screens/gameover/game_over_listener.dart';
 import 'package:calc_tetris/util/int_vector_2.dart';
 import 'package:flame/components.dart';

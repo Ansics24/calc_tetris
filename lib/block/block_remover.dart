@@ -1,4 +1,4 @@
-import 'package:calc_tetris/core/solution/blockremove/shrink_and_remove_block.dart';
+import 'package:calc_tetris/block/shrink_and_remove_block.dart';
 import 'package:calc_tetris/grid/model/grid_single_block_model.dart';
 
 class BlockRemover {

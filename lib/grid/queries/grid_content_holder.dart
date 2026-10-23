@@ -1,4 +1,4 @@
-import 'package:calc_tetris/core/block/model/math_single_block.dart';
+import 'package:calc_tetris/block/math/model/math_single_block.dart';
 import 'package:calc_tetris/grid/model/grid_model.dart';
 
 /// Gives access to the blocks of a grid that does not exist yet when the

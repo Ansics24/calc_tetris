@@ -1,4 +1,4 @@
-import 'package:calc_tetris/core/block/appearance/tile_colors.dart';
+import 'package:calc_tetris/block/math/appearance/tile_colors.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/painting.dart';
 

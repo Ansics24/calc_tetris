@@ -22,3 +22,10 @@
     * Use abstractions / interfaces to separate modules from each other
 * Use narrowed modules or classes (high cohesive files)
 * Open/closed principle: Prefer adding new code instead of changing existing one
+
+# Important aspects about directory layout
+
+`lib/block` contains models and aspects equal for any block (not necessarily only math blocks)
+`lib/block/math` math blocks forming equations (main game logic for now)
+`grid` contains the grid and behavours how blocks behave in grids
+`screens` root components the user can navigate through

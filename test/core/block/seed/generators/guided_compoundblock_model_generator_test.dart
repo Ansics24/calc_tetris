@@ -134,6 +134,21 @@ void main() {
       }
     });
 
+    test('completes an equation inside a longer row of blocks', () {
+      final generator = _generator(
+        gridRows: () => ['=8+1=.'],
+        hintChance: 1,
+      );
+
+      final tokens = List.generate(
+        50,
+        (_) => _tokensOf(generator.generate()).single,
+      );
+
+      expect(tokens, everyElement(isIn(['1', '9'])));
+      expect(tokens, contains('9'));
+    });
+
     test('ignores the grid when hints are disabled', () {
       final generator = _generator(
         gridRows: () => ['1+2=.'],

@@ -1,8 +1,7 @@
+import 'package:calc_tetris/core/block/appearance/block_tile.dart';
+import 'package:calc_tetris/core/block/appearance/tile_colors.dart';
 import 'package:calc_tetris/core/block/math_single_block_component.dart';
 import 'package:calc_tetris/core/block/model/math_equals_block.dart';
-import 'package:flame/components.dart';
-import 'package:flame_svg/flame_svg.dart';
-import 'package:flutter/material.dart';
 
 class MathEqualsBlockComponent
     extends MathSingleBlockComponent<MathEqualsBlock> {
@@ -13,27 +12,7 @@ class MathEqualsBlockComponent
   @override
   void onLoad() async {
     await super.onLoad();
-    final backgroundSvg = await Svg.load("images/block_green.svg");
-    add(
-      SvgComponent(
-        svg: backgroundSvg,
-        size: Vector2(size.x, size.y),
-        position: Vector2(0, 0),
-      ),
-    );
-    add(
-      TextComponent(
-        textRenderer: TextPaint(
-          style: TextStyle(
-            color: Color.fromARGB(255, 50, 42, 42),
-            fontSize: 20,
-          ),
-        ),
-        text: '=',
-        position: Vector2(size.x / 2, size.y / 2),
-        anchor: Anchor.center,
-      ),
-    );
+    add(BlockTile(color: TileColors.equals, symbol: '=', size: size));
   }
 
   @override

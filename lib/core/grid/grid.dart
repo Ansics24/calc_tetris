@@ -14,6 +14,7 @@ import 'package:calc_tetris/core/grid/queries/grid_content_holder.dart';
 import 'package:calc_tetris/core/math/valid_equation_solution_strategy.dart';
 import 'package:calc_tetris/core/scoring/score_keeper.dart';
 import 'package:calc_tetris/global/block_board.dart';
+import 'package:calc_tetris/global/board/grid_frame.dart';
 import 'package:flame/components.dart';
 
 class Grid extends PositionComponent {
@@ -74,6 +75,11 @@ class Grid extends PositionComponent {
   }
 
   void addGridVisualization() {
+    add(
+      GridFrame(
+        size: Vector2(_blockCount.x * _cellSize, _blockCount.y * _cellSize),
+      ),
+    );
     for (var i = 0; i <= _blockCount.x; i++) {
       add(
         GridLine(

@@ -20,7 +20,7 @@ class GuidedCompoundblockModelGenerator implements CompoundblockModelGenerator {
     ShapeChooser? shapeChooser,
     Random? random,
     OpenEquationHintFinder? hintFinder,
-    this._hintChance = 0.9,
+    this._hintChance = 0.8,
   }) : _shapeChooser = shapeChooser ?? ShapeChooser(),
        _random = random ?? Random(),
        _hintFinder = hintFinder ?? OpenEquationHintFinder();
@@ -49,7 +49,7 @@ class GuidedCompoundblockModelGenerator implements CompoundblockModelGenerator {
     }
     final tokens = [?hint];
     while (tokens.length < count) {
-      tokens.add(_randomDigit());
+      tokens.add(_randomSingleToken());
     }
     final hasSymbol = hint != null && !BlockTokens.isDigit(hint);
     if (!hasSymbol && _random.nextBool()) {
@@ -63,6 +63,8 @@ class GuidedCompoundblockModelGenerator implements CompoundblockModelGenerator {
     final hints = _hintFinder.find(_gridContent());
     final candidates = hints.completions.isNotEmpty
         ? hints.completions
+        : hints.partialCompletions.isNotEmpty
+        ? hints.partialCompletions
         : hints.extensions;
     if (candidates.isEmpty) {
       return null;

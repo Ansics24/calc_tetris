@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:calc_tetris/core/block/seed/generators/guided_compoundblock_model_generator.dart';
 import 'package:calc_tetris/core/block/seed/next_block_planner.dart';
@@ -12,6 +13,7 @@ import 'package:calc_tetris/global/game_over/game_over_hint.dart';
 import 'package:calc_tetris/global/header.dart';
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
+import 'package:flutter/painting.dart';
 
 class TetrisGame extends FlameGame implements GameOverListener {
   final GameDimensions _gameDimensions = GameDimensions();
@@ -23,19 +25,34 @@ class TetrisGame extends FlameGame implements GameOverListener {
     ),
   );
 
+  late final SpriteComponent _background;
+  late final RectangleComponent _backgroundShade;
+
   @override
   FutureOr<void> onLoad() async {
     super.onLoad();
-    final background = await Sprite.load("background_mittelalter.png");
-    await add(
-      SpriteComponent(
-        sprite: background,
-        anchor: Anchor.topLeft,
-        position: Vector2(0, 200),
-        scale: Vector2.all(0.4),
-        priority: -1,
-      ),
+    _background = SpriteComponent(
+      sprite: await Sprite.load("background_mittelalter.png"),
+      anchor: Anchor.center,
+      priority: -2,
     );
+    await add(_background);
+    _backgroundShade = RectangleComponent(
+      paint: Paint()..color = const Color(0x66050A18),
+      priority: -1,
+    );
+    await add(_backgroundShade);
+    _fitBackground();
+  }
+
+  /// Scales the background image to cover the whole screen.
+  void _fitBackground() {
+    final imageSize = _background.sprite!.srcSize;
+    _background.scale = Vector2.all(
+      max(size.x / imageSize.x, size.y / imageSize.y),
+    );
+    _background.position = size / 2;
+    _backgroundShade.size = size;
   }
 
   @override
@@ -78,6 +95,9 @@ class TetrisGame extends FlameGame implements GameOverListener {
   void onGameResize(Vector2 size) {
     super.onGameResize(size);
     _gameDimensions.availableSize = size;
+    if (isLoaded) {
+      _fitBackground();
+    }
   }
 
   GameDimensions get gameDimensions => _gameDimensions;

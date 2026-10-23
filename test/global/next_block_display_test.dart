@@ -16,7 +16,7 @@ void main() {
   });
 
   test('is labeled in german', () {
-    expect(NextBlockDisplay.labelText, 'Nächster Block');
+    expect(NextBlockDisplay.labelText, 'Nächster Stein');
   });
 
   test('a cell is 80 percent as big as a cell in the grid', () {

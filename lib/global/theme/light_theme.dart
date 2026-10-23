@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
 final colorScheme = ColorScheme.fromSeed(
-  seedColor: const Color.fromARGB(0, 97, 132, 168),
+  seedColor: const Color(0xFF1F4E8C),
+  brightness: Brightness.dark,
 );

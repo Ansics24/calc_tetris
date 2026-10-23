@@ -12,7 +12,7 @@ import 'package:flutter/painting.dart';
 /// grid.
 class NextBlockDisplay extends PositionComponent implements SpawnOrigin {
   static const double previewScale = 0.8;
-  static const String labelText = 'Nächster Block';
+  static const String labelText = 'Nächster Stein';
 
   /// Edge length of a cell as it is in the grid, i.e. before scaling.
   final double _gridCellSize;

@@ -75,6 +75,24 @@ void main() {
       expect(hints.completions, isEmpty);
     });
 
+    test('keeps whole-row completions separate from partial ones', () {
+      final hints = finder.find(gridFromRows(['1+2=.']));
+
+      expect(hints.completions, {'3'});
+    });
+
+    test('completes an equation that sits inside a longer row of blocks', () {
+      final hints = finder.find(gridFromRows(['=8+1=.']));
+
+      expect(hints.partialCompletions, contains('9'));
+    });
+
+    test('completes an equation that has stray blocks on both sides', () {
+      final hints = finder.find(gridFromRows(['7=8+1=.-']));
+
+      expect(hints.partialCompletions, contains('9'));
+    });
+
     test('has no completions on an empty grid', () {
       final hints = finder.find(gridFromRows(['.....', '.....']));
 

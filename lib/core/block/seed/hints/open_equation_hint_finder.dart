@@ -9,6 +9,7 @@ class OpenEquationHintFinder {
   /// [grid] is indexed `[x][y]`, y grows downwards.
   OpenEquationHints find(List<List<MathSingleBlock?>> grid) {
     final completions = <String>{};
+    final partials = <String>{};
     final extensions = <String>{};
     if (grid.isEmpty) {
       return OpenEquationHints(
@@ -17,12 +18,16 @@ class OpenEquationHintFinder {
       );
     }
     for (final row in _rows(grid)) {
-      _scan(row, requireSupport: false, completions, extensions);
+      _scan(row, requireSupport: false, completions, partials, extensions);
     }
     for (final column in grid) {
-      _scan(column, requireSupport: true, completions, extensions);
+      _scan(column, requireSupport: true, completions, partials, extensions);
     }
-    return OpenEquationHints(completions: completions, extensions: extensions);
+    return OpenEquationHints(
+      completions: completions,
+      partialCompletions: partials,
+      extensions: extensions,
+    );
   }
 
   Iterable<List<MathSingleBlock?>> _rows(List<List<MathSingleBlock?>> grid) {
@@ -35,6 +40,7 @@ class OpenEquationHintFinder {
   void _scan(
     List<MathSingleBlock?> line,
     Set<String> completions,
+    Set<String> partialCompletions,
     Set<String> extensions, {
     required bool requireSupport,
   }) {
@@ -50,11 +56,21 @@ class OpenEquationHintFinder {
         final run = _runWith(line, i, token);
         if (_completesEquation(run)) {
           completions.add(token);
+        } else if (_completesPartOfRun(run, i - _runStart(line, i))) {
+          partialCompletions.add(token);
         } else if (_canBePartOfEquation(run)) {
           extensions.add(token);
         }
       }
     }
+  }
+
+  int _runStart(List<MathSingleBlock?> line, int index) {
+    var start = index;
+    while (start > 0 && line[start - 1] != null) {
+      start--;
+    }
+    return start;
   }
 
   bool _touchesBlock(List<MathSingleBlock?> line, int i) {
@@ -88,6 +104,19 @@ class OpenEquationHintFinder {
       return false;
     }
     return Equation.fromBlocks(tokens.map(BlockTokens.blockFor)).isCorrect();
+  }
+
+  /// Whether a part of the run that includes the token at [tokenIndex] is a
+  /// correct equation.
+  bool _completesPartOfRun(List<String> tokens, int tokenIndex) {
+    for (var start = 0; start <= tokenIndex; start++) {
+      for (var end = tokenIndex + 1; end <= tokens.length; end++) {
+        if (_completesEquation(tokens.sublist(start, end))) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   /// Whether [tokens] could be a part of a valid equation.

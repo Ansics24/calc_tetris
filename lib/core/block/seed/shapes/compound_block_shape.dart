@@ -117,13 +117,13 @@ List<List<MathSingleBlock?>> generate1x1() {
 
 enum CompoundBlockShape {
   b2x2(generateEmptyFunction: generateB2x2, enabled: false),
-  t3x2(generateEmptyFunction: generateT3x2, enabled: false),
+  t3x2(generateEmptyFunction: generateT3x2, enabled: true),
   lLeft3x2(generateEmptyFunction: generateLLeft3x2, enabled: false),
   lRight3x2(generateEmptyFunction: generateLRight3x2, enabled: false),
-  i4x1(generateEmptyFunction: generateI4x1, enabled: false),
-  i3x1(generateEmptyFunction: generateI3x1, enabled: false),
-  s3x2r(generateEmptyFunction: generateS3x2Right, enabled: false),
-  s3x2l(generateEmptyFunction: generateS3x2Left, enabled: false),
+  i4x1(generateEmptyFunction: generateI4x1, enabled: true),
+  i3x1(generateEmptyFunction: generateI3x1, enabled: true),
+  s3x2r(generateEmptyFunction: generateS3x2Right, enabled: true),
+  s3x2l(generateEmptyFunction: generateS3x2Left, enabled: true),
   l2x2l(generateEmptyFunction: generatel2x2Left),
   l2x2r(generateEmptyFunction: generatel2x2Right),
   i2x1(generateEmptyFunction: generateI2x1),

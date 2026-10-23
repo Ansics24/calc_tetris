@@ -5,6 +5,7 @@ import 'dart:math';
 import 'package:calc_tetris/core/block/seed/generators/random_compoundblock_model_generator.dart';
 import 'package:calc_tetris/core/block/seed/next_block_planner.dart';
 import 'package:calc_tetris/core/block/seed/spawn_origin.dart';
+import 'package:calc_tetris/core/game_over/game_over_listener.dart';
 import 'package:calc_tetris/core/grid/grid_controller.dart';
 import 'package:calc_tetris/core/grid/grid_line.dart';
 import 'package:calc_tetris/core/grid/grid_model.dart';
@@ -27,6 +28,7 @@ class Grid extends PositionComponent {
     GridContentHolder? gridContentHolder,
     SpawnOrigin? spawnOrigin,
     ScoreRecorder? scoreRecorder,
+    GameOverListener? gameOverListener,
   }) {
     _gridModel = GridModel(
       size: _blockCount,
@@ -42,6 +44,7 @@ class Grid extends PositionComponent {
           NextBlockPlanner(generator: RandomCompoundblockModelGenerator()),
       spawnOrigin: spawnOrigin,
       scoreRecorder: scoreRecorder,
+      gameOverListener: gameOverListener,
     );
   }
 

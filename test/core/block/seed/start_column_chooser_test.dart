@@ -66,4 +66,40 @@ void main() {
 
     expect(chooser.choose(blockWidth: 1, gridWidth: 1), 0);
   });
+
+  test('only chooses among the given candidates', () {
+    final chooser = RandomStartColumnChooser(random: Random(1));
+
+    for (var i = 0; i < 200; i++) {
+      final column = chooser.choose(
+        blockWidth: 2,
+        gridWidth: 9,
+        candidates: [2, 5],
+      );
+      expect([2, 5], contains(column));
+    }
+  });
+
+  test('draws from exactly the number of candidates', () {
+    final random = _ScriptedRandom([1]);
+    final chooser = RandomStartColumnChooser(random: random);
+
+    final column = chooser.choose(
+      blockWidth: 2,
+      gridWidth: 9,
+      candidates: [0, 4, 7],
+    );
+
+    expect(random.requestedBounds, [3]);
+    expect(column, 4);
+  });
+
+  test('rejects an empty list of candidates', () {
+    final chooser = RandomStartColumnChooser(random: Random(1));
+
+    expect(
+      () => chooser.choose(blockWidth: 2, gridWidth: 9, candidates: []),
+      throwsStateError,
+    );
+  });
 }

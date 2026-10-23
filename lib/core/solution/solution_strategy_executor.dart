@@ -20,12 +20,11 @@ class SolutionStrategyExecutor {
   final BlockFaller _blockFaller;
 
   SolutionStrategyExecutor({
-    required SolutionStrategy solutionStrategy,
+    required this._solutionStrategy,
     required GridModel gridModel,
     BlockRemover? blockRemover,
     BlockFaller? blockFaller,
-  }) : _solutionStrategy = solutionStrategy,
-       _gridModel = gridModel,
+  }) : _gridModel = gridModel,
        // sync: a result reaches its listeners immediately, i.e. before the
        // next cascade run starts (async delivery would defer it)
        _streamController = StreamController<SolutionStrategySinglerunResult>(

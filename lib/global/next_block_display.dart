@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:calc_tetris/core/block/math_single_block_component_factory.dart';
 import 'package:calc_tetris/core/block/model/math_single_block.dart';
 import 'package:calc_tetris/core/block/seed/spawn_origin.dart';
-import 'package:flame/components.dart';
 import 'package:calc_tetris/global/next_block_display_style.dart';
 import 'package:calc_tetris/global/theme/light_theme.dart';
+import 'package:flame/components.dart';
 import 'package:flutter/painting.dart';
 
 /// Shows the upcoming compound block, a bit smaller than it will be in the
@@ -25,14 +25,13 @@ class NextBlockDisplay extends PositionComponent implements SpawnOrigin {
 
   NextBlockDisplay({
     required double cellSize,
-    required List<List<MathSingleBlock>> model,
+    required this._model,
     super.size,
     super.position,
     super.anchor,
     NextBlockDisplayStyle? style,
   }) : style = style ?? NextBlockDisplayStyle.fromColorScheme(colorScheme),
-       _gridCellSize = cellSize,
-       _model = model {
+       _gridCellSize = cellSize {
     _content.scale = Vector2.all(previewScale);
     _layoutContent();
   }

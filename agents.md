@@ -12,6 +12,7 @@
 * Run `flutter test` to verify all tests pass
 * Code, names and comments: Everything in english
 * The game interface is in german language
+* Run `dart analyze` when finished and fix any issues
 
 # Architecture
 

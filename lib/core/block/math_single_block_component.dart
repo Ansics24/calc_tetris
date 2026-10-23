@@ -8,7 +8,7 @@ abstract class MathSingleBlockComponent<M> extends MathBlockComponent {
   final double? _cellSize;
 
   /// Without a [cellSize] the block takes the cell size of its [Grid] parent.
-  MathSingleBlockComponent({double? cellSize}) : _cellSize = cellSize;
+  MathSingleBlockComponent({this._cellSize});
 
   @override
   FutureOr<void> onLoad() async {

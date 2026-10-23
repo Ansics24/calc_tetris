@@ -38,6 +38,18 @@ class ScoreDisplayStyle {
         ),
       );
 
+  static const TextStyle standardTextStyle = TextStyle(
+    color: Color(0xFFFFFFFF),
+    fontSize: 30,
+    fontWeight: FontWeight.bold,
+  );
+
+  static const TextStyle standardLabelStyle = TextStyle(
+    color: Color(0xFFB8C4DC),
+    fontSize: 16,
+    fontWeight: FontWeight.w600,
+  );
+
   static const ScoreDisplayStyle standard = ScoreDisplayStyle(
     decoration: BoxDecoration(
       color: Color.fromARGB(200, 20, 16, 16),

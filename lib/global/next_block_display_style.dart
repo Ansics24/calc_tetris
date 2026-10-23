@@ -1,3 +1,4 @@
+import 'package:calc_tetris/global/hud/hud_panel.dart';
 import 'package:flutter/material.dart';
 
 /// Look of the [NextBlockDisplay]: card decoration plus the label text style.
@@ -12,17 +13,11 @@ class NextBlockDisplayStyle {
 
   factory NextBlockDisplayStyle.fromColorScheme(ColorScheme scheme) =>
       NextBlockDisplayStyle(
-        decoration: BoxDecoration(
-          color: scheme.secondaryContainer,
-          borderRadius: const BorderRadius.all(Radius.circular(16)),
-          border: Border.fromBorderSide(
-            BorderSide(color: scheme.secondary, width: 3),
-          ),
-        ),
+        decoration: hudPanelDecoration,
         labelStyle: TextStyle(
-          color: scheme.onSecondaryContainer,
-          fontSize: 16,
-          fontWeight: FontWeight.w600,
+          color: scheme.onSurface,
+          fontSize: 15,
+          fontWeight: FontWeight.w700,
         ),
       );
 }

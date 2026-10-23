@@ -63,6 +63,8 @@ class GuidedCompoundblockModelGenerator implements CompoundblockModelGenerator {
     final hints = _hintFinder.find(_gridContent());
     final candidates = hints.completions.isNotEmpty
         ? hints.completions
+        : hints.partialCompletions.isNotEmpty
+        ? hints.partialCompletions
         : hints.extensions;
     if (candidates.isEmpty) {
       return null;

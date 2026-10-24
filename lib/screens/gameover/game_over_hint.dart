@@ -2,7 +2,7 @@ import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 
 /// Temporary hint that the game is over. To be replaced by a game over
-/// screen: delete this file and its use in `TetrisGame`.
+/// screen: delete this file and its use in `EndlessGame`.
 class GameOverHint extends PositionComponent {
   static const String message = 'Spiel vorbei!';
 

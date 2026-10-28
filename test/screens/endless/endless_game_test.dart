@@ -1,4 +1,4 @@
-import 'package:calc_tetris/screens/endless_game.dart';
+import 'package:calc_tetris/screens/endless/endless_game.dart';
 import 'package:calc_tetris/screens/gameover/game_over_listener.dart';
 import 'package:flame/components.dart';
 import 'package:test/test.dart';

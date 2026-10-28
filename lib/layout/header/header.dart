@@ -8,12 +8,14 @@ import 'package:calc_tetris/layout/header/hud/header_layout.dart';
 import 'package:calc_tetris/layout/header/hud/hud_bar.dart';
 import 'package:calc_tetris/layout/header/next_block_display.dart';
 import 'package:calc_tetris/layout/header/next_block_display_style.dart';
+import 'package:calc_tetris/layout/header/stop_button.dart';
 import 'package:calc_tetris/theme/light_theme.dart';
 import 'package:flame/components.dart';
 
 /// Everything above the grid: score card, drop button and next block card.
 class Header extends PositionComponent {
   final void Function() _onDropPressed;
+  final void Function() _onStopPressed;
   final ScoreKeeper _scoreKeeper;
   final NextBlockPlanner _nextBlockPlanner;
   final NextBlockDisplay nextBlockDisplay;
@@ -22,6 +24,7 @@ class Header extends PositionComponent {
 
   Header({
     required this._onDropPressed,
+    required this._onStopPressed,
     required this._scoreKeeper,
     required this._nextBlockPlanner,
     required double gridCellSize,
@@ -50,6 +53,13 @@ class Header extends PositionComponent {
         onPressed: _onDropPressed,
         size: _layout.dropButtonSize,
         position: _layout.dropButtonPosition,
+      ),
+    );
+    add(
+      StopButton(
+        onPressed: _onStopPressed,
+        size: _layout.stopButtonSize,
+        position: _layout.stopButtonPosition,
       ),
     );
     add(nextBlockDisplay);

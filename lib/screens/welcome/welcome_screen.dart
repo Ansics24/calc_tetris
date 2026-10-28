@@ -1,5 +1,6 @@
 import 'package:calc_tetris/screens/welcome/game_mode_card.dart';
-import 'package:calc_tetris/theme/game_palette.dart';
+import 'package:calc_tetris/screens/welcome/sky_background.dart';
+import 'package:calc_tetris/theme/welcome_palette.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/painting.dart';
 
@@ -7,15 +8,12 @@ import 'package:flutter/painting.dart';
 class WelcomeScreen extends PositionComponent {
   static const double _margin = 16;
   static const double _logoHeight = 140;
-  static const double _cardHeight = 120;
+  static const double _cardHeight = 150;
   static const double _gap = 16;
 
-  final RectangleComponent logoPlaceholder = RectangleComponent(
-    paint: Paint()
-      ..color = GamePalette.copper
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2,
-  );
+  final SkyBackground background = SkyBackground();
+
+  final RectangleComponent logoPlaceholder = _LogoPlaceholder();
 
   late final List<GameModeCard> cards;
 
@@ -23,9 +21,7 @@ class WelcomeScreen extends PositionComponent {
     cards = [
       GameModeCard(
         title: 'Endlosspiel',
-        description:
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit, '
-            'sed do eiusmod tempor incididunt ut labore.',
+        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
         highScore: endlessHighScore,
         size: Vector2(0, _cardHeight),
         onTap: onStartEndless,
@@ -36,6 +32,7 @@ class WelcomeScreen extends PositionComponent {
 
   @override
   Future<void> onLoad() async {
+    await add(background);
     await add(logoPlaceholder);
     await addAll(cards);
   }
@@ -48,6 +45,9 @@ class WelcomeScreen extends PositionComponent {
   }
 
   void _layout() {
+    background
+      ..position = Vector2.zero()
+      ..size = size.clone();
     final contentWidth = width - 2 * _margin;
     logoPlaceholder
       ..position = Vector2(_margin, _margin)
@@ -59,5 +59,26 @@ class WelcomeScreen extends PositionComponent {
         ..position = Vector2(_margin, y);
       y += _cardHeight + _gap;
     }
+  }
+}
+
+/// Light, rounded stand-in for the logo.
+class _LogoPlaceholder extends RectangleComponent {
+  _LogoPlaceholder() : super(paint: Paint()..color = WelcomePalette.logoFill);
+
+  @override
+  void render(Canvas canvas) {
+    final shape = RRect.fromRectAndRadius(
+      Rect.fromLTWH(0, 0, size.x, size.y),
+      const Radius.circular(GameModeCard.cornerRadius),
+    );
+    canvas.drawRRect(shape, paint);
+    canvas.drawRRect(
+      shape.deflate(1.5),
+      Paint()
+        ..color = WelcomePalette.logoBorder
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 3,
+    );
   }
 }

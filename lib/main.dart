@@ -1,9 +1,6 @@
-import 'package:calc_tetris/tetris_game.dart';
-import 'package:flame/game.dart';
+import 'package:calc_tetris/calc_tetris_app.dart';
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(
-    GameWidget(game: TetrisGame()),
-  );
+  runApp(CalcTetrisApp());
 }

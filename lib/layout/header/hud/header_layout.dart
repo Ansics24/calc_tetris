@@ -26,4 +26,11 @@ class HeaderLayout {
     (size.x - dropButtonSize.x) / 2,
     (size.y - dropButtonSize.y) / 2,
   );
+
+  Vector2 get stopButtonSize => dropButtonSize;
+
+  /// Top of the header, far enough above the drop button to not hit it by
+  /// accident.
+  Vector2 get stopButtonPosition =>
+      Vector2(dropButtonPosition.x, size.y * 0.05);
 }

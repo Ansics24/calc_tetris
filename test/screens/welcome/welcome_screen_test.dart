@@ -1,5 +1,7 @@
 import 'package:calc_tetris/screens/welcome/welcome_screen.dart';
+import 'package:calc_tetris/theme/welcome_palette.dart';
 import 'package:flame/components.dart';
+import 'package:flutter/painting.dart' show PaintingStyle;
 import 'package:test/test.dart';
 
 WelcomeScreen _screen({int endlessHighScore = 0, void Function()? onStart}) {
@@ -10,6 +12,8 @@ WelcomeScreen _screen({int endlessHighScore = 0, void Function()? onStart}) {
 }
 
 void main() {
+  _friendlyLookTests();
+
   test('takes over the size of the game when it is resized', () {
     expect(_screen().size, Vector2(400, 800));
   });
@@ -51,5 +55,31 @@ void main() {
     screen.cards.first.press();
 
     expect(started, 1);
+  });
+}
+
+void _friendlyLookTests() {
+  group('friendly look', () {
+    test('has a sky background covering the whole screen', () {
+      final screen = _screen();
+
+      expect(screen.background.size, Vector2(400, 800));
+      expect(screen.background.position, Vector2.zero());
+    });
+
+    test('draws the sky behind everything else', () {
+      expect(_screen().background.priority, lessThan(0));
+    });
+
+    test('fills the logo placeholder with a light color', () {
+      final paint = _screen().logoPlaceholder.paint;
+
+      expect(paint.color.toARGB32(), WelcomePalette.logoFill.toARGB32());
+      expect(paint.style, PaintingStyle.fill);
+    });
+
+    test('gives the cards enough height for the bigger texts', () {
+      expect(_screen().cards.first.height, greaterThanOrEqualTo(150));
+    });
   });
 }

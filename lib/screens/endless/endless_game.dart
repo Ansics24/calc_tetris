@@ -13,10 +13,17 @@ import 'package:calc_tetris/layout/game_dimensions.dart';
 import 'package:calc_tetris/layout/header/header.dart';
 import 'package:calc_tetris/screens/gameover/game_over_hint.dart';
 import 'package:calc_tetris/screens/gameover/game_over_listener.dart';
+import 'package:calc_tetris/screens/stopgame/stop_game_dialog.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/painting.dart';
 
 class EndlessGame extends PositionComponent implements GameOverListener {
+  /// Called when the player confirmed to end the game.
+  final void Function()? onQuit;
+
+  EndlessGame({this.onQuit});
+
+  StopGameDialog? _stopDialog;
   final GameDimensions _gameDimensions = GameDimensions();
   final ScoreKeeper _scoreKeeper = ScoreKeeper();
   final GridContentHolder _gridContentHolder = GridContentHolder();
@@ -62,6 +69,7 @@ class EndlessGame extends PositionComponent implements GameOverListener {
     late final BlockBoard board;
     final header = Header(
       onDropPressed: () => board.dropCurrentBlock(),
+      onStopPressed: _askToStop,
       scoreKeeper: _scoreKeeper,
       nextBlockPlanner: _nextBlockPlanner,
       gridCellSize: _gameDimensions.gridCellSize,
@@ -90,6 +98,22 @@ class EndlessGame extends PositionComponent implements GameOverListener {
         ),
       ),
     );
+  }
+
+  void _askToStop() {
+    if (_stopDialog != null) return;
+    final dialog = StopGameDialog(
+      size: size,
+      onConfirm: () => onQuit?.call(),
+      onCancel: _closeStopDialog,
+    );
+    _stopDialog = dialog;
+    add(dialog);
+  }
+
+  void _closeStopDialog() {
+    _stopDialog?.removeFromParent();
+    _stopDialog = null;
   }
 
   @override

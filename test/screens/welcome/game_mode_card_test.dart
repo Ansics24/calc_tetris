@@ -1,5 +1,9 @@
+import 'dart:ui';
+
 import 'package:calc_tetris/screens/welcome/game_mode_card.dart';
+import 'package:calc_tetris/theme/welcome_palette.dart';
 import 'package:flame/components.dart';
+import 'package:flutter/painting.dart' show TextStyle;
 import 'package:test/test.dart';
 
 GameModeCard _card({int highScore = 0, void Function()? onTap}) => GameModeCard(
@@ -12,6 +16,7 @@ GameModeCard _card({int highScore = 0, void Function()? onTap}) => GameModeCard(
 
 void main() {
   _verticalLayoutTests();
+  _friendlyLookTests();
 
   test('shows title and description', () {
     final card = _card();
@@ -91,6 +96,63 @@ void _verticalLayoutTests() {
       final style = (_card().highScoreValue.textRenderer as TextPaint).style;
 
       expect(style.fontSize, greaterThan(22));
+    });
+  });
+}
+
+TextStyle _styleOf(TextComponent text) =>
+    (text.textRenderer as TextPaint).style;
+
+void _friendlyLookTests() {
+  group('friendly look', () {
+    test('uses the colors of the welcome palette for the texts', () {
+      final card = _card();
+
+      expect(_styleOf(card.titleText).color, WelcomePalette.cardTitle);
+      expect(_styleOf(card.descriptionText).color, WelcomePalette.cardText);
+      expect(
+        _styleOf(card.highScoreLabel).color,
+        WelcomePalette.cardTextMuted,
+      );
+      expect(_styleOf(card.highScoreValue).color, WelcomePalette.scoreValue);
+    });
+
+    test('uses big, easy to read letters', () {
+      final card = _card();
+
+      expect(_styleOf(card.titleText).fontSize, greaterThanOrEqualTo(26));
+      expect(
+        _styleOf(card.descriptionText).fontSize,
+        greaterThanOrEqualTo(15),
+      );
+      expect(_styleOf(card.highScoreLabel).fontSize, greaterThanOrEqualTo(13));
+    });
+
+    test('has strongly rounded corners', () {
+      expect(GameModeCard.cornerRadius, greaterThanOrEqualTo(20));
+    });
+
+    test('fills the image placeholder with a warm color', () {
+      final paint = _card().imagePlaceholder.paint;
+
+      expect(paint.color.toARGB32(), WelcomePalette.imageFill.toARGB32());
+    });
+
+    test('paints a light card', () async {
+      final recorder = PictureRecorder();
+      _card().render(Canvas(recorder));
+      final image = await recorder.endRecording().toImage(360, 120);
+      final bytes = (await image.toByteData())!;
+      // pixel inside the card, left of the image placeholder
+      final offset = (60 * 360 + 6) * 4;
+      final pixel = Color.fromARGB(
+        bytes.getUint8(offset + 3),
+        bytes.getUint8(offset),
+        bytes.getUint8(offset + 1),
+        bytes.getUint8(offset + 2),
+      );
+
+      expect(pixel, WelcomePalette.cardFill);
     });
   });
 }

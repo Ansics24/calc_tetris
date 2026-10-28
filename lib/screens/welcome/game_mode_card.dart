@@ -1,20 +1,21 @@
 import 'dart:math';
 
-import 'package:calc_tetris/layout/header/hud/hud_panel.dart';
-import 'package:calc_tetris/theme/game_palette.dart';
+import 'package:calc_tetris/theme/welcome_palette.dart';
 import 'package:calc_tetris/util/german_number_format.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flutter/painting.dart';
 
 /// Card presenting one game mode with its image, description and high score.
-class GameModeCard extends PositionComponent
-    with HudPanelBackground, TapCallbacks {
-  static const double _padding = 12;
+class GameModeCard extends PositionComponent with TapCallbacks {
+  static const double cornerRadius = 24;
+  static const double _borderWidth = 3;
+  static const double _padding = 14;
   static const double _imageSize = 72;
-  static const double _scoreColumnWidth = 120;
+  static const double _scoreColumnWidth = 110;
   static const double _minDescriptionWidth = 40;
   static const double _scoreGap = 2;
+  static const double _descriptionTop = 44;
 
   final String title;
   final String description;
@@ -33,15 +34,15 @@ class GameModeCard extends PositionComponent
 
   late final RectangleComponent imagePlaceholder = RectangleComponent(
     size: Vector2.all(_imageSize),
-    paint: Paint()..color = GamePalette.panelDeep,
+    paint: Paint()..color = WelcomePalette.imageFill,
   );
 
   late final TextComponent titleText = TextComponent(
     text: title,
     textRenderer: TextPaint(
       style: const TextStyle(
-        color: GamePalette.gold,
-        fontSize: 20,
+        color: WelcomePalette.cardTitle,
+        fontSize: 26,
         fontWeight: FontWeight.bold,
       ),
     ),
@@ -50,7 +51,7 @@ class GameModeCard extends PositionComponent
   late final TextBoxComponent descriptionText = TextBoxComponent(
     text: description,
     textRenderer: TextPaint(
-      style: const TextStyle(color: GamePalette.textMuted, fontSize: 13),
+      style: const TextStyle(color: WelcomePalette.cardText, fontSize: 15),
     ),
     boxConfig: const TextBoxConfig(),
   );
@@ -59,7 +60,11 @@ class GameModeCard extends PositionComponent
     text: 'Höchstpunktzahl',
     anchor: Anchor.topRight,
     textRenderer: TextPaint(
-      style: const TextStyle(color: GamePalette.textMuted, fontSize: 11),
+      style: const TextStyle(
+        color: WelcomePalette.cardTextMuted,
+        fontSize: 13,
+        fontWeight: FontWeight.w600,
+      ),
     ),
   );
 
@@ -68,7 +73,7 @@ class GameModeCard extends PositionComponent
     anchor: Anchor.topCenter,
     textRenderer: TextPaint(
       style: const TextStyle(
-        color: GamePalette.text,
+        color: WelcomePalette.scoreValue,
         fontSize: 30,
         fontWeight: FontWeight.bold,
       ),
@@ -89,7 +94,7 @@ class GameModeCard extends PositionComponent
     final scoreRight = width - _padding;
     imagePlaceholder.position = Vector2(_padding, (height - _imageSize) / 2);
     titleText.position = Vector2(textX, _padding);
-    descriptionText.position = Vector2(textX, _padding + 28);
+    descriptionText.position = Vector2(textX, _padding + _descriptionTop);
     descriptionText.boxConfig = TextBoxConfig(
       maxWidth: max(
         _minDescriptionWidth,
@@ -116,7 +121,22 @@ class GameModeCard extends PositionComponent
 
   @override
   void render(Canvas canvas) {
-    renderPanel(canvas);
+    final shape = RRect.fromRectAndRadius(
+      Rect.fromLTWH(0, 0, size.x, size.y),
+      const Radius.circular(cornerRadius),
+    );
+    canvas.drawRRect(
+      shape.shift(const Offset(0, 4)),
+      Paint()..color = WelcomePalette.cardShadow,
+    );
+    canvas.drawRRect(shape, Paint()..color = WelcomePalette.cardFill);
+    canvas.drawRRect(
+      shape.deflate(_borderWidth / 2),
+      Paint()
+        ..color = WelcomePalette.cardBorder
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = _borderWidth,
+    );
     super.render(canvas);
   }
 

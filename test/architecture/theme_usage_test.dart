@@ -40,6 +40,17 @@ void main() {
     expect(offending, isEmpty);
   });
 
+  test('all texts get their style from the text theme', () {
+    final offending = [
+      for (final file in _dartFilesBelow('lib'))
+        if (!file.path.startsWith('lib/theme') &&
+            file.readAsStringSync().contains('TextStyle('))
+          file.path,
+    ];
+
+    expect(offending, isEmpty);
+  });
+
   test('the background image is not used any more but still exists', () {
     for (final file in _dartFilesBelow('lib')) {
       expect(

@@ -1,14 +1,18 @@
 import 'package:calc_tetris/screens/welcome/game_mode_card.dart';
 import 'package:calc_tetris/screens/welcome/mascot.dart';
 import 'package:calc_tetris/screens/welcome/sky_background.dart';
+import 'package:calc_tetris/theme/text_theme.dart';
 import 'package:calc_tetris/theme/welcome_palette.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/painting.dart';
 
-/// Start screen: logo on top, one card per game mode below.
+/// Start screen: name of the game on top (in front of the mascot), one card
+/// per game mode below.
 class WelcomeScreen extends PositionComponent {
+  static const String gameName = 'Magic Blocks';
+
   static const double _margin = 16;
-  static const double _logoHeight = 140;
+  static const double _titleHeight = 140;
   static const double _cardHeight = 150;
   static const double _gap = 16;
 
@@ -16,7 +20,17 @@ class WelcomeScreen extends PositionComponent {
 
   final Mascot mascot = Mascot();
 
-  final RectangleComponent logoPlaceholder = _LogoPlaceholder();
+  final TextComponent title = TextComponent(
+    text: gameName,
+    anchor: Anchor.center,
+    textRenderer: TextPaint(
+      style: textTheme.displayLarge!.copyWith(
+        fontSize: 46,
+        color: WelcomePalette.cardTitle,
+        shadows: const [Shadow(color: WelcomePalette.cardFill, blurRadius: 8)],
+      ),
+    ),
+  );
 
   late final List<GameModeCard> cards;
 
@@ -37,7 +51,7 @@ class WelcomeScreen extends PositionComponent {
   Future<void> onLoad() async {
     await add(background);
     await add(mascot);
-    await add(logoPlaceholder);
+    await add(title);
     await addAll(cards);
   }
 
@@ -49,15 +63,13 @@ class WelcomeScreen extends PositionComponent {
   }
 
   void _layout() {
-    _layoutMascot();
     background
       ..position = Vector2.zero()
       ..size = size.clone();
     final contentWidth = width - 2 * _margin;
-    logoPlaceholder
-      ..position = Vector2(_margin, _margin)
-      ..size = Vector2(contentWidth, _logoHeight);
-    var y = _margin + _logoHeight + _gap;
+    title.position = Vector2(width / 2, _margin + _titleHeight / 2);
+    _layoutMascot();
+    var y = _margin + _titleHeight + _gap;
     for (final card in cards) {
       card
         ..resizeTo(Vector2(contentWidth, _cardHeight))
@@ -66,39 +78,15 @@ class WelcomeScreen extends PositionComponent {
     }
   }
 
-  /// Puts the mascot to the right, below the cards, with its upper part hidden
-  /// behind the last card.
+  /// Centers the mascot behind the title. Its feet reach behind the first
+  /// card.
   void _layoutMascot() {
-    final cardsBottom =
-        _margin +
-        _logoHeight +
-        _gap +
-        cards.length * (_cardHeight + _gap) -
-        _gap;
-    final mascotSize = width * 0.85;
+    final mascotSize = _titleHeight * 1.6;
     mascot
       ..size = Vector2.all(mascotSize)
-      ..position = Vector2(width - mascotSize, cardsBottom - mascotSize * 0.4);
-  }
-}
-
-/// Light, rounded stand-in for the logo.
-class _LogoPlaceholder extends RectangleComponent {
-  _LogoPlaceholder() : super(paint: Paint()..color = WelcomePalette.logoFill);
-
-  @override
-  void render(Canvas canvas) {
-    final shape = RRect.fromRectAndRadius(
-      Rect.fromLTWH(0, 0, size.x, size.y),
-      const Radius.circular(GameModeCard.cornerRadius),
-    );
-    canvas.drawRRect(shape, paint);
-    canvas.drawRRect(
-      shape.deflate(1.5),
-      Paint()
-        ..color = WelcomePalette.logoBorder
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 3,
-    );
+      ..position = Vector2(
+        (width - mascotSize) / 2,
+        _margin + _titleHeight / 2 - mascotSize * 0.38,
+      );
   }
 }

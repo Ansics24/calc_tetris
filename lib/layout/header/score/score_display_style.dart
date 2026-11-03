@@ -1,3 +1,4 @@
+import 'package:calc_tetris/theme/text_theme.dart';
 import 'package:flutter/material.dart';
 
 /// Look of the [ScoreDisplay]: any [BoxDecoration] (border, gradient, radius,
@@ -22,15 +23,11 @@ class ScoreDisplayStyle {
             BorderSide(color: scheme.primary, width: 3),
           ),
         ),
-        textStyle: TextStyle(
+        textStyle: textTheme.displayLarge!.copyWith(
           color: scheme.onPrimaryContainer,
-          fontSize: 36,
-          fontWeight: FontWeight.bold,
         ),
-        labelStyle: TextStyle(
+        labelStyle: textTheme.bodyLarge!.copyWith(
           color: scheme.onPrimaryContainer,
-          fontSize: 16,
-          fontWeight: FontWeight.w600,
         ),
       );
 

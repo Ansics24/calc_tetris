@@ -1,4 +1,5 @@
 import 'package:calc_tetris/block/math/appearance/tile_colors.dart';
+import 'package:calc_tetris/theme/text_theme.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/painting.dart';
 
@@ -50,7 +51,7 @@ class BlockTile extends PositionComponent {
         ..color = color.dark,
     );
     TextPaint(
-      style: TextStyle(
+      style: textTheme.titleLarge!.copyWith(
         color: const Color(0xFFFFFFFF),
         fontSize: size.y * 0.55,
         fontWeight: FontWeight.w800,

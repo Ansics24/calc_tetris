@@ -50,7 +50,7 @@ class DropButton extends PositionComponent with TapCallbacks {
 
   void _renderDoubleArrow(Canvas canvas, Offset center, double halfWidth) {
     final paint = Paint()
-      ..color = colorScheme.onPrimaryContainer
+      ..color = colorScheme.tertiary
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round
       ..strokeWidth = 3;

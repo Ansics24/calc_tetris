@@ -54,7 +54,7 @@ class StopButton extends PositionComponent with TapCallbacks {
         Rect.fromCenter(center: center, width: half * 2, height: half * 2),
         const Radius.circular(3),
       ),
-      Paint()..color = colorScheme.onPrimaryContainer,
+      Paint()..color = colorScheme.tertiary,
     );
   }
 }

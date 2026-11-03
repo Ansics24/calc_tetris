@@ -11,6 +11,7 @@ import 'package:calc_tetris/layout/header/header.dart';
 import 'package:calc_tetris/screens/gameover/game_over_hint.dart';
 import 'package:calc_tetris/screens/gameover/game_over_listener.dart';
 import 'package:calc_tetris/screens/stopgame/stop_game_dialog.dart';
+import 'package:calc_tetris/screens/welcome/sky_background.dart';
 import 'package:flame/components.dart';
 
 class EndlessGame extends PositionComponent implements GameOverListener {
@@ -18,6 +19,8 @@ class EndlessGame extends PositionComponent implements GameOverListener {
   final void Function()? onQuit;
 
   EndlessGame({this.onQuit});
+
+  final SkyBackground background = SkyBackground();
 
   StopGameDialog? _stopDialog;
   final GameDimensions _gameDimensions = GameDimensions();
@@ -32,6 +35,7 @@ class EndlessGame extends PositionComponent implements GameOverListener {
   @override
   void onMount() {
     super.onMount();
+    add(background);
     late final BlockBoard board;
     final header = Header(
       onDropPressed: () => board.dropCurrentBlock(),
@@ -90,6 +94,7 @@ class EndlessGame extends PositionComponent implements GameOverListener {
     super.onGameResize(size);
     this.size = size;
     _gameDimensions.availableSize = size;
+    background.size = size.clone();
   }
 
   GameDimensions get gameDimensions => _gameDimensions;

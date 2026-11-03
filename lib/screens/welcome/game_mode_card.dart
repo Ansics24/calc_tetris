@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:calc_tetris/theme/text_theme.dart';
 import 'package:calc_tetris/theme/welcome_palette.dart';
 import 'package:calc_tetris/util/german_number_format.dart';
 import 'package:flame/components.dart';
@@ -40,10 +41,8 @@ class GameModeCard extends PositionComponent with TapCallbacks {
   late final TextComponent titleText = TextComponent(
     text: title,
     textRenderer: TextPaint(
-      style: const TextStyle(
+      style: textTheme.headlineMedium!.copyWith(
         color: WelcomePalette.cardTitle,
-        fontSize: 26,
-        fontWeight: FontWeight.bold,
       ),
     ),
   );
@@ -51,7 +50,7 @@ class GameModeCard extends PositionComponent with TapCallbacks {
   late final TextBoxComponent descriptionText = TextBoxComponent(
     text: description,
     textRenderer: TextPaint(
-      style: const TextStyle(color: WelcomePalette.cardText, fontSize: 15),
+      style: textTheme.bodyMedium!.copyWith(color: WelcomePalette.cardText),
     ),
     boxConfig: const TextBoxConfig(),
   );
@@ -60,10 +59,8 @@ class GameModeCard extends PositionComponent with TapCallbacks {
     text: 'Höchstpunktzahl',
     anchor: Anchor.topRight,
     textRenderer: TextPaint(
-      style: const TextStyle(
+      style: textTheme.labelMedium!.copyWith(
         color: WelcomePalette.cardTextMuted,
-        fontSize: 13,
-        fontWeight: FontWeight.w600,
       ),
     ),
   );
@@ -72,11 +69,7 @@ class GameModeCard extends PositionComponent with TapCallbacks {
     text: formatGermanNumber(highScore),
     anchor: Anchor.topCenter,
     textRenderer: TextPaint(
-      style: const TextStyle(
-        color: WelcomePalette.scoreValue,
-        fontSize: 30,
-        fontWeight: FontWeight.bold,
-      ),
+      style: textTheme.displaySmall!.copyWith(color: WelcomePalette.scoreValue),
     ),
   );
 

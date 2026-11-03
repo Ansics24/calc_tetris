@@ -1,7 +1,5 @@
 import 'package:calc_tetris/screens/welcome/welcome_screen.dart';
-import 'package:calc_tetris/theme/welcome_palette.dart';
 import 'package:flame/components.dart';
-import 'package:flutter/painting.dart' show PaintingStyle;
 import 'package:test/test.dart';
 
 WelcomeScreen _screen({int endlessHighScore = 0, void Function()? onStart}) {
@@ -35,14 +33,14 @@ void main() {
       );
     });
 
-    test('still shows its lower part below the cards', () {
+    test('sits behind the title', () {
       final screen = _screen();
-      final card = screen.cards.first;
 
       expect(
-        screen.mascot.y + screen.mascot.height,
-        greaterThan(card.y + card.height),
+        screen.mascot.toRect().contains(screen.title.position.toOffset()),
+        isTrue,
       );
+      expect(screen.mascot.priority, lessThan(screen.title.priority + 1));
     });
 
     test('stays inside the screen horizontally', () {
@@ -55,17 +53,16 @@ void main() {
     test('stays inside the screen vertically', () {
       final screen = _screen();
 
+      expect(screen.mascot.y, greaterThanOrEqualTo(0));
       expect(screen.mascot.y + screen.mascot.height, lessThanOrEqualTo(800));
     });
   });
 
-  test('places the logo placeholder above the cards', () {
+  test('shows the game name above the cards', () {
     final screen = _screen();
 
-    expect(
-      screen.logoPlaceholder.y + screen.logoPlaceholder.height,
-      lessThanOrEqualTo(screen.cards.first.y),
-    );
+    expect(screen.title.text, 'Magic Blocks');
+    expect(screen.title.y, lessThan(screen.cards.first.y));
   });
 
   test('lets the cards fill the width apart from a margin', () {
@@ -110,13 +107,6 @@ void _friendlyLookTests() {
 
     test('draws the sky behind everything else', () {
       expect(_screen().background.priority, lessThan(0));
-    });
-
-    test('fills the logo placeholder with a light color', () {
-      final paint = _screen().logoPlaceholder.paint;
-
-      expect(paint.color.toARGB32(), WelcomePalette.logoFill.toARGB32());
-      expect(paint.style, PaintingStyle.fill);
     });
 
     test('gives the cards enough height for the bigger texts', () {

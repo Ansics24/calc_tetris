@@ -1,4 +1,5 @@
 import 'package:calc_tetris/theme/light_theme.dart';
+import 'package:calc_tetris/theme/text_theme.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 
@@ -17,15 +18,22 @@ class GameOverHint extends PositionComponent {
         width: size.x * 0.8,
         height: 90,
       ),
-      const Radius.circular(16),
+      const Radius.circular(24),
     );
-    canvas.drawRRect(panel, Paint()..color = colorScheme.scrim.withAlpha(200));
+    canvas.drawRRect(
+      panel.shift(const Offset(0, 4)),
+      Paint()..color = colorScheme.shadow,
+    );
+    canvas.drawRRect(panel, Paint()..color = colorScheme.surface);
+    canvas.drawRRect(
+      panel.deflate(1.5),
+      Paint()
+        ..color = colorScheme.primary
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 3,
+    );
     TextPaint(
-      style: TextStyle(
-        color: colorScheme.onSurface,
-        fontSize: 32,
-        fontWeight: FontWeight.bold,
-      ),
+      style: textTheme.headlineLarge!.copyWith(color: colorScheme.tertiary),
     ).render(canvas, message, size / 2, anchor: Anchor.center);
   }
 }

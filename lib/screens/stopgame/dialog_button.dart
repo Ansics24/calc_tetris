@@ -1,4 +1,5 @@
 import 'package:calc_tetris/theme/light_theme.dart';
+import 'package:calc_tetris/theme/text_theme.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flutter/painting.dart';
@@ -53,10 +54,8 @@ class DialogButton extends PositionComponent with TapCallbacks {
         ..strokeWidth = 2,
     );
     TextPaint(
-      style: TextStyle(
+      style: textTheme.titleMedium!.copyWith(
         color: colorScheme.onPrimaryContainer,
-        fontSize: 20,
-        fontWeight: FontWeight.bold,
       ),
     ).render(canvas, label, size / 2, anchor: Anchor.center);
   }

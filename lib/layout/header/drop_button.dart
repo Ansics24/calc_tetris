@@ -1,4 +1,4 @@
-import 'package:calc_tetris/theme/game_palette.dart';
+import 'package:calc_tetris/theme/light_theme.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flutter/painting.dart';
@@ -34,13 +34,14 @@ class DropButton extends PositionComponent with TapCallbacks {
     canvas.drawCircle(
       center,
       radius,
-      Paint()..color = _pressed ? GamePalette.goldDark : GamePalette.panel,
+      Paint()
+        ..color = _pressed ? colorScheme.primary : colorScheme.primaryContainer,
     );
     canvas.drawCircle(
       center,
       radius - 1,
       Paint()
-        ..color = GamePalette.copper
+        ..color = colorScheme.primary
         ..style = PaintingStyle.stroke
         ..strokeWidth = 2,
     );
@@ -49,7 +50,7 @@ class DropButton extends PositionComponent with TapCallbacks {
 
   void _renderDoubleArrow(Canvas canvas, Offset center, double halfWidth) {
     final paint = Paint()
-      ..color = GamePalette.gold
+      ..color = colorScheme.onPrimaryContainer
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round
       ..strokeWidth = 3;

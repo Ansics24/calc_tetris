@@ -10,11 +10,7 @@ class ScoreDisplayStyle {
   const ScoreDisplayStyle({
     required this.decoration,
     required this.textStyle,
-    this.labelStyle = const TextStyle(
-      color: Color(0xFFFFF3C4),
-      fontSize: 16,
-      fontWeight: FontWeight.w600,
-    ),
+    required this.labelStyle,
   });
 
   factory ScoreDisplayStyle.fromColorScheme(ColorScheme scheme) =>
@@ -38,30 +34,9 @@ class ScoreDisplayStyle {
         ),
       );
 
-  static const TextStyle standardTextStyle = TextStyle(
-    color: Color(0xFFFFFFFF),
-    fontSize: 30,
-    fontWeight: FontWeight.bold,
-  );
-
-  static const TextStyle standardLabelStyle = TextStyle(
-    color: Color(0xFFB8C4DC),
-    fontSize: 16,
-    fontWeight: FontWeight.w600,
-  );
-
-  static const ScoreDisplayStyle standard = ScoreDisplayStyle(
-    decoration: BoxDecoration(
-      color: Color.fromARGB(200, 20, 16, 16),
-      borderRadius: BorderRadius.all(Radius.circular(12)),
-      border: Border.fromBorderSide(
-        BorderSide(color: Color(0xFFD4AF37), width: 3),
-      ),
-    ),
-    textStyle: TextStyle(
-      color: Color(0xFFFFF3C4),
-      fontSize: 32,
-      fontWeight: FontWeight.bold,
-    ),
+  ScoreDisplayStyle copyWith({BoxDecoration? decoration}) => ScoreDisplayStyle(
+    decoration: decoration ?? this.decoration,
+    textStyle: textStyle,
+    labelStyle: labelStyle,
   );
 }

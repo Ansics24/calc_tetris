@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:calc_tetris/screens/stopgame/dialog_button.dart';
-import 'package:calc_tetris/theme/game_palette.dart';
+import 'package:calc_tetris/theme/light_theme.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flutter/painting.dart';
@@ -30,8 +30,8 @@ class StopGameDialog extends PositionComponent
       anchor: Anchor.center,
       position: Vector2(centerX, centerY - 30),
       textRenderer: TextPaint(
-        style: const TextStyle(
-          color: GamePalette.text,
+        style: TextStyle(
+          color: colorScheme.onSurface,
           fontSize: 22,
           fontWeight: FontWeight.bold,
         ),
@@ -65,7 +65,7 @@ class StopGameDialog extends PositionComponent
   void render(Canvas canvas) {
     canvas.drawRect(
       Rect.fromLTWH(0, 0, size.x, size.y),
-      Paint()..color = const Color(0x99000000),
+      Paint()..color = colorScheme.scrim.withAlpha(0x99),
     );
     final panel = RRect.fromRectAndRadius(
       Rect.fromCenter(
@@ -75,11 +75,11 @@ class StopGameDialog extends PositionComponent
       ),
       const Radius.circular(16),
     );
-    canvas.drawRRect(panel, Paint()..color = GamePalette.panel);
+    canvas.drawRRect(panel, Paint()..color = colorScheme.surfaceContainerHigh);
     canvas.drawRRect(
       panel,
       Paint()
-        ..color = GamePalette.gold
+        ..color = colorScheme.primary
         ..style = PaintingStyle.stroke
         ..strokeWidth = 2,
     );

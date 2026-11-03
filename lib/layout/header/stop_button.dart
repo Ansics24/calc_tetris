@@ -1,4 +1,4 @@
-import 'package:calc_tetris/theme/game_palette.dart';
+import 'package:calc_tetris/theme/light_theme.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flutter/painting.dart';
@@ -37,13 +37,14 @@ class StopButton extends PositionComponent with TapCallbacks {
     canvas.drawCircle(
       center,
       radius,
-      Paint()..color = _pressed ? GamePalette.goldDark : GamePalette.panel,
+      Paint()
+        ..color = _pressed ? colorScheme.primary : colorScheme.primaryContainer,
     );
     canvas.drawCircle(
       center,
       radius - 1,
       Paint()
-        ..color = GamePalette.copper
+        ..color = colorScheme.primary
         ..style = PaintingStyle.stroke
         ..strokeWidth = 2,
     );
@@ -53,7 +54,7 @@ class StopButton extends PositionComponent with TapCallbacks {
         Rect.fromCenter(center: center, width: half * 2, height: half * 2),
         const Radius.circular(3),
       ),
-      Paint()..color = GamePalette.gold,
+      Paint()..color = colorScheme.onPrimaryContainer,
     );
   }
 }

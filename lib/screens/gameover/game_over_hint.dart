@@ -1,3 +1,4 @@
+import 'package:calc_tetris/theme/light_theme.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 
@@ -18,10 +19,10 @@ class GameOverHint extends PositionComponent {
       ),
       const Radius.circular(16),
     );
-    canvas.drawRRect(panel, Paint()..color = Colors.black.withAlpha(200));
+    canvas.drawRRect(panel, Paint()..color = colorScheme.scrim.withAlpha(200));
     TextPaint(
-      style: const TextStyle(
-        color: Colors.white,
+      style: TextStyle(
+        color: colorScheme.onSurface,
         fontSize: 32,
         fontWeight: FontWeight.bold,
       ),

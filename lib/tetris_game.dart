@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:calc_tetris/screens/endless/endless_game.dart';
 import 'package:calc_tetris/screens/welcome/welcome_screen.dart';
-import 'package:calc_tetris/theme/game_palette.dart';
+import 'package:calc_tetris/theme/light_theme.dart';
 import 'package:calc_tetris/theme/welcome_palette.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/foundation.dart';
@@ -16,9 +16,9 @@ class TetrisGame extends FlameGame {
     WelcomePalette.skyTop,
     WelcomePalette.skyBottom,
   ];
-  static const List<Color> _endlessSurround = [
-    GamePalette.panelDeep,
-    GamePalette.panelDeep,
+  static final List<Color> _endlessSurround = [
+    colorScheme.surface,
+    colorScheme.surface,
   ];
 
   /// Colors (top to bottom) for the area around the game, e.g. behind camera

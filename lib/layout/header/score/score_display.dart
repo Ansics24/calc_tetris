@@ -1,5 +1,6 @@
 import 'package:calc_tetris/layout/header/score/count_up_animation.dart';
 import 'package:calc_tetris/layout/header/score/score_display_style.dart';
+import 'package:calc_tetris/theme/light_theme.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/painting.dart';
 
@@ -19,9 +20,10 @@ class ScoreDisplay extends PositionComponent {
     super.size,
     super.position,
     super.anchor,
-    this.style = ScoreDisplayStyle.standard,
+    ScoreDisplayStyle? style,
     double countUpDuration = 1.2,
-  }) : _animation = CountUpAnimation(duration: countUpDuration);
+  }) : style = style ?? ScoreDisplayStyle.fromColorScheme(colorScheme),
+       _animation = CountUpAnimation(duration: countUpDuration);
 
   int get displayedScore => _animation.value;
 

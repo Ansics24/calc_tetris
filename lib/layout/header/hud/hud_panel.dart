@@ -1,15 +1,17 @@
-import 'package:calc_tetris/theme/game_palette.dart';
+import 'package:calc_tetris/theme/light_theme.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/painting.dart';
 
-/// Decoration of a dark panel framed in gold, used by all HUD cards.
-const BoxDecoration hudPanelDecoration = BoxDecoration(
-  color: GamePalette.panel,
-  borderRadius: BorderRadius.all(Radius.circular(14)),
+/// Decoration of a panel framed in the primary color, used by all HUD cards.
+final BoxDecoration hudPanelDecoration = BoxDecoration(
+  color: colorScheme.primaryContainer,
+  borderRadius: const BorderRadius.all(Radius.circular(14)),
   border: Border.fromBorderSide(
-    BorderSide(color: GamePalette.copper, width: 2),
+    BorderSide(color: colorScheme.primary, width: 2),
   ),
-  boxShadow: [BoxShadow(color: Color(0x88000000), blurRadius: 8)],
+  boxShadow: [
+    BoxShadow(color: colorScheme.shadow.withAlpha(0x55), blurRadius: 8),
+  ],
 );
 
 /// A [PositionComponent] that paints [hudPanelDecoration] behind its children.

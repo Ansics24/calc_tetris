@@ -15,7 +15,7 @@ class NextBlockDisplayStyle {
       NextBlockDisplayStyle(
         decoration: hudPanelDecoration,
         labelStyle: TextStyle(
-          color: scheme.onSurface,
+          color: scheme.onPrimaryContainer,
           fontSize: 15,
           fontWeight: FontWeight.w700,
         ),

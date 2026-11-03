@@ -1,6 +1,3 @@
-import 'dart:async';
-import 'dart:math';
-
 import 'package:calc_tetris/block/math/math_single_block_component_factory.dart';
 import 'package:calc_tetris/block/math/scoring/score_keeper.dart';
 import 'package:calc_tetris/block/math/seed/generators/guided_compoundblock_model_generator.dart';
@@ -15,7 +12,6 @@ import 'package:calc_tetris/screens/gameover/game_over_hint.dart';
 import 'package:calc_tetris/screens/gameover/game_over_listener.dart';
 import 'package:calc_tetris/screens/stopgame/stop_game_dialog.dart';
 import 'package:flame/components.dart';
-import 'package:flutter/painting.dart';
 
 class EndlessGame extends PositionComponent implements GameOverListener {
   /// Called when the player confirmed to end the game.
@@ -32,36 +28,6 @@ class EndlessGame extends PositionComponent implements GameOverListener {
       gridContent: _gridContentHolder.call,
     ),
   );
-
-  late final SpriteComponent _background;
-  late final RectangleComponent _backgroundShade;
-
-  @override
-  FutureOr<void> onLoad() async {
-    super.onLoad();
-    _background = SpriteComponent(
-      sprite: await Sprite.load("background_mittelalter.png"),
-      anchor: Anchor.center,
-      priority: -2,
-    );
-    await add(_background);
-    _backgroundShade = RectangleComponent(
-      paint: Paint()..color = const Color(0x66050A18),
-      priority: -1,
-    );
-    await add(_backgroundShade);
-    _fitBackground();
-  }
-
-  /// Scales the background image to cover the whole screen.
-  void _fitBackground() {
-    final imageSize = _background.sprite!.srcSize;
-    _background.scale = Vector2.all(
-      max(size.x / imageSize.x, size.y / imageSize.y),
-    );
-    _background.position = size / 2;
-    _backgroundShade.size = size;
-  }
 
   @override
   void onMount() {
@@ -124,9 +90,6 @@ class EndlessGame extends PositionComponent implements GameOverListener {
     super.onGameResize(size);
     this.size = size;
     _gameDimensions.availableSize = size;
-    if (isLoaded) {
-      _fitBackground();
-    }
   }
 
   GameDimensions get gameDimensions => _gameDimensions;

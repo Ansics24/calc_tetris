@@ -3,7 +3,7 @@ import 'package:calc_tetris/screens/endless/endless_game.dart';
 import 'package:calc_tetris/screens/stopgame/stop_game_dialog.dart';
 import 'package:calc_tetris/screens/welcome/welcome_screen.dart';
 import 'package:calc_tetris/tetris_game.dart';
-import 'package:calc_tetris/theme/game_palette.dart';
+import 'package:calc_tetris/theme/light_theme.dart';
 import 'package:calc_tetris/theme/welcome_palette.dart';
 import 'package:flame/game.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -144,12 +144,14 @@ void main() {
       ]);
     });
 
-    testWidgets('is dark while playing the endless game', (tester) async {
+    testWidgets('is the theme surface while playing the endless game', (
+      tester,
+    ) async {
       final game = await _pumpEndlessGame(tester);
 
       expect(game.surroundColors.value, [
-        GamePalette.panelDeep,
-        GamePalette.panelDeep,
+        colorScheme.surface,
+        colorScheme.surface,
       ]);
     });
 

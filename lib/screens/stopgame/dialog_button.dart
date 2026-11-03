@@ -1,4 +1,4 @@
-import 'package:calc_tetris/theme/game_palette.dart';
+import 'package:calc_tetris/theme/light_theme.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flutter/painting.dart';
@@ -42,18 +42,19 @@ class DialogButton extends PositionComponent with TapCallbacks {
     );
     canvas.drawRRect(
       shape,
-      Paint()..color = _pressed ? GamePalette.goldDark : GamePalette.panelDeep,
+      Paint()
+        ..color = _pressed ? colorScheme.primary : colorScheme.primaryContainer,
     );
     canvas.drawRRect(
       shape,
       Paint()
-        ..color = GamePalette.gold
+        ..color = colorScheme.primary
         ..style = PaintingStyle.stroke
         ..strokeWidth = 2,
     );
     TextPaint(
-      style: const TextStyle(
-        color: GamePalette.text,
+      style: TextStyle(
+        color: colorScheme.onPrimaryContainer,
         fontSize: 20,
         fontWeight: FontWeight.bold,
       ),

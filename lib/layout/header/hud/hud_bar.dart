@@ -4,6 +4,7 @@ import 'package:calc_tetris/block/math/scoring/score_keeper.dart';
 import 'package:calc_tetris/layout/header/hud/hud_panel.dart';
 import 'package:calc_tetris/layout/header/score/score_display.dart';
 import 'package:calc_tetris/layout/header/score/score_display_style.dart';
+import 'package:calc_tetris/theme/light_theme.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/painting.dart';
 
@@ -19,11 +20,9 @@ class HudBar extends PositionComponent with HudPanelBackground {
   FutureOr<void> onLoad() {
     _scoreDisplay = ScoreDisplay(
       size: size,
-      style: const ScoreDisplayStyle(
-        decoration: BoxDecoration(),
-        textStyle: ScoreDisplayStyle.standardTextStyle,
-        labelStyle: ScoreDisplayStyle.standardLabelStyle,
-      ),
+      style: ScoreDisplayStyle.fromColorScheme(
+        colorScheme,
+      ).copyWith(decoration: const BoxDecoration()),
     )..score = _scoreKeeper.total;
     add(_scoreDisplay);
     _scoreSubscription = _scoreKeeper.totals.listen(

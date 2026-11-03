@@ -1,8 +1,8 @@
-import 'package:calc_tetris/theme/game_palette.dart';
+import 'package:calc_tetris/theme/light_theme.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/painting.dart';
 
-/// Dark board with a copper frame, drawn behind the cells and blocks.
+/// Board with a primary colored frame, drawn behind the cells and blocks.
 class GridFrame extends PositionComponent {
   static const double frameWidth = 6;
 
@@ -11,16 +11,16 @@ class GridFrame extends PositionComponent {
   @override
   void render(Canvas canvas) {
     final board = Rect.fromLTWH(0, 0, size.x, size.y);
-    canvas.drawRect(board, Paint()..color = GamePalette.boardFill);
+    canvas.drawRect(board, Paint()..color = colorScheme.surface);
     canvas.drawRect(
       board.inflate(frameWidth / 2),
       Paint()
         ..style = PaintingStyle.stroke
         ..strokeWidth = frameWidth
-        ..shader = const LinearGradient(
+        ..shader = LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [GamePalette.copper, GamePalette.goldDark],
+          colors: [colorScheme.primary, colorScheme.secondary],
         ).createShader(board.inflate(frameWidth)),
     );
   }

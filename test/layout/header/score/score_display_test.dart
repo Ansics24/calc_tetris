@@ -34,6 +34,7 @@ void main() {
           borderRadius: BorderRadius.circular(8),
         ),
         textStyle: const TextStyle(fontSize: 24, color: Colors.white),
+        labelStyle: const TextStyle(fontSize: 12, color: Colors.white),
       ),
     )..score = 10;
     display.update(2.0);

@@ -18,6 +18,47 @@ void main() {
     expect(_screen().size, Vector2(400, 800));
   });
 
+  group('mascot', () {
+    test('is drawn above the sky but behind the cards', () {
+      final screen = _screen();
+
+      expect(screen.mascot.priority, greaterThan(screen.background.priority));
+      expect(screen.mascot.priority, lessThan(screen.cards.first.priority));
+    });
+
+    test('reaches behind the first card', () {
+      final screen = _screen();
+
+      expect(
+        screen.mascot.toRect().overlaps(screen.cards.first.toRect()),
+        isTrue,
+      );
+    });
+
+    test('still shows its lower part below the cards', () {
+      final screen = _screen();
+      final card = screen.cards.first;
+
+      expect(
+        screen.mascot.y + screen.mascot.height,
+        greaterThan(card.y + card.height),
+      );
+    });
+
+    test('stays inside the screen horizontally', () {
+      final screen = _screen();
+
+      expect(screen.mascot.x, greaterThanOrEqualTo(0));
+      expect(screen.mascot.x + screen.mascot.width, lessThanOrEqualTo(400));
+    });
+
+    test('stays inside the screen vertically', () {
+      final screen = _screen();
+
+      expect(screen.mascot.y + screen.mascot.height, lessThanOrEqualTo(800));
+    });
+  });
+
   test('places the logo placeholder above the cards', () {
     final screen = _screen();
 

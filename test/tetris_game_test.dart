@@ -12,7 +12,7 @@ Future<TetrisGame> _pumpGame(WidgetTester tester) async {
   final game = TetrisGame();
   await tester.pumpWidget(GameWidget(game: game));
   await tester.pump();
-  await tester.pump();
+  await _settle(tester);
   // Text boxes redraw delayed; let those timers run out.
   await tester.pump(const Duration(seconds: 1));
   return game;
@@ -27,7 +27,7 @@ EndlessGame _endlessGame(TetrisGame game) =>
 StopGameDialog? _stopDialog(TetrisGame game) =>
     game.descendants().whereType<StopGameDialog>().firstOrNull;
 
-/// Lets the loading of the endless game (background image) finish.
+/// Lets the loading of images (e.g. the mascot) finish.
 Future<void> _settle(WidgetTester tester) async {
   await tester.pump();
   await tester.runAsync(

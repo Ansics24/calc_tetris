@@ -9,7 +9,7 @@ class SkyBackground extends PositionComponent {
   final Color topColor = WelcomePalette.skyTop;
   final Color bottomColor = WelcomePalette.skyBottom;
 
-  SkyBackground({super.size, super.position}) : super(priority: -1);
+  SkyBackground({super.size, super.position}) : super(priority: -2);
 
   @override
   void render(Canvas canvas) {

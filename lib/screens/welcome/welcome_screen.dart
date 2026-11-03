@@ -1,4 +1,5 @@
 import 'package:calc_tetris/screens/welcome/game_mode_card.dart';
+import 'package:calc_tetris/screens/welcome/mascot.dart';
 import 'package:calc_tetris/screens/welcome/sky_background.dart';
 import 'package:calc_tetris/theme/welcome_palette.dart';
 import 'package:flame/components.dart';
@@ -12,6 +13,8 @@ class WelcomeScreen extends PositionComponent {
   static const double _gap = 16;
 
   final SkyBackground background = SkyBackground();
+
+  final Mascot mascot = Mascot();
 
   final RectangleComponent logoPlaceholder = _LogoPlaceholder();
 
@@ -33,6 +36,7 @@ class WelcomeScreen extends PositionComponent {
   @override
   Future<void> onLoad() async {
     await add(background);
+    await add(mascot);
     await add(logoPlaceholder);
     await addAll(cards);
   }
@@ -45,6 +49,7 @@ class WelcomeScreen extends PositionComponent {
   }
 
   void _layout() {
+    _layoutMascot();
     background
       ..position = Vector2.zero()
       ..size = size.clone();
@@ -59,6 +64,21 @@ class WelcomeScreen extends PositionComponent {
         ..position = Vector2(_margin, y);
       y += _cardHeight + _gap;
     }
+  }
+
+  /// Puts the mascot to the right, below the cards, with its upper part hidden
+  /// behind the last card.
+  void _layoutMascot() {
+    final cardsBottom =
+        _margin +
+        _logoHeight +
+        _gap +
+        cards.length * (_cardHeight + _gap) -
+        _gap;
+    final mascotSize = width * 0.85;
+    mascot
+      ..size = Vector2.all(mascotSize)
+      ..position = Vector2(width - mascotSize, cardsBottom - mascotSize * 0.4);
   }
 }
 

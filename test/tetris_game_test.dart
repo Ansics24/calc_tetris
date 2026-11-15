@@ -1,3 +1,5 @@
+import 'package:calc_tetris/grid/grid.dart';
+import 'package:calc_tetris/layout/header/confirm_button.dart';
 import 'package:calc_tetris/layout/header/stop_button.dart';
 import 'package:calc_tetris/screens/endless/endless_game.dart';
 import 'package:calc_tetris/screens/stopgame/stop_game_dialog.dart';
@@ -133,6 +135,86 @@ void main() {
     });
   });
 
+  group('confirming the current block', () {
+    /// Grid positions of the single blocks that landed in the grid.
+    List<Vector2> landedPositions(TetrisGame game) {
+      final content = game
+          .descendants()
+          .whereType<EndlessGame>()
+          .first
+          .gridContent;
+      return [
+        for (var x = 0; x < content.length; x++)
+          for (var y = 0; y < content[x].length; y++)
+            if (content[x][y] != null) Vector2(x * 1.0, y * 1.0),
+      ];
+    }
+
+    Future<void> pressConfirm(WidgetTester tester, TetrisGame game) async {
+      game.descendants().whereType<ConfirmButton>().first.press();
+      // landing animation, then the strategy runs and the next block spawns
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
+      await tester.pump(const Duration(seconds: 1));
+    }
+
+    testWidgets('puts the block into the grid where it stands', (
+      tester,
+    ) async {
+      final game = await _pumpGameWithArrivedBlock(tester);
+      final controller = game.descendants().whereType<Grid>().first.controller;
+      final start = controller.currentBlockGridPosition!;
+      final block = controller.currentBlock!;
+      final expected = block
+          .getLocalSingleBlockPositions()
+          .map((p) => Vector2(start.x + p.x * 1.0, start.y + p.y * 1.0))
+          .toSet();
+      expect(landedPositions(game), isEmpty);
+
+      await pressConfirm(tester, game);
+
+      expect(landedPositions(game).toSet(), expected);
+    });
+
+    testWidgets('does not let the block fall down first', (tester) async {
+      final game = await _pumpGameWithArrivedBlock(tester);
+      final controller = game.descendants().whereType<Grid>().first.controller;
+      controller.moveBlockDown();
+      final row = controller.currentBlockGridPosition!.y;
+
+      await pressConfirm(tester, game);
+
+      expect(row, 1);
+      expect(landedPositions(game).every((p) => p.y == row), isTrue);
+    });
+
+    testWidgets('spawns the next block afterwards', (tester) async {
+      final game = await _pumpGameWithArrivedBlock(tester);
+      final controller = game.descendants().whereType<Grid>().first.controller;
+      final first = controller.currentBlock;
+
+      await pressConfirm(tester, game);
+
+      expect(controller.currentBlock, isNotNull);
+      expect(controller.currentBlock, isNot(same(first)));
+    });
+
+    testWidgets('ignores a second press while the block is landing', (
+      tester,
+    ) async {
+      final game = await _pumpGameWithArrivedBlock(tester);
+      final button = game.descendants().whereType<ConfirmButton>().first;
+
+      button.press();
+      button.press();
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
+      await tester.pump(const Duration(seconds: 1));
+
+      expect(tester.takeException(), isNull);
+    });
+  });
+
   group('surrounding color', () {
     testWidgets('is the sky while on the welcome route', (tester) async {
       final game = await _pumpGame(tester);
@@ -167,4 +249,12 @@ void main() {
       ]);
     });
   });
+}
+
+/// Pumps the endless game and waits until the first block has flown in from
+/// the preview, as it can not be used before.
+Future<TetrisGame> _pumpGameWithArrivedBlock(WidgetTester tester) async {
+  final game = await _pumpEndlessGame(tester);
+  await tester.pump(const Duration(seconds: 1));
+  return game;
 }

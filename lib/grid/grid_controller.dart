@@ -40,6 +40,9 @@ class GridController implements PositionInGridAware {
   /// not be controlled and does not fall until it has arrived.
   bool _spawning = false;
 
+  /// True from the moment the block starts to land until it is in the grid.
+  bool _landing = false;
+
   /// True once the upcoming block found no room. The controller does nothing
   /// from then on.
   bool _gameOver = false;
@@ -59,25 +62,6 @@ class GridController implements PositionInGridAware {
     this._gameOverListener,
   }) : _startColumnChooser = startColumnChooser ?? RandomStartColumnChooser(),
        _positionInGridFinder = PositionInGridFinder(gridModel: _gridModel);
-
-  void moveBlockDownByOne() {
-    if (currentBlock == null) {
-      return;
-    }
-
-    final anyTargetBlocked = anyTargetPositionBlockedFromCurrentLocation(
-      (vector) => vector.addY(1),
-    );
-
-    if (anyTargetBlocked) {
-      dev.log('Cant move block down. Its blocked');
-      landCurrentBlockOnGrid();
-      return;
-    }
-
-    currentBlockGridPosition = currentBlockGridPosition!.addY(1);
-    onPositionUpdated();
-  }
 
   bool anyTargetPositionBlockedFromCurrentLocation(
     IntVector2 Function(IntVector2) posMapper,
@@ -116,6 +100,10 @@ class GridController implements PositionInGridAware {
   }
 
   void landCurrentBlockOnGrid() {
+    if (_landing) {
+      return;
+    }
+    _landing = true;
     currentBlock!.add(
       ScaleEffect.by(
         Vector2.all(1.3),
@@ -139,6 +127,7 @@ class GridController implements PositionInGridAware {
     currentBlock!.removeFromParent();
     currentBlock = null;
     currentBlockGridPosition = null;
+    _landing = false;
 
     final executor = SolutionStrategyExecutor(
       solutionStrategy: _solutionStrategy,
@@ -176,7 +165,6 @@ class GridController implements PositionInGridAware {
     if (spawnOrigin == null) {
       block.position = targetPosition;
       _grid.add(block);
-      _startFalling(block);
       return;
     }
 
@@ -192,10 +180,7 @@ class GridController implements PositionInGridAware {
       MoveToEffect(
         targetPosition,
         spawnController,
-        onComplete: () {
-          _spawning = false;
-          _startFalling(block);
-        },
+        onComplete: () => _spawning = false,
       ),
     );
     block.add(
@@ -205,21 +190,6 @@ class GridController implements PositionInGridAware {
           duration: spawnDurationInSeconds,
           curve: Curves.easeInOutCubic,
         ),
-      ),
-    );
-  }
-
-  void _startFalling(CompoundBlockComponent block) {
-    if (!blockFallsDownAutomatically) {
-      return;
-    }
-    block.add(
-      TimerComponent(
-        period: durationForBlockToMoveDownInSeconds,
-        repeat: true,
-        onTick: () {
-          moveBlockDownByOne();
-        },
       ),
     );
   }
@@ -277,8 +247,8 @@ class GridController implements PositionInGridAware {
     onPositionUpdated(withAnimation: false);
   }
 
-  /// Moves the block one cell down on player request. Unlike
-  /// [moveBlockDownByOne] a blocked block does not land.
+  /// Moves the block one cell down on player request. A blocked
+  /// block does not land.
   void moveBlockDown() => _moveBlockVertically(1);
 
   void moveBlockUp() => _moveBlockVertically(-1);
@@ -295,6 +265,14 @@ class GridController implements PositionInGridAware {
     }
     currentBlockGridPosition = currentBlockGridPosition!.addY(deltaY);
     onPositionUpdated(withAnimation: false);
+  }
+
+  /// Puts the block into the grid exactly where it stands now.
+  void placeCurrentBlock() {
+    if (_spawning || currentBlock == null) {
+      return;
+    }
+    landCurrentBlockOnGrid();
   }
 
   void fallBlockDown() {

@@ -3,6 +3,7 @@ import 'package:calc_tetris/block/math/scoring/score_keeper.dart';
 import 'package:calc_tetris/block/math/seed/generators/guided_compoundblock_model_generator.dart';
 import 'package:calc_tetris/block/math/seed/next_block_planner.dart';
 import 'package:calc_tetris/block/math/valid_equation_solution_strategy.dart';
+import 'package:calc_tetris/block/model/single_block.dart';
 import 'package:calc_tetris/grid/queries/grid_content_holder.dart';
 import 'package:calc_tetris/layout/board/block_board.dart';
 import 'package:calc_tetris/layout/footer/footer.dart';
@@ -38,7 +39,7 @@ class EndlessGame extends PositionComponent implements GameOverListener {
     add(background);
     late final BlockBoard board;
     final header = Header(
-      onDropPressed: () => board.dropCurrentBlock(),
+      onConfirmPressed: () => board.placeCurrentBlock(),
       onStopPressed: _askToStop,
       scoreKeeper: _scoreKeeper,
       nextBlockPlanner: _nextBlockPlanner,
@@ -98,4 +99,7 @@ class EndlessGame extends PositionComponent implements GameOverListener {
   }
 
   GameDimensions get gameDimensions => _gameDimensions;
+
+  /// The blocks that landed in the grid, indexed `[x][y]`.
+  List<List<SingleBlock?>> get gridContent => _gridContentHolder.call();
 }

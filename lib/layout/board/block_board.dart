@@ -49,6 +49,7 @@ class BlockBoard extends PositionComponent {
     add(_grid);
   }
 
-  /// Lets the block currently controlled by the player fall down.
-  void dropCurrentBlock() => _grid.controller.fallBlockDown();
+  /// Puts the block currently controlled by the player into the grid where it
+  /// stands.
+  void placeCurrentBlock() => _grid.controller.placeCurrentBlock();
 }

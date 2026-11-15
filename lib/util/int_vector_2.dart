@@ -4,7 +4,10 @@ class IntVector2 {
 
   IntVector2(this._x, this._y);
 
+  IntVector2.square(this._x) : _y = _x;
+
   int get x => _x;
+
   int get y => _y;
 
   IntVector2 addY(int y) {

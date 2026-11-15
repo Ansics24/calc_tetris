@@ -4,12 +4,15 @@ import 'package:flame/events.dart';
 import 'package:flutter/painting.dart';
 
 /// Round button in the header that triggers [onPressed] when tapped. Paints a
-/// double arrow pointing down.
-class DropButton extends PositionComponent with TapCallbacks {
+/// checkmark.
+class ConfirmButton extends PositionComponent with TapCallbacks {
   final void Function() onPressed;
   bool _pressed = false;
 
-  DropButton({required this.onPressed, super.size, super.position});
+  ConfirmButton({required this.onPressed, super.size, super.position});
+
+  /// Reports that the player wants to confirm the block's position.
+  void press() => onPressed();
 
   @override
   void onTapDown(TapDownEvent event) {
@@ -19,7 +22,7 @@ class DropButton extends PositionComponent with TapCallbacks {
   @override
   void onTapUp(TapUpEvent event) {
     _pressed = false;
-    onPressed();
+    press();
   }
 
   @override
@@ -45,24 +48,21 @@ class DropButton extends PositionComponent with TapCallbacks {
         ..style = PaintingStyle.stroke
         ..strokeWidth = 2,
     );
-    _renderDoubleArrow(canvas, center, radius * 0.45);
+    _renderCheckmark(canvas, center, radius * 0.45);
   }
 
-  void _renderDoubleArrow(Canvas canvas, Offset center, double halfWidth) {
-    final paint = Paint()
-      ..color = colorScheme.tertiary
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round
-      ..strokeWidth = 3;
-    for (final offsetY in [-halfWidth * 0.5, halfWidth * 0.5]) {
-      final tip = center.translate(0, offsetY + halfWidth * 0.4);
-      canvas.drawPath(
-        Path()
-          ..moveTo(tip.dx - halfWidth, tip.dy - halfWidth * 0.8)
-          ..lineTo(tip.dx, tip.dy)
-          ..lineTo(tip.dx + halfWidth, tip.dy - halfWidth * 0.8),
-        paint,
-      );
-    }
+  void _renderCheckmark(Canvas canvas, Offset center, double half) {
+    canvas.drawPath(
+      Path()
+        ..moveTo(center.dx - half, center.dy + half * 0.1)
+        ..lineTo(center.dx - half * 0.3, center.dy + half * 0.8)
+        ..lineTo(center.dx + half, center.dy - half * 0.7),
+      Paint()
+        ..color = colorScheme.tertiary
+        ..style = PaintingStyle.stroke
+        ..strokeCap = StrokeCap.round
+        ..strokeJoin = StrokeJoin.round
+        ..strokeWidth = 4,
+    );
   }
 }

@@ -8,28 +8,28 @@ void main() {
   final layout = HeaderLayout(Vector2(400, 200));
 
   group('stop button', () {
-    test('is as big as the drop button', () {
-      expect(layout.stopButtonSize, layout.dropButtonSize);
+    test('is as big as the confirm button', () {
+      expect(layout.stopButtonSize, layout.confirmButtonSize);
     });
 
-    test('is centered horizontally like the drop button', () {
-      expect(layout.stopButtonPosition.x, layout.dropButtonPosition.x);
+    test('is centered horizontally like the confirm button', () {
+      expect(layout.stopButtonPosition.x, layout.confirmButtonPosition.x);
     });
 
-    test('sits above the drop button and inside the header', () {
+    test('sits above the confirm button and inside the header', () {
       expect(layout.stopButtonPosition.y, greaterThanOrEqualTo(0));
       expect(
         layout.stopButtonPosition.y + layout.stopButtonSize.y,
-        lessThan(layout.dropButtonPosition.y),
+        lessThan(layout.confirmButtonPosition.y),
       );
     });
 
-    test('keeps a gap to the drop button of at least half a button', () {
+    test('keeps a gap to the confirm button of at least half a button', () {
       final gap =
-          layout.dropButtonPosition.y -
+          layout.confirmButtonPosition.y -
           (layout.stopButtonPosition.y + layout.stopButtonSize.y);
 
-      expect(gap, greaterThanOrEqualTo(layout.dropButtonSize.y / 2));
+      expect(gap, greaterThanOrEqualTo(layout.confirmButtonSize.y / 2));
     });
   });
 }
@@ -48,7 +48,7 @@ void _buttonsStayWithinCardsTests() {
       final cardTop = layout.scoreCardPosition.y;
       final cardBottom = cardTop + layout.cardSize.y;
       final buttons = {
-        'drop': (layout.dropButtonPosition, layout.dropButtonSize),
+        'confirm': (layout.confirmButtonPosition, layout.confirmButtonSize),
         'stop': (layout.stopButtonPosition, layout.stopButtonSize),
       };
 
@@ -66,7 +66,8 @@ void _buttonsStayWithinCardsTests() {
 
       test('the two buttons are centered vertically between the cards', () {
         final top = layout.stopButtonPosition.y;
-        final bottom = layout.dropButtonPosition.y + layout.dropButtonSize.y;
+        final bottom =
+            layout.confirmButtonPosition.y + layout.confirmButtonSize.y;
 
         expect(top - cardTop, closeTo(cardBottom - bottom, 0.001));
       });

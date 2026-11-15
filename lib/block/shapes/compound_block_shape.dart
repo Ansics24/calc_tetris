@@ -1,59 +1,6 @@
 import 'package:calc_tetris/block/model/null_block.dart';
 import 'package:calc_tetris/block/model/single_block.dart';
 
-List<List<SingleBlock?>> generateB2x2() {
-  return List.generate(2, (_) => List.generate(2, (_) => null));
-}
-
-List<List<SingleBlock?>> generateT3x2() {
-  return List.generate(
-    3,
-    (x) => List.generate(3, (y) {
-      if (y == 0) {
-        return null;
-      } else if (y == 2) {
-        return NullBlock();
-      }
-      return x == 1 ? null : NullBlock();
-    }),
-  );
-}
-
-List<List<SingleBlock?>> generateLLeft3x2() {
-  return List.generate(
-    3,
-    (x) => List.generate(3, (y) {
-      if (y == 0) {
-        return null;
-      } else if (y == 2) {
-        return NullBlock();
-      }
-      return x == 0 ? null : NullBlock();
-    }),
-  );
-}
-
-List<List<SingleBlock?>> generateLRight3x2() {
-  return List.generate(
-    3,
-    (x) => List.generate(3, (y) {
-      if (y == 0) {
-        return null;
-      } else if (y == 2) {
-        return NullBlock();
-      }
-      return x == 2 ? null : NullBlock();
-    }),
-  );
-}
-
-List<List<SingleBlock?>> generateI4x1() {
-  return List.generate(
-    4,
-    (_) => List.generate(4, (y) => y == 1 ? null : NullBlock()),
-  );
-}
-
 List<List<SingleBlock?>> generateI3x1() {
   return List.generate(
     3,
@@ -116,14 +63,7 @@ List<List<SingleBlock?>> generate1x1() {
 }
 
 enum CompoundBlockShape {
-  b2x2(generateEmptyFunction: generateB2x2, enabled: false),
-  t3x2(generateEmptyFunction: generateT3x2, enabled: true),
-  lLeft3x2(generateEmptyFunction: generateLLeft3x2, enabled: false),
-  lRight3x2(generateEmptyFunction: generateLRight3x2, enabled: false),
-  i4x1(generateEmptyFunction: generateI4x1, enabled: true),
-  i3x1(generateEmptyFunction: generateI3x1, enabled: true),
-  s3x2r(generateEmptyFunction: generateS3x2Right, enabled: true),
-  s3x2l(generateEmptyFunction: generateS3x2Left, enabled: true),
+  i3x1(generateEmptyFunction: generateI3x1),
   l2x2l(generateEmptyFunction: generatel2x2Left),
   l2x2r(generateEmptyFunction: generatel2x2Right),
   i2x1(generateEmptyFunction: generateI2x1),

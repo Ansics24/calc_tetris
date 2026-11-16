@@ -1,1 +1,0 @@
-class GridIndexOutOfBoundsException implements Exception {}

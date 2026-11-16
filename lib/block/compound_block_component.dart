@@ -162,17 +162,4 @@ class CompoundBlockComponent extends BlockComponent with TapCallbacks {
     }
     return maxIndexFound - minIndexFound + 1;
   }
-
-  int getLowestLocalBlockYPosition(int columnIndex) {
-    var maxIndexFound = 0;
-    for (var y = 0; y < model[columnIndex].length; y++) {
-      if (model[columnIndex][y] is NullBlock) {
-        continue;
-      }
-      if (y > maxIndexFound) {
-        maxIndexFound = y;
-      }
-    }
-    return maxIndexFound;
-  }
 }

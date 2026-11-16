@@ -158,34 +158,40 @@ void main() {
       await tester.pump(const Duration(seconds: 1));
     }
 
+    /// The grid cells the controlled block covers right now.
+    Set<Vector2> coveredCells(Grid grid) {
+      final start = grid.controller.currentBlockGridPosition!;
+      return grid.controller.currentBlock!
+          .getLocalSingleBlockPositions()
+          .map((p) => Vector2(start.x + p.x * 1.0, start.y + p.y * 1.0))
+          .toSet();
+    }
+
+    // A landed block may solve an equation right away and disappear, so the
+    // landed cells can only be a subset of the cells the block covered.
     testWidgets('puts the block into the grid where it stands', (
       tester,
     ) async {
       final game = await _pumpGameWithArrivedBlock(tester);
-      final controller = game.descendants().whereType<Grid>().first.controller;
-      final start = controller.currentBlockGridPosition!;
-      final block = controller.currentBlock!;
-      final expected = block
-          .getLocalSingleBlockPositions()
-          .map((p) => Vector2(start.x + p.x * 1.0, start.y + p.y * 1.0))
-          .toSet();
+      final grid = game.descendants().whereType<Grid>().first;
+      final expected = coveredCells(grid);
       expect(landedPositions(game), isEmpty);
 
       await pressConfirm(tester, game);
 
-      expect(landedPositions(game).toSet(), expected);
+      expect(expected.containsAll(landedPositions(game)), isTrue);
     });
 
     testWidgets('does not let the block fall down first', (tester) async {
       final game = await _pumpGameWithArrivedBlock(tester);
-      final controller = game.descendants().whereType<Grid>().first.controller;
-      controller.moveBlockDown();
-      final row = controller.currentBlockGridPosition!.y;
+      final grid = game.descendants().whereType<Grid>().first;
+      grid.controller.moveBlockDown();
+      final expected = coveredCells(grid);
+      expect(grid.controller.currentBlockGridPosition!.y, 1);
 
       await pressConfirm(tester, game);
 
-      expect(row, 1);
-      expect(landedPositions(game).every((p) => p.y == row), isTrue);
+      expect(expected.containsAll(landedPositions(game)), isTrue);
     });
 
     testWidgets('spawns the next block afterwards', (tester) async {

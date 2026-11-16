@@ -150,7 +150,6 @@ void main() {
     setUp.controller.spawnNextBlock();
     setUp.controller.moveBlockLeft();
     setUp.controller.moveBlockRight();
-    setUp.controller.fallBlockDown();
 
     expect(listener.calls, 1);
     expect(setUp.controller.currentBlock, isNull);

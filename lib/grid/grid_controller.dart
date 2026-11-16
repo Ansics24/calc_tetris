@@ -15,7 +15,6 @@ import 'package:calc_tetris/grid/grid.dart';
 import 'package:calc_tetris/grid/grid_behaviour_settings.dart';
 import 'package:calc_tetris/grid/model/grid_model.dart';
 import 'package:calc_tetris/grid/queries/position_in_grid_aware.dart';
-import 'package:calc_tetris/grid/queries/position_in_grid_finder.dart';
 import 'package:calc_tetris/screens/gameover/game_over_listener.dart';
 import 'package:calc_tetris/util/int_vector_2.dart';
 import 'package:flame/components.dart';
@@ -24,7 +23,6 @@ import 'package:flutter/animation.dart';
 
 class GridController implements PositionInGridAware {
   final GridModel _gridModel;
-  final PositionInGridFinder _positionInGridFinder;
   final Grid _grid;
   final SolutionStrategy _solutionStrategy;
   final SingleBlockComponentFactory _singleBlockComponentFactory;
@@ -37,7 +35,7 @@ class GridController implements PositionInGridAware {
   IntVector2? currentBlockGridPosition;
 
   /// True while the new block flies from the preview into the grid. It can
-  /// not be controlled and does not fall until it has arrived.
+  /// not be controlled until it has arrived.
   bool _spawning = false;
 
   /// True from the moment the block starts to land until it is in the grid.
@@ -60,8 +58,7 @@ class GridController implements PositionInGridAware {
     this._spawnOrigin,
     this._scoreRecorder,
     this._gameOverListener,
-  }) : _startColumnChooser = startColumnChooser ?? RandomStartColumnChooser(),
-       _positionInGridFinder = PositionInGridFinder(gridModel: _gridModel);
+  }) : _startColumnChooser = startColumnChooser ?? RandomStartColumnChooser();
 
   bool anyTargetPositionBlockedFromCurrentLocation(
     IntVector2 Function(IntVector2) posMapper,
@@ -272,25 +269,6 @@ class GridController implements PositionInGridAware {
     if (_spawning || currentBlock == null) {
       return;
     }
-    landCurrentBlockOnGrid();
-  }
-
-  void fallBlockDown() {
-    if (_spawning || currentBlock == null) {
-      return;
-    }
-    var lowestPossiblePosition = _positionInGridFinder
-        .findLowestPossiblePosition(
-          currentBlockGridPosition!,
-          currentBlock!,
-        );
-    if (lowestPossiblePosition == null) {
-      dev.log("Block can't fall down. It's blocked");
-      return;
-    }
-    dev.log("Block falls down to $lowestPossiblePosition");
-    currentBlockGridPosition = lowestPossiblePosition;
-    onPositionUpdated();
     landCurrentBlockOnGrid();
   }
 

@@ -29,3 +29,4 @@
 `lib/block/math` math blocks forming equations (main game logic for now)
 `grid` contains the grid and behavours how blocks behave in grids
 `screens` root components the user can navigate through
+`persistence` Persistence of the game containing the datamodel in the `model` subfolder

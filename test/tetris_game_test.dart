@@ -1,6 +1,9 @@
 import 'package:calc_tetris/grid/grid.dart';
 import 'package:calc_tetris/layout/header/confirm_button.dart';
 import 'package:calc_tetris/layout/header/stop_button.dart';
+import 'package:calc_tetris/persistence/database_service.dart';
+import 'package:calc_tetris/persistence/in_memory_database_service.dart';
+import 'package:calc_tetris/persistence/model/game_mode_name.dart';
 import 'package:calc_tetris/screens/endless/endless_game.dart';
 import 'package:calc_tetris/screens/stopgame/stop_game_dialog.dart';
 import 'package:calc_tetris/screens/welcome/welcome_screen.dart';
@@ -9,8 +12,11 @@ import 'package:calc_tetris/theme/welcome_palette.dart';
 import 'package:flame/game.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-Future<TetrisGame> _pumpGame(WidgetTester tester) async {
-  final game = TetrisGame();
+Future<TetrisGame> _pumpGame(
+  WidgetTester tester, {
+  DatabaseService? databaseService,
+}) async {
+  final game = TetrisGame(databaseService: databaseService);
   await tester.pumpWidget(GameWidget(game: game));
   await tester.pump();
   await _settle(tester);
@@ -39,8 +45,11 @@ Future<void> _settle(WidgetTester tester) async {
   }
 }
 
-Future<TetrisGame> _pumpEndlessGame(WidgetTester tester) async {
-  final game = await _pumpGame(tester);
+Future<TetrisGame> _pumpEndlessGame(
+  WidgetTester tester, {
+  DatabaseService? databaseService,
+}) async {
+  final game = await _pumpGame(tester, databaseService: databaseService);
   _welcomeScreen(game).cards.first.press();
   await _settle(tester);
   return game;
@@ -69,6 +78,33 @@ void main() {
 
     expect(game.router.currentRoute.name, TetrisGame.endlessRoute);
     expect(game.descendants().whereType<WelcomeScreen>(), isEmpty);
+  });
+
+  group('high score on the welcome screen', () {
+    testWidgets('shows the stored high score of the endless game', (
+      tester,
+    ) async {
+      final service = InMemoryDatabaseService();
+      await service.saveHighscoreIfHigher(GameModeName.endless, 4711);
+
+      final game = await _pumpGame(tester, databaseService: service);
+
+      expect(_welcomeScreen(game).cards.first.highScoreValue.text, '4.711');
+    });
+
+    testWidgets('shows a new high score after coming back from the game', (
+      tester,
+    ) async {
+      final service = InMemoryDatabaseService();
+      final game = await _pumpEndlessGame(tester, databaseService: service);
+      await service.saveHighscoreIfHigher(GameModeName.endless, 80);
+      await _pressStop(tester, game);
+
+      _stopDialog(game)!.yesButton.press();
+      await _settle(tester);
+
+      expect(_welcomeScreen(game).cards.first.highScoreValue.text, '80');
+    });
   });
 
   group('stopping the endless game', () {

@@ -38,6 +38,23 @@ void main() {
     expect(card.highScoreValue.text, '12.540');
   });
 
+  test('shows a new high score after it was updated', () {
+    final card = _card(highScore: 7);
+
+    card.updateHighScore(12540);
+
+    expect(card.highScoreValue.text, '12.540');
+  });
+
+  test('stays centered below its label after the high score was updated', () {
+    final card = _card(highScore: 7);
+    final x = card.highScoreValue.x;
+
+    card.updateHighScore(12540);
+
+    expect(card.highScoreValue.x, x);
+  });
+
   test('shows the high score on the right of the title', () {
     final card = _card(highScore: 7);
 

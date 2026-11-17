@@ -1,12 +1,29 @@
+import 'package:calc_tetris/persistence/database_service.dart';
+import 'package:calc_tetris/persistence/in_memory_database_service.dart';
+import 'package:calc_tetris/persistence/model/game_mode.dart';
+import 'package:calc_tetris/persistence/model/game_mode_name.dart';
 import 'package:calc_tetris/screens/welcome/welcome_screen.dart';
 import 'package:flame/components.dart';
 import 'package:test/test.dart';
 
-WelcomeScreen _screen({int endlessHighScore = 0, void Function()? onStart}) {
+WelcomeScreen _screen({
+  DatabaseService? databaseService,
+  void Function()? onStart,
+}) {
   return WelcomeScreen(
-    endlessHighScore: endlessHighScore,
+    databaseService: databaseService,
     onStartEndless: onStart,
   )..onGameResize(Vector2(400, 800));
+}
+
+class _FailingDatabaseService implements DatabaseService {
+  @override
+  Future<GameMode?> loadGameMode(GameModeName name) =>
+      Future.error(StateError('database is broken'));
+
+  @override
+  Future<bool> saveHighscoreIfHigher(GameModeName name, int score) =>
+      Future.error(StateError('database is broken'));
 }
 
 void main() {
@@ -80,10 +97,46 @@ void main() {
     expect(screen.cards.first.descriptionText.text, startsWith('Lorem ipsum'));
   });
 
-  test('shows the high score of the endless game', () {
-    final screen = _screen(endlessHighScore: 4711);
+  group('high score of the endless game', () {
+    test('is 0 before it was loaded', () {
+      final screen = _screen();
 
-    expect(screen.cards.first.highScoreValue.text, '4.711');
+      expect(screen.cards.first.highScoreValue.text, '0');
+    });
+
+    test('is loaded from the database service', () async {
+      final service = InMemoryDatabaseService();
+      await service.saveHighscoreIfHigher(GameModeName.endless, 4711);
+      final screen = _screen(databaseService: service);
+
+      await screen.loadHighScores();
+
+      expect(screen.cards.first.highScoreValue.text, '4.711');
+    });
+
+    test('stays 0 when nothing was saved yet', () async {
+      final screen = _screen(databaseService: InMemoryDatabaseService());
+
+      await screen.loadHighScores();
+
+      expect(screen.cards.first.highScoreValue.text, '0');
+    });
+
+    test('stays 0 when the database can not be read', () async {
+      final screen = _screen(databaseService: _FailingDatabaseService());
+
+      await screen.loadHighScores();
+
+      expect(screen.cards.first.highScoreValue.text, '0');
+    });
+
+    test('works without a given database service', () async {
+      final screen = _screen();
+
+      await screen.loadHighScores();
+
+      expect(screen.cards.first.highScoreValue.text, '0');
+    });
   });
 
   test('reports a press on the endless game card', () {

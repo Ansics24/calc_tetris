@@ -1,3 +1,8 @@
+import 'dart:developer' as dev;
+
+import 'package:calc_tetris/persistence/database_service.dart';
+import 'package:calc_tetris/persistence/in_memory_database_service.dart';
+import 'package:calc_tetris/persistence/model/game_mode_name.dart';
 import 'package:calc_tetris/screens/welcome/game_mode_card.dart';
 import 'package:calc_tetris/screens/welcome/mascot.dart';
 import 'package:calc_tetris/screens/welcome/sky_background.dart';
@@ -34,12 +39,17 @@ class WelcomeScreen extends PositionComponent {
 
   late final List<GameModeCard> cards;
 
-  WelcomeScreen({int endlessHighScore = 0, void Function()? onStartEndless}) {
+  final DatabaseService _databaseService;
+
+  WelcomeScreen({
+    DatabaseService? databaseService,
+    void Function()? onStartEndless,
+  }) : _databaseService = databaseService ?? InMemoryDatabaseService() {
     cards = [
       GameModeCard(
         title: 'Endlosspiel',
         description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-        highScore: endlessHighScore,
+        highScore: 0,
         size: Vector2(0, _cardHeight),
         onTap: onStartEndless,
       ),
@@ -53,6 +63,22 @@ class WelcomeScreen extends PositionComponent {
     await add(mascot);
     await add(title);
     await addAll(cards);
+    await loadHighScores();
+  }
+
+  /// Shows the stored high scores on the cards. A card keeps showing 0 if
+  /// there is none or the database can not be read.
+  Future<void> loadHighScores() async {
+    try {
+      final endless = await _databaseService.loadGameMode(
+        GameModeName.endless,
+      );
+      if (endless != null) {
+        cards.first.updateHighScore(endless.highscore);
+      }
+    } catch (error) {
+      dev.log('Could not load the high scores: $error');
+    }
   }
 
   @override

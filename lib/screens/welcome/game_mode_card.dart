@@ -20,7 +20,7 @@ class GameModeCard extends PositionComponent with TapCallbacks {
 
   final String title;
   final String description;
-  final int highScore;
+  int highScore;
   final void Function()? onTap;
 
   GameModeCard({
@@ -76,6 +76,13 @@ class GameModeCard extends PositionComponent with TapCallbacks {
   /// Resizes the card and arranges its content for the new [newSize].
   void resizeTo(Vector2 newSize) {
     size = newSize;
+    _layout();
+  }
+
+  /// Shows a new high score.
+  void updateHighScore(int newHighScore) {
+    highScore = newHighScore;
+    highScoreValue.text = formatGermanNumber(newHighScore);
     _layout();
   }
 

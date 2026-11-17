@@ -1,3 +1,5 @@
+import 'dart:developer' as dev;
+
 import 'package:calc_tetris/block/math/math_single_block_component_factory.dart';
 import 'package:calc_tetris/block/math/scoring/score_keeper.dart';
 import 'package:calc_tetris/block/math/seed/generators/guided_compoundblock_model_generator.dart';
@@ -9,6 +11,9 @@ import 'package:calc_tetris/layout/board/block_board.dart';
 import 'package:calc_tetris/layout/footer/footer.dart';
 import 'package:calc_tetris/layout/game_dimensions.dart';
 import 'package:calc_tetris/layout/header/header.dart';
+import 'package:calc_tetris/persistence/database_service.dart';
+import 'package:calc_tetris/persistence/in_memory_database_service.dart';
+import 'package:calc_tetris/persistence/model/game_mode_name.dart';
 import 'package:calc_tetris/screens/gameover/game_over_hint.dart';
 import 'package:calc_tetris/screens/gameover/game_over_listener.dart';
 import 'package:calc_tetris/screens/stopgame/stop_game_dialog.dart';
@@ -19,13 +24,20 @@ class EndlessGame extends PositionComponent implements GameOverListener {
   /// Called when the player confirmed to end the game.
   final void Function()? onQuit;
 
-  EndlessGame({this.onQuit});
+  final DatabaseService _databaseService;
+  final ScoreKeeper _scoreKeeper;
+
+  EndlessGame({
+    this.onQuit,
+    DatabaseService? databaseService,
+    ScoreKeeper? scoreKeeper,
+  }) : _databaseService = databaseService ?? InMemoryDatabaseService(),
+       _scoreKeeper = scoreKeeper ?? ScoreKeeper();
 
   final SkyBackground background = SkyBackground();
 
   StopGameDialog? _stopDialog;
   final GameDimensions _gameDimensions = GameDimensions();
-  final ScoreKeeper _scoreKeeper = ScoreKeeper();
   final GridContentHolder _gridContentHolder = GridContentHolder();
   late final NextBlockPlanner _nextBlockPlanner = NextBlockPlanner(
     generator: GuidedCompoundblockModelGenerator(
@@ -75,7 +87,8 @@ class EndlessGame extends PositionComponent implements GameOverListener {
     if (_stopDialog != null) return;
     final dialog = StopGameDialog(
       size: size,
-      onConfirm: () => onQuit?.call(),
+      // Quits only after saving, so the welcome screen shows the new score.
+      onConfirm: () => _saveScore().then((_) => onQuit?.call()),
       onCancel: _closeStopDialog,
     );
     _stopDialog = dialog;
@@ -88,7 +101,21 @@ class EndlessGame extends PositionComponent implements GameOverListener {
   }
 
   @override
-  void onGameOver() => add(GameOverHint(size: size));
+  void onGameOver() {
+    _saveScore();
+    add(GameOverHint(size: size));
+  }
+
+  /// Stores the reached score if it beats the highscore. A failing database
+  /// must not disturb the game.
+  Future<void> _saveScore() {
+    return _databaseService
+        .saveHighscoreIfHigher(GameModeName.endless, _scoreKeeper.total)
+        .then<void>((_) {})
+        .catchError((Object error) {
+          dev.log('Could not save the score: $error');
+        });
+  }
 
   @override
   void onGameResize(Vector2 size) {

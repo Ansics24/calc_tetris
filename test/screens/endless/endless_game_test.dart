@@ -1,3 +1,6 @@
+import 'package:calc_tetris/block/math/scoring/score_keeper.dart';
+import 'package:calc_tetris/persistence/in_memory_database_service.dart';
+import 'package:calc_tetris/persistence/model/game_mode_name.dart';
 import 'package:calc_tetris/screens/endless/endless_game.dart';
 import 'package:calc_tetris/screens/gameover/game_over_listener.dart';
 import 'package:calc_tetris/screens/welcome/sky_background.dart';
@@ -36,4 +39,48 @@ void main() {
       expect(game.background.priority, lessThan(0));
     },
   );
+
+  group('saving the score when the game is over', () {
+    test('saves the reached score', () async {
+      final service = InMemoryDatabaseService();
+      final game = EndlessGame(
+        databaseService: service,
+        scoreKeeper: ScoreKeeper()..add(70),
+      );
+
+      game.onGameOver();
+
+      final mode = await service.loadGameMode(GameModeName.endless);
+      expect(mode!.highscore, 70);
+    });
+
+    test('keeps a higher stored highscore', () async {
+      final service = InMemoryDatabaseService();
+      await service.saveHighscoreIfHigher(GameModeName.endless, 200);
+      final game = EndlessGame(
+        databaseService: service,
+        scoreKeeper: ScoreKeeper()..add(70),
+      );
+
+      game.onGameOver();
+
+      final mode = await service.loadGameMode(GameModeName.endless);
+      expect(mode!.highscore, 200);
+    });
+
+    test('saves nothing for a game without points', () async {
+      final service = InMemoryDatabaseService();
+      final game = EndlessGame(databaseService: service);
+
+      game.onGameOver();
+
+      expect(await service.loadGameMode(GameModeName.endless), isNull);
+    });
+
+    test('works without a given database service', () {
+      final game = EndlessGame(scoreKeeper: ScoreKeeper()..add(70));
+
+      expect(game.onGameOver, returnsNormally);
+    });
+  });
 }

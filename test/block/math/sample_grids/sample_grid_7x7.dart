@@ -1,14 +1,8 @@
-import 'package:calc_tetris/block/math/math_equals_block_component.dart';
-import 'package:calc_tetris/block/math/math_number_block_component.dart';
-import 'package:calc_tetris/block/math/math_operant_block_component.dart';
-import 'package:calc_tetris/block/math/model/math_equals_block.dart';
-import 'package:calc_tetris/block/math/model/math_number_block.dart';
-import 'package:calc_tetris/block/math/model/math_operant_block.dart';
-import 'package:calc_tetris/block/math/model/math_operant_type.dart';
 import 'package:calc_tetris/grid/model/grid_model.dart';
 import 'package:calc_tetris/util/int_vector_2.dart';
 
 import '../../../support/test_grid.dart';
+import 'sample_grid_support.dart';
 
 /// Gridmodel looks like this
 ///
@@ -33,70 +27,32 @@ GridModel get7x7SampleModel() {
     gridComponent: newTestGrid(IntVector2(0, 6)),
   );
   gridModel.cellSize = 0;
-  _addNumber(IntVector2(6, 0), 7, gridModel);
-  _addNumber(IntVector2(1, 1), 2, gridModel);
-  _addNumber(IntVector2(0, 2), 5, gridModel);
-  _addNumber(IntVector2(2, 2), 3, gridModel);
-  _addNumber(IntVector2(4, 2), 8, gridModel);
-  _addNumber(IntVector2(6, 2), 1, gridModel);
-  _addNumber(IntVector2(1, 3), 4, gridModel);
-  _addNumber(IntVector2(6, 4), 9, gridModel);
-  _addNumber(IntVector2(1, 5), 6, gridModel);
-  _addNumber(IntVector2(2, 6), 9, gridModel);
-  _addNumber(IntVector2(4, 6), 4, gridModel);
-  _addNumber(IntVector2(6, 6), 6, gridModel);
+  addNumber(IntVector2(6, 0), 7, gridModel);
+  addNumber(IntVector2(1, 1), 2, gridModel);
+  addNumber(IntVector2(0, 2), 5, gridModel);
+  addNumber(IntVector2(2, 2), 3, gridModel);
+  addNumber(IntVector2(4, 2), 8, gridModel);
+  addNumber(IntVector2(6, 2), 1, gridModel);
+  addNumber(IntVector2(1, 3), 4, gridModel);
+  addNumber(IntVector2(6, 4), 9, gridModel);
+  addNumber(IntVector2(1, 5), 6, gridModel);
+  addNumber(IntVector2(2, 6), 9, gridModel);
+  addNumber(IntVector2(4, 6), 4, gridModel);
+  addNumber(IntVector2(6, 6), 6, gridModel);
 
-  _addPlus(IntVector2(6, 1), gridModel);
-  _addPlus(IntVector2(1, 2), gridModel);
-  _addPlus(IntVector2(2, 5), gridModel);
+  addPlus(IntVector2(6, 1), gridModel);
+  addPlus(IntVector2(1, 2), gridModel);
+  addPlus(IntVector2(2, 5), gridModel);
 
-  _addMinus(IntVector2(3, 6), gridModel);
-  _addMinus(IntVector2(2, 3), gridModel);
+  addMinus(IntVector2(3, 6), gridModel);
+  addMinus(IntVector2(2, 3), gridModel);
 
-  _addEquals(IntVector2(0, 3), gridModel);
-  _addEquals(IntVector2(3, 2), gridModel);
-  _addEquals(IntVector2(6, 3), gridModel);
-  _addEquals(IntVector2(1, 4), gridModel);
-  _addEquals(IntVector2(5, 6), gridModel);
-  _addEquals(IntVector2(6, 5), gridModel);
+  addEquals(IntVector2(0, 3), gridModel);
+  addEquals(IntVector2(3, 2), gridModel);
+  addEquals(IntVector2(6, 3), gridModel);
+  addEquals(IntVector2(1, 4), gridModel);
+  addEquals(IntVector2(5, 6), gridModel);
+  addEquals(IntVector2(6, 5), gridModel);
 
   return gridModel;
-}
-
-void _addNumber(IntVector2 position, int number, GridModel gridModel) {
-  gridModel.addSingleBlock(
-    "pid${position.x}_${position.y}",
-    MathNumberBlockComponent(model: MathNumberBlock(number: number)),
-    position,
-  );
-}
-
-void _addPlus(IntVector2 position, GridModel gridModel) {
-  gridModel.addSingleBlock(
-    "pid${position.x}_${position.y}",
-    MathOperantBlockComponent(
-      model: MathOperantBlock(type: MathOperandType.plus),
-    ),
-    position,
-  );
-}
-
-void _addMinus(IntVector2 position, GridModel gridModel) {
-  gridModel.addSingleBlock(
-    "pid${position.x}_${position.y}",
-    MathOperantBlockComponent(
-      model: MathOperantBlock(type: MathOperandType.minus),
-    ),
-    position,
-  );
-}
-
-void _addEquals(IntVector2 position, GridModel gridModel) {
-  gridModel.addSingleBlock(
-    "pid${position.x}_${position.y}",
-    MathEqualsBlockComponent(
-      model: MathEqualsBlock(),
-    ),
-    position,
-  );
 }

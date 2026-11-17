@@ -185,9 +185,15 @@ void main() {
     testWidgets('does not let the block fall down first', (tester) async {
       final game = await _pumpGameWithArrivedBlock(tester);
       final grid = game.descendants().whereType<Grid>().first;
+      // the block may spawn at any border, so it can be blocked in one
+      // direction
+      final startY = grid.controller.currentBlockGridPosition!.y;
       grid.controller.moveBlockDown();
+      if (grid.controller.currentBlockGridPosition!.y == startY) {
+        grid.controller.moveBlockUp();
+      }
       final expected = coveredCells(grid);
-      expect(grid.controller.currentBlockGridPosition!.y, 1);
+      expect(grid.controller.currentBlockGridPosition!.y, isNot(startY));
 
       await pressConfirm(tester, game);
 

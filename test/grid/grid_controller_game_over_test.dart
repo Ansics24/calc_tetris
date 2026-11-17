@@ -4,7 +4,7 @@ import 'package:calc_tetris/block/math/model/math_number_block.dart';
 import 'package:calc_tetris/block/math/model/math_single_block.dart';
 import 'package:calc_tetris/block/math/seed/compoundblock_model_generator.dart';
 import 'package:calc_tetris/block/math/seed/next_block_planner.dart';
-import 'package:calc_tetris/block/math/seed/start_column_chooser.dart';
+import 'package:calc_tetris/block/math/seed/spawn_position_chooser.dart';
 import 'package:calc_tetris/block/solution_strategy.dart';
 import 'package:calc_tetris/grid/grid_controller.dart';
 import 'package:calc_tetris/grid/model/grid_model.dart';
@@ -31,17 +31,13 @@ class _RecordingListener implements GameOverListener {
 }
 
 /// Always picks the first of the offered candidates.
-class _FirstCandidateChooser implements StartColumnChooser {
-  List<int>? lastCandidates;
+class _FirstCandidateChooser implements SpawnPositionChooser {
+  List<IntVector2>? lastCandidates;
 
   @override
-  int choose({
-    required int blockWidth,
-    required int gridWidth,
-    List<int>? candidates,
-  }) {
+  IntVector2 choose(List<IntVector2> candidates) {
     lastCandidates = candidates;
-    return candidates!.first;
+    return candidates.first;
   }
 }
 
@@ -55,7 +51,7 @@ class _UnusedStrategy implements SolutionStrategy {
 ({GridController controller, GridModel model, NextBlockPlanner planner})
 _setUp({
   required GameOverListener listener,
-  required StartColumnChooser chooser,
+  required SpawnPositionChooser chooser,
   Set<(int, int)> blocked = const {},
 }) {
   final size = IntVector2(5, 5);
@@ -75,40 +71,69 @@ _setUp({
     solutionStrategy: _UnusedStrategy(),
     nextBlockPlanner: planner,
     singleBlockComponentFactory: newComponentFromBlockModel,
-    startColumnChooser: chooser,
+    spawnPositionChooser: chooser,
     gameOverListener: listener,
   );
   return (controller: controller, model: model, planner: planner);
 }
 
+/// Blocks the columns 1 and 3 completely. A 2 wide block fits nowhere then,
+/// as the remaining free columns 0, 2 and 4 are never adjacent.
+Set<(int, int)> _noRoomForTwoWideBlock() => {
+  for (var y = 0; y < 5; y++) ...[(1, y), (3, y)],
+};
+
 void main() {
-  test('offers only columns whose top cells are free as candidates', () {
+  test('offers border positions other than the top as candidates', () {
     final chooser = _FirstCandidateChooser();
     final setUp = _setUp(
       listener: _RecordingListener(),
       chooser: chooser,
-      blocked: {(0, 0), (3, 0)},
+      blocked: {for (var x = 0; x < 5; x++) (x, 0)},
     );
 
     setUp.controller.spawnNextBlock();
 
-    // block is 2 wide: c=0 hits (0,0), c=2 and c=3 hit (3,0)
-    expect(chooser.lastCandidates, [1]);
-    expect(setUp.controller.currentBlockGridPosition!.x, 1);
+    final candidates = chooser.lastCandidates!;
+    expect(candidates, isNotEmpty);
+    expect(candidates.every((p) => p.y > 0), isTrue);
+    expect(setUp.controller.currentBlock, isNotNull);
   });
 
-  test('does not signal game over while a free column exists', () {
+  test('spawns inside the grid when the whole border is blocked', () {
     final listener = _RecordingListener();
     final setUp = _setUp(
       listener: listener,
       chooser: _FirstCandidateChooser(),
-      blocked: {(0, 0)},
+      blocked: {
+        for (var x = 0; x < 5; x++)
+          for (var y = 0; y < 5; y++)
+            if (x == 0 || y == 0 || x == 4 || y == 4) (x, y),
+      },
     );
 
     setUp.controller.spawnNextBlock();
 
+    final position = setUp.controller.currentBlockGridPosition!;
+    expect(position.x, inInclusiveRange(1, 2));
+    expect(position.y, inInclusiveRange(1, 3));
     expect(listener.calls, 0);
-    expect(setUp.controller.currentBlock, isNotNull);
+  });
+
+  test('does not signal game over while any position is free', () {
+    final listener = _RecordingListener();
+    final setUp = _setUp(
+      listener: listener,
+      chooser: _FirstCandidateChooser(),
+      blocked: _noRoomForTwoWideBlock()..remove((3, 2)),
+    );
+
+    setUp.controller.spawnNextBlock();
+
+    // (3,2) is free now, so the block fits at the right border
+    expect(listener.calls, 0);
+    expect(setUp.controller.currentBlockGridPosition!.x, 3);
+    expect(setUp.controller.currentBlockGridPosition!.y, 2);
   });
 
   test('signals game over once when the block fits nowhere', () {
@@ -116,7 +141,7 @@ void main() {
     final setUp = _setUp(
       listener: listener,
       chooser: _FirstCandidateChooser(),
-      blocked: {(1, 0), (3, 0)},
+      blocked: _noRoomForTwoWideBlock(),
     );
 
     setUp.controller.spawnNextBlock();
@@ -129,7 +154,7 @@ void main() {
     final setUp = _setUp(
       listener: _RecordingListener(),
       chooser: _FirstCandidateChooser(),
-      blocked: {(1, 0), (3, 0)},
+      blocked: _noRoomForTwoWideBlock(),
     );
     final upcoming = setUp.planner.upcoming;
 
@@ -143,7 +168,7 @@ void main() {
     final setUp = _setUp(
       listener: listener,
       chooser: _FirstCandidateChooser(),
-      blocked: {(1, 0), (3, 0)},
+      blocked: _noRoomForTwoWideBlock(),
     );
     setUp.controller.spawnNextBlock();
 
@@ -160,7 +185,7 @@ void main() {
     final controller = _setUp(
       listener: _RecordingListener(),
       chooser: _FirstCandidateChooser(),
-      blocked: {(1, 0), (3, 0)},
+      blocked: _noRoomForTwoWideBlock(),
     ).controller;
 
     expect(controller.spawnNextBlock, returnsNormally);

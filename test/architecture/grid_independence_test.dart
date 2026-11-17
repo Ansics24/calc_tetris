@@ -9,8 +9,8 @@ const _allowedGenericFiles = {
   'seed/next_block_planner.dart',
   'seed/compoundblock_model_generator.dart',
   'seed/spawn_origin.dart',
-  'seed/free_start_columns.dart',
-  'seed/start_column_chooser.dart',
+  'seed/free_spawn_positions.dart',
+  'seed/spawn_position_chooser.dart',
 };
 
 void main() {

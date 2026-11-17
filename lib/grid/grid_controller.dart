@@ -3,10 +3,10 @@ import 'dart:developer' as dev;
 import 'package:calc_tetris/block/block_component.dart';
 import 'package:calc_tetris/block/compound_block_component.dart';
 import 'package:calc_tetris/block/math/scoring/score_keeper.dart';
-import 'package:calc_tetris/block/math/seed/free_start_columns.dart';
+import 'package:calc_tetris/block/math/seed/free_spawn_positions.dart';
 import 'package:calc_tetris/block/math/seed/next_block_planner.dart';
 import 'package:calc_tetris/block/math/seed/spawn_origin.dart';
-import 'package:calc_tetris/block/math/seed/start_column_chooser.dart';
+import 'package:calc_tetris/block/math/seed/spawn_position_chooser.dart';
 import 'package:calc_tetris/block/single_block_component_factory.dart';
 import 'package:calc_tetris/block/solution_strategy.dart';
 import 'package:calc_tetris/block/solution_strategy_executor.dart';
@@ -29,7 +29,7 @@ class GridController implements PositionInGridAware {
   final ScoreRecorder? _scoreRecorder;
 
   final NextBlockPlanner _nextBlockPlanner;
-  final StartColumnChooser _startColumnChooser;
+  final SpawnPositionChooser _spawnPositionChooser;
   final SpawnOrigin? _spawnOrigin;
   CompoundBlockComponent? currentBlock;
   IntVector2? currentBlockGridPosition;
@@ -54,11 +54,12 @@ class GridController implements PositionInGridAware {
     required this._solutionStrategy,
     required this._nextBlockPlanner,
     required this._singleBlockComponentFactory,
-    StartColumnChooser? startColumnChooser,
+    SpawnPositionChooser? spawnPositionChooser,
     this._spawnOrigin,
     this._scoreRecorder,
     this._gameOverListener,
-  }) : _startColumnChooser = startColumnChooser ?? RandomStartColumnChooser();
+  }) : _spawnPositionChooser =
+           spawnPositionChooser ?? RandomSpawnPositionChooser();
 
   bool anyTargetPositionBlockedFromCurrentLocation(
     IntVector2 Function(IntVector2) posMapper,
@@ -191,29 +192,25 @@ class GridController implements PositionInGridAware {
     );
   }
 
-  /// Takes the planned block, puts it into a random column at the top of the
-  /// grid and plans the next one.
+  /// Takes the planned block, puts it at a free position (preferably at a
+  /// border of the grid) and plans the next one. The game is over when the
+  /// block fits nowhere.
   void spawnNextBlock() {
     if (_gameOver) {
       return;
     }
-    final freeColumns = freeStartColumns(
+    final freePositions = freeSpawnPositions(
       block: _nextBlockPlanner.upcoming,
-      gridWidth: _gridModel.model.length,
-      isBlocked: _gridModel.isPositionBlocked,
+      gridModel: _gridModel,
     );
-    if (freeColumns.isEmpty) {
+    if (freePositions.isEmpty) {
       _gameOver = true;
       _gameOverListener?.onGameOver();
       return;
     }
 
     final blockModel = _nextBlockPlanner.take();
-    final column = _startColumnChooser.choose(
-      blockWidth: blockModel.length,
-      gridWidth: _gridModel.model.length,
-      candidates: freeColumns,
-    );
+    final startPosition = _spawnPositionChooser.choose(freePositions);
 
     startNewBlock(
       CompoundBlockComponent(
@@ -222,7 +219,7 @@ class GridController implements PositionInGridAware {
         positionInGridAware: this,
         singleBlockComponentFactory: _singleBlockComponentFactory,
       ),
-      IntVector2(column, 0),
+      startPosition,
     );
   }
 

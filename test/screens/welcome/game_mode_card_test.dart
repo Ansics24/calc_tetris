@@ -36,7 +36,7 @@ void main() {
   test('has an image placeholder on the left of the texts', () {
     final card = _card();
 
-    expect(card.imagePlaceholder.x, lessThan(card.titleText.x));
+    expect(card.image.x, lessThan(card.titleText.x));
   });
 
   test('shows the high score with german thousands separator', () {
@@ -159,7 +159,7 @@ void _verticalLayoutTests() {
   group('vertical layout', () {
     test('centers the image placeholder vertically', () {
       final card = _card();
-      final image = card.imagePlaceholder;
+      final image = card.image;
 
       expect(image.y + image.height / 2, card.height / 2);
     });
@@ -227,12 +227,6 @@ void _friendlyLookTests() {
 
     test('has strongly rounded corners', () {
       expect(GameModeCard.cornerRadius, greaterThanOrEqualTo(20));
-    });
-
-    test('fills the image placeholder with a warm color', () {
-      final paint = _card().imagePlaceholder.paint;
-
-      expect(paint.color.toARGB32(), WelcomePalette.imageFill.toARGB32());
     });
 
     test('paints a light card', () async {

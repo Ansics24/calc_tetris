@@ -22,6 +22,9 @@ class GameModeCard extends PositionComponent with TapCallbacks {
 
   final String title;
   final String description;
+
+  /// Name of the image in the image assets, e.g. `trophy.png`.
+  final String? imageName;
   int highScore;
   final void Function()? onTap;
 
@@ -32,6 +35,7 @@ class GameModeCard extends PositionComponent with TapCallbacks {
     required this.title,
     required this.description,
     required this.highScore,
+    this.imageName,
     required Vector2 size,
     this.onTap,
     String? secondaryLabel,
@@ -43,9 +47,9 @@ class GameModeCard extends PositionComponent with TapCallbacks {
     _layout();
   }
 
-  late final RectangleComponent imagePlaceholder = RectangleComponent(
+  /// The picture of the game mode, shown once [imageName] is loaded.
+  late final SpriteComponent image = SpriteComponent(
     size: Vector2.all(_imageSize),
-    paint: Paint()..color = WelcomePalette.imageFill,
   );
 
   late final TextComponent titleText = TextComponent(
@@ -102,7 +106,7 @@ class GameModeCard extends PositionComponent with TapCallbacks {
   void _layout() {
     final textX = _padding * 2 + _imageSize;
     final scoreRight = width - _padding;
-    imagePlaceholder.position = Vector2(_padding, (height - _imageSize) / 2);
+    image.position = Vector2(_padding, (height - _imageSize) / 2);
     titleText.position = Vector2(textX, _padding);
     descriptionText.position = Vector2(textX, _padding + _descriptionTop);
     descriptionText.boxConfig = TextBoxConfig(
@@ -130,8 +134,12 @@ class GameModeCard extends PositionComponent with TapCallbacks {
 
   @override
   Future<void> onLoad() async {
+    final name = imageName;
+    if (name != null) {
+      image.sprite = await Sprite.load(name);
+    }
     await addAll([
-      imagePlaceholder,
+      image,
       titleText,
       descriptionText,
       highScoreLabel,

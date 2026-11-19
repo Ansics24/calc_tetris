@@ -98,7 +98,7 @@ void main() {
     expect(screen.cards.first.titleText.text, 'Endlosspiel');
     expect(
       screen.cards.first.descriptionText.text,
-      'Löse Gleichungen, sammle Punkte und spiele, so lange du kannst.',
+      WelcomeScreen.endlessDescription,
     );
   });
 

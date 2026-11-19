@@ -66,6 +66,7 @@ flutter:
   assets:
     - assets/images/background_mittelalter.png
     - assets/images/mascot.png
+    - assets/images/trophy.png
 
   fonts:
     - family: Fredoka

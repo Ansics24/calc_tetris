@@ -16,11 +16,11 @@ import 'package:flutter/painting.dart';
 class WelcomeScreen extends PositionComponent {
   static const String gameName = 'Magic Blocks';
   static const String endlessDescription =
-      'Löse Gleichungen, sammle Punkte und spiele, so lange du kannst.';
+      'Löse Gleichungen, sammle Punkte und verbessere deinen persönlichen Highscore.';
 
   static const double _margin = 16;
   static const double _titleHeight = 140;
-  static const double _cardHeight = 150;
+  static const double _cardHeight = 170;
   static const double _gap = 16;
 
   final SkyBackground background = SkyBackground();
@@ -53,6 +53,7 @@ class WelcomeScreen extends PositionComponent {
         title: 'Endlosspiel',
         description: endlessDescription,
         highScore: 0,
+        imageName: 'trophy.png',
         size: Vector2(0, _cardHeight),
         onTap: onStartEndless,
         secondaryLabel: 'Tutorial',

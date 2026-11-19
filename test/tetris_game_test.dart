@@ -37,10 +37,12 @@ StopGameDialog? _stopDialog(TetrisGame game) =>
 /// Lets the loading of images (e.g. the mascot) finish.
 Future<void> _settle(WidgetTester tester) async {
   await tester.pump();
-  await tester.runAsync(
-    () => Future<void>.delayed(const Duration(milliseconds: 500)),
-  );
-  for (var i = 0; i < 5; i++) {
+  // Images (e.g. mascot and trophy) are loaded one after another, so real time
+  // has to pass between the frames.
+  for (var i = 0; i < 12; i++) {
+    await tester.runAsync(
+      () => Future<void>.delayed(const Duration(milliseconds: 100)),
+    );
     await tester.pump(const Duration(milliseconds: 100));
   }
 }

@@ -16,6 +16,9 @@ class HudBar extends PositionComponent with HudPanelBackground {
 
   HudBar({required this._scoreKeeper, super.size, super.position});
 
+  /// True while the shown score is still counting up to the real one.
+  bool get isCountingUp => _scoreDisplay.isCountingUp;
+
   @override
   FutureOr<void> onLoad() {
     _scoreDisplay = ScoreDisplay(

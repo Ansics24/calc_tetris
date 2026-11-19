@@ -13,6 +13,7 @@ import 'package:calc_tetris/block/solution_strategy_executor.dart';
 import 'package:calc_tetris/block/solution_strategy_singlerun_result.dart';
 import 'package:calc_tetris/grid/grid.dart';
 import 'package:calc_tetris/grid/grid_behaviour_settings.dart';
+import 'package:calc_tetris/grid/grid_round_listener.dart';
 import 'package:calc_tetris/grid/model/grid_model.dart';
 import 'package:calc_tetris/grid/queries/position_in_grid_aware.dart';
 import 'package:calc_tetris/screens/gameover/game_over_listener.dart';
@@ -45,6 +46,11 @@ class GridController implements PositionInGridAware {
   /// from then on.
   bool _gameOver = false;
   final GameOverListener? _gameOverListener;
+  final GridRoundListener? _roundListener;
+  final bool _spawnNextBlockAfterRound;
+
+  /// Points earned since the last block landed.
+  int _roundPoints = 0;
 
   bool get isGameOver => _gameOver;
 
@@ -58,6 +64,8 @@ class GridController implements PositionInGridAware {
     this._spawnOrigin,
     this._scoreRecorder,
     this._gameOverListener,
+    this._roundListener,
+    this._spawnNextBlockAfterRound = true,
   }) : _spawnPositionChooser =
            spawnPositionChooser ?? RandomSpawnPositionChooser();
 
@@ -141,12 +149,18 @@ class GridController implements PositionInGridAware {
 
   void onStrategyResult(SolutionStrategySinglerunResult result) async {
     dev.log("Got result from solution strategy executor: $result");
+    _roundPoints += result.pointsEarned;
     _scoreRecorder?.add(result.pointsEarned);
   }
 
   void onStrategyDone() {
     dev.log("Solution strategy executor done");
-    spawnNextBlock();
+    final points = _roundPoints;
+    _roundPoints = 0;
+    _roundListener?.onRoundFinished(points);
+    if (_spawnNextBlockAfterRound) {
+      spawnNextBlock();
+    }
   }
 
   void startNewBlock(

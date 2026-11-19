@@ -9,10 +9,12 @@ import 'package:test/test.dart';
 WelcomeScreen _screen({
   DatabaseService? databaseService,
   void Function()? onStart,
+  void Function()? onStartTutorial,
 }) {
   return WelcomeScreen(
     databaseService: databaseService,
     onStartEndless: onStart,
+    onStartTutorial: onStartTutorial,
   )..onGameResize(Vector2(400, 800));
 }
 
@@ -89,12 +91,62 @@ void main() {
     expect(card.x * 2 + card.width, 400);
   });
 
-  test('shows the endless game card with lorem ipsum description', () {
+  test('shows the endless game card with a describing text', () {
     final screen = _screen();
 
     expect(screen.cards, hasLength(1));
     expect(screen.cards.first.titleText.text, 'Endlosspiel');
-    expect(screen.cards.first.descriptionText.text, startsWith('Lorem ipsum'));
+    expect(
+      screen.cards.first.descriptionText.text,
+      'Löse Gleichungen, sammle Punkte und spiele, so lange du kannst.',
+    );
+  });
+
+  group('tutorial button', () {
+    test('sits on the endless game card, there is no card of its own', () {
+      final screen = _screen();
+
+      expect(screen.cards, hasLength(1));
+      expect(screen.cards.first.secondaryButton, isNotNull);
+      expect(screen.cards.first.secondaryButton!.label, 'Tutorial');
+    });
+
+    test('reports a press of the button as start of the tutorial', () {
+      var tutorial = 0;
+      var endless = 0;
+      final screen = _screen(
+        onStart: () => endless++,
+        onStartTutorial: () => tutorial++,
+      );
+
+      screen.cards.first.secondaryButton!.press();
+
+      expect(tutorial, 1);
+      expect(endless, 0);
+    });
+
+    test('does not disturb the press on the rest of the card', () {
+      var tutorial = 0;
+      var endless = 0;
+      final screen = _screen(
+        onStart: () => endless++,
+        onStartTutorial: () => tutorial++,
+      );
+
+      screen.cards.first.press();
+
+      expect(endless, 1);
+      expect(tutorial, 0);
+    });
+
+    test('stays inside the card', () {
+      final card = _screen().cards.first;
+      final button = card.secondaryButton!;
+
+      expect(button.x, greaterThanOrEqualTo(0));
+      expect(button.x + button.width, lessThanOrEqualTo(card.width));
+      expect(button.y + button.height, lessThanOrEqualTo(card.height));
+    });
   });
 
   group('high score of the endless game', () {

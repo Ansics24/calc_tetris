@@ -3,9 +3,12 @@ import 'dart:async';
 import 'package:calc_tetris/block/math/scoring/score_keeper.dart';
 import 'package:calc_tetris/block/math/seed/next_block_planner.dart';
 import 'package:calc_tetris/block/math/seed/spawn_origin.dart';
+import 'package:calc_tetris/block/math/seed/spawn_position_chooser.dart';
+import 'package:calc_tetris/block/model/single_block.dart';
 import 'package:calc_tetris/block/single_block_component_factory.dart';
 import 'package:calc_tetris/block/solution_strategy.dart';
 import 'package:calc_tetris/grid/grid.dart';
+import 'package:calc_tetris/grid/grid_round_listener.dart';
 import 'package:calc_tetris/grid/queries/grid_content_holder.dart';
 import 'package:calc_tetris/layout/game_dimensions.dart';
 import 'package:calc_tetris/screens/gameover/game_over_listener.dart';
@@ -19,6 +22,10 @@ class BlockBoard extends PositionComponent {
   final SpawnOrigin? _spawnOrigin;
   final GridContentHolder? _gridContentHolder;
   final GameOverListener? _gameOverListener;
+  final GridRoundListener? _roundListener;
+  final SpawnPositionChooser? _spawnPositionChooser;
+  final bool _spawnNextBlockAfterRound;
+  final List<List<SingleBlock?>>? _initialContent;
   late final Grid _grid;
 
   BlockBoard({
@@ -29,6 +36,10 @@ class BlockBoard extends PositionComponent {
     this._spawnOrigin,
     this._gridContentHolder,
     this._gameOverListener,
+    this._roundListener,
+    this._spawnPositionChooser,
+    this._spawnNextBlockAfterRound = true,
+    this._initialContent,
     super.size,
     super.position,
   });
@@ -45,6 +56,10 @@ class BlockBoard extends PositionComponent {
       spawnOrigin: _spawnOrigin,
       scoreRecorder: _scoreRecorder,
       gameOverListener: _gameOverListener,
+      roundListener: _roundListener,
+      spawnPositionChooser: _spawnPositionChooser,
+      spawnNextBlockAfterRound: _spawnNextBlockAfterRound,
+      initialContent: _initialContent,
     );
     add(_grid);
   }

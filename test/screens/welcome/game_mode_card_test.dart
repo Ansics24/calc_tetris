@@ -6,16 +6,24 @@ import 'package:flame/components.dart';
 import 'package:flutter/painting.dart' show TextStyle;
 import 'package:test/test.dart';
 
-GameModeCard _card({int highScore = 0, void Function()? onTap}) => GameModeCard(
+GameModeCard _card({
+  int highScore = 0,
+  void Function()? onTap,
+  String? secondaryLabel,
+  void Function()? onSecondaryTap,
+}) => GameModeCard(
   title: 'Endlosspiel',
   description: 'Lorem ipsum dolor sit amet',
   highScore: highScore,
-  size: Vector2(360, 120),
+  size: Vector2(360, 150),
   onTap: onTap,
+  secondaryLabel: secondaryLabel,
+  onSecondaryTap: onSecondaryTap,
 );
 
 void main() {
   _verticalLayoutTests();
+  _secondaryButtonTests();
   _friendlyLookTests();
 
   test('shows title and description', () {
@@ -72,6 +80,78 @@ void main() {
 
   test('can be pressed without a tap callback', () {
     expect(() => _card().press(), returnsNormally);
+  });
+}
+
+void _secondaryButtonTests() {
+  group('secondary button', () {
+    test('is missing without a label', () {
+      expect(_card().secondaryButton, isNull);
+    });
+
+    test('shows the label', () {
+      expect(
+        _card(secondaryLabel: 'Tutorial').secondaryButton!.label,
+        'Tutorial',
+      );
+    });
+
+    test('calls its own callback and not the one of the card', () {
+      var card = 0;
+      var button = 0;
+      final c = _card(
+        secondaryLabel: 'Tutorial',
+        onTap: () => card++,
+        onSecondaryTap: () => button++,
+      );
+
+      c.secondaryButton!.press();
+
+      expect(button, 1);
+      expect(card, 0);
+    });
+
+    test('can be pressed without a callback', () {
+      final c = _card(secondaryLabel: 'Tutorial');
+
+      expect(c.secondaryButton!.press, returnsNormally);
+    });
+
+    test('sits below the high score on the right side of the card', () {
+      final c = _card(highScore: 12540, secondaryLabel: 'Tutorial');
+      final button = c.secondaryButton!;
+
+      expect(
+        button.y,
+        greaterThanOrEqualTo(c.highScoreValue.y + c.highScoreValue.height),
+      );
+      expect(button.x, greaterThan(c.titleText.x));
+      expect(button.x + button.width, lessThanOrEqualTo(c.width));
+    });
+
+    test('does not overlap the description', () {
+      final c = _card(secondaryLabel: 'Tutorial');
+
+      // the box wraps its text at maxWidth, so it ends before the button
+      expect(
+        c.descriptionText.x + c.descriptionText.boxConfig.maxWidth,
+        lessThanOrEqualTo(c.secondaryButton!.x),
+      );
+    });
+
+    test('stays inside the card, also after a resize', () {
+      final c = _card(secondaryLabel: 'Tutorial')..resizeTo(Vector2(300, 150));
+      final button = c.secondaryButton!;
+
+      expect(button.x + button.width, lessThanOrEqualTo(300));
+      expect(button.y + button.height, lessThanOrEqualTo(150));
+    });
+
+    test('is a big button that is easy to hit', () {
+      final button = _card(secondaryLabel: 'Tutorial').secondaryButton!;
+
+      expect(button.height, greaterThanOrEqualTo(36));
+    });
   });
 }
 
@@ -158,10 +238,10 @@ void _friendlyLookTests() {
     test('paints a light card', () async {
       final recorder = PictureRecorder();
       _card().render(Canvas(recorder));
-      final image = await recorder.endRecording().toImage(360, 120);
+      final image = await recorder.endRecording().toImage(360, 150);
       final bytes = (await image.toByteData())!;
       // pixel inside the card, left of the image placeholder
-      final offset = (60 * 360 + 6) * 4;
+      final offset = (75 * 360 + 6) * 4;
       final pixel = Color.fromARGB(
         bytes.getUint8(offset + 3),
         bytes.getUint8(offset),

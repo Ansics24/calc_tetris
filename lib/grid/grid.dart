@@ -5,9 +5,12 @@ import 'dart:math';
 import 'package:calc_tetris/block/math/scoring/score_keeper.dart';
 import 'package:calc_tetris/block/math/seed/next_block_planner.dart';
 import 'package:calc_tetris/block/math/seed/spawn_origin.dart';
+import 'package:calc_tetris/block/math/seed/spawn_position_chooser.dart';
+import 'package:calc_tetris/block/model/single_block.dart';
 import 'package:calc_tetris/block/single_block_component_factory.dart';
 import 'package:calc_tetris/block/solution_strategy.dart';
 import 'package:calc_tetris/grid/grid_controller.dart';
+import 'package:calc_tetris/grid/grid_round_listener.dart';
 import 'package:calc_tetris/grid/model/grid_model.dart';
 import 'package:calc_tetris/grid/queries/grid_content_holder.dart';
 import 'package:calc_tetris/grid/visuals/grid_frame.dart';
@@ -22,6 +25,8 @@ class Grid extends PositionComponent {
   double _cellSize = 0;
   late final GridModel _gridModel;
   late final GridController _gridController;
+  final SingleBlockComponentFactory _singleBlockComponentFactory;
+  final List<List<SingleBlock?>>? _initialContent;
 
   Grid({
     required this._blockCount,
@@ -32,7 +37,11 @@ class Grid extends PositionComponent {
     SpawnOrigin? spawnOrigin,
     ScoreRecorder? scoreRecorder,
     GameOverListener? gameOverListener,
-  }) {
+    GridRoundListener? roundListener,
+    SpawnPositionChooser? spawnPositionChooser,
+    bool spawnNextBlockAfterRound = true,
+    this._initialContent,
+  }) : _singleBlockComponentFactory = singleBlockComponentFactory {
     _gridModel = GridModel(
       size: _blockCount,
       gridComponent: this,
@@ -47,6 +56,9 @@ class Grid extends PositionComponent {
       spawnOrigin: spawnOrigin,
       scoreRecorder: scoreRecorder,
       gameOverListener: gameOverListener,
+      roundListener: roundListener,
+      spawnPositionChooser: spawnPositionChooser,
+      spawnNextBlockAfterRound: spawnNextBlockAfterRound,
     );
   }
 
@@ -69,10 +81,30 @@ class Grid extends PositionComponent {
     dev.log('Position of Grid: $position');
 
     addGridVisualization();
+    _placeInitialContent();
 
     _gridController.spawnNextBlock();
 
     return super.onLoad();
+  }
+
+  /// Puts the blocks the grid starts with in place, before the first spawn.
+  void _placeInitialContent() {
+    final content = _initialContent;
+    if (content == null) {
+      return;
+    }
+    for (var x = 0; x < content.length; x++) {
+      for (var y = 0; y < content[x].length; y++) {
+        final block = content[x][y];
+        final component = block == null
+            ? null
+            : _singleBlockComponentFactory(block);
+        if (component != null) {
+          _gridModel.addSingleBlock('initial', component, IntVector2(x, y));
+        }
+      }
+    }
   }
 
   void addGridVisualization() {

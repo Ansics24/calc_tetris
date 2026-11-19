@@ -80,6 +80,21 @@ void main() {
     expect(game.descendants().whereType<WelcomeScreen>(), isEmpty);
   });
 
+  testWidgets('replaces the welcome route by the tutorial route', (
+    tester,
+  ) async {
+    final game = await _pumpGame(tester);
+
+    _welcomeScreen(game).cards.first.secondaryButton!.press();
+    await tester.pump();
+    // Text boxes redraw delayed; let those timers run out.
+    await tester.pump(const Duration(seconds: 1));
+    await tester.pump(const Duration(seconds: 1));
+
+    expect(game.router.currentRoute.name, TetrisGame.tutorialRoute);
+    expect(game.descendants().whereType<WelcomeScreen>(), isEmpty);
+  });
+
   group('high score on the welcome screen', () {
     testWidgets('shows the stored high score of the endless game', (
       tester,

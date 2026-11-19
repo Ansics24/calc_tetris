@@ -27,6 +27,9 @@ class ScoreDisplay extends PositionComponent {
 
   int get displayedScore => _animation.value;
 
+  /// True while the shown score is still on its way to the latest [score].
+  bool get isCountingUp => _animation.isAnimating;
+
   set score(int value) => _animation.animateTo(value);
 
   @override

@@ -15,6 +15,8 @@ import 'package:flutter/painting.dart';
 /// per game mode below.
 class WelcomeScreen extends PositionComponent {
   static const String gameName = 'Magic Blocks';
+  static const String endlessDescription =
+      'Löse Gleichungen, sammle Punkte und spiele, so lange du kannst.';
 
   static const double _margin = 16;
   static const double _titleHeight = 140;
@@ -44,14 +46,17 @@ class WelcomeScreen extends PositionComponent {
   WelcomeScreen({
     DatabaseService? databaseService,
     void Function()? onStartEndless,
+    void Function()? onStartTutorial,
   }) : _databaseService = databaseService ?? InMemoryDatabaseService() {
     cards = [
       GameModeCard(
         title: 'Endlosspiel',
-        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+        description: endlessDescription,
         highScore: 0,
         size: Vector2(0, _cardHeight),
         onTap: onStartEndless,
+        secondaryLabel: 'Tutorial',
+        onSecondaryTap: onStartTutorial,
       ),
     ];
     _layout();

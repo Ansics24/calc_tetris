@@ -21,6 +21,7 @@ class Header extends PositionComponent {
   final NextBlockDisplay nextBlockDisplay;
   final HeaderLayout _layout;
   StreamSubscription<List<List<SingleBlock>>>? _nextBlockSubscription;
+  HudBar? _hudBar;
 
   Header({
     required this._onConfirmPressed,
@@ -39,15 +40,18 @@ class Header extends PositionComponent {
          style: NextBlockDisplayStyle.fromColorScheme(colorScheme),
        );
 
+  /// True while the shown score is still counting up to the real one.
+  bool get isScoreCountingUp => _hudBar?.isCountingUp ?? false;
+
   @override
   FutureOr<void> onLoad() {
-    add(
-      HudBar(
-        scoreKeeper: _scoreKeeper,
-        size: _layout.cardSize,
-        position: _layout.scoreCardPosition,
-      ),
+    final hudBar = HudBar(
+      scoreKeeper: _scoreKeeper,
+      size: _layout.cardSize,
+      position: _layout.scoreCardPosition,
     );
+    _hudBar = hudBar;
+    add(hudBar);
     add(
       ConfirmButton(
         onPressed: _onConfirmPressed,

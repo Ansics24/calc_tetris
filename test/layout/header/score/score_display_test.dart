@@ -24,6 +24,32 @@ void main() {
     expect(display.displayedScore, 48);
   });
 
+  group('counting up', () {
+    test('is not happening initially', () {
+      expect(ScoreDisplay(size: Vector2(200, 50)).isCountingUp, isFalse);
+    });
+
+    test('is happening until the new score is reached', () {
+      final display = ScoreDisplay(
+        size: Vector2(200, 50),
+        countUpDuration: 1.0,
+      )..score = 48;
+      expect(display.isCountingUp, isTrue);
+
+      display.update(0.5);
+      expect(display.isCountingUp, isTrue);
+
+      display.update(0.5);
+      expect(display.isCountingUp, isFalse);
+    });
+
+    test('does not happen for an unchanged score', () {
+      final display = ScoreDisplay(size: Vector2(200, 50))..score = 0;
+
+      expect(display.isCountingUp, isFalse);
+    });
+  });
+
   test('renders with a custom decoration and text style', () {
     final display = ScoreDisplay(
       size: Vector2(200, 50),

@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:calc_tetris/screens/welcome/card_button.dart';
 import 'package:calc_tetris/theme/text_theme.dart';
 import 'package:calc_tetris/theme/welcome_palette.dart';
 import 'package:calc_tetris/util/german_number_format.dart';
@@ -17,11 +18,15 @@ class GameModeCard extends PositionComponent with TapCallbacks {
   static const double _minDescriptionWidth = 40;
   static const double _scoreGap = 2;
   static const double _descriptionTop = 44;
+  static const double _buttonHeight = 38;
 
   final String title;
   final String description;
   int highScore;
   final void Function()? onTap;
+
+  /// Optional button inside the card, e.g. to start a tutorial.
+  final CardButton? secondaryButton;
 
   GameModeCard({
     required this.title,
@@ -29,7 +34,12 @@ class GameModeCard extends PositionComponent with TapCallbacks {
     required this.highScore,
     required Vector2 size,
     this.onTap,
-  }) : super(size: size) {
+    String? secondaryLabel,
+    void Function()? onSecondaryTap,
+  }) : secondaryButton = secondaryLabel == null
+           ? null
+           : CardButton(label: secondaryLabel, onPressed: onSecondaryTap),
+       super(size: size) {
     _layout();
   }
 
@@ -106,6 +116,16 @@ class GameModeCard extends PositionComponent with TapCallbacks {
       scoreRight - highScoreLabel.width / 2,
       _padding + highScoreLabel.height + _scoreGap,
     );
+    final button = secondaryButton;
+    if (button != null) {
+      final buttonWidth = _scoreColumnWidth - _padding / 2;
+      button
+        ..size = Vector2(buttonWidth, _buttonHeight)
+        ..position = Vector2(
+          scoreRight - buttonWidth,
+          height - _padding - _buttonHeight,
+        );
+    }
   }
 
   @override
@@ -116,6 +136,7 @@ class GameModeCard extends PositionComponent with TapCallbacks {
       descriptionText,
       highScoreLabel,
       highScoreValue,
+      ?secondaryButton,
     ]);
   }
 

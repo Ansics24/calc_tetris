@@ -1,0 +1,34 @@
+import 'dart:developer' as dev;
+
+import 'package:calc_tetris/audio/sound_effect_player.dart';
+import 'package:calc_tetris/block/math/scoring/score_keeper.dart';
+
+/// Passes points on to another recorder and plays a sound whenever points
+/// were earned. Broken audio must not disturb the game.
+class SoundOnScoreRecorder implements ScoreRecorder {
+  final ScoreRecorder _inner;
+  final SoundEffectPlayer _player;
+  final String _fileName;
+
+  SoundOnScoreRecorder({
+    required this._inner,
+    required this._player,
+    required this._fileName,
+  });
+
+  @override
+  void add(int points) {
+    _inner.add(points);
+    if (points > 0) {
+      _playSound();
+    }
+  }
+
+  Future<void> _playSound() async {
+    try {
+      await _player.play(_fileName);
+    } catch (error) {
+      dev.log('Could not play the sound $_fileName: $error');
+    }
+  }
+}

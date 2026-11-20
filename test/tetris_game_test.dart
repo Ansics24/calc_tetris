@@ -1,3 +1,7 @@
+import 'package:calc_tetris/audio/music_player.dart';
+import 'package:calc_tetris/audio/sound_effect_player.dart';
+import 'package:calc_tetris/audio/sound_files.dart';
+import 'package:calc_tetris/block/solution_strategy_singlerun_result.dart';
 import 'package:calc_tetris/grid/grid.dart';
 import 'package:calc_tetris/layout/header/confirm_button.dart';
 import 'package:calc_tetris/layout/header/stop_button.dart';
@@ -12,11 +16,20 @@ import 'package:calc_tetris/theme/welcome_palette.dart';
 import 'package:flame/game.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'support/recording_music_player.dart';
+import 'support/recording_sound_effect_player.dart';
+
 Future<TetrisGame> _pumpGame(
   WidgetTester tester, {
   DatabaseService? databaseService,
+  MusicPlayer? musicPlayer,
+  SoundEffectPlayer? soundEffectPlayer,
 }) async {
-  final game = TetrisGame(databaseService: databaseService);
+  final game = TetrisGame(
+    databaseService: databaseService,
+    musicPlayer: musicPlayer,
+    soundEffectPlayer: soundEffectPlayer,
+  );
   await tester.pumpWidget(GameWidget(game: game));
   await tester.pump();
   await _settle(tester);
@@ -52,6 +65,16 @@ Future<TetrisGame> _pumpEndlessGame(
   DatabaseService? databaseService,
 }) async {
   final game = await _pumpGame(tester, databaseService: databaseService);
+  _welcomeScreen(game).cards.first.press();
+  await _settle(tester);
+  return game;
+}
+
+Future<TetrisGame> _pumpEndlessGameWith(
+  WidgetTester tester,
+  MusicPlayer musicPlayer,
+) async {
+  final game = await _pumpGame(tester, musicPlayer: musicPlayer);
   _welcomeScreen(game).cards.first.press();
   await _settle(tester);
   return game;
@@ -95,6 +118,136 @@ void main() {
 
     expect(game.router.currentRoute.name, TetrisGame.tutorialRoute);
     expect(game.descendants().whereType<WelcomeScreen>(), isEmpty);
+  });
+
+  group('sound of a solved equation in the endless game', () {
+    Future<TetrisGame> pumpWith(
+      WidgetTester tester,
+      RecordingSoundEffectPlayer sounds,
+    ) async {
+      final game = await _pumpGame(tester, soundEffectPlayer: sounds);
+      _welcomeScreen(game).cards.first.press();
+      await _settle(tester);
+      await tester.pump(const Duration(seconds: 1));
+      return game;
+    }
+
+    SolutionStrategySinglerunResult result(int points) =>
+        SolutionStrategySinglerunResult(solvedBlocks: [], pointsEarned: points);
+
+    testWidgets('rings the bell when an equation was solved', (tester) async {
+      final sounds = RecordingSoundEffectPlayer();
+      final game = await pumpWith(tester, sounds);
+
+      game.descendants().whereType<Grid>().first.controller.onStrategyResult(
+        result(6),
+      );
+
+      expect(sounds.played, [SoundFiles.solvedEquation]);
+    });
+
+    testWidgets('rings once for every solved result', (tester) async {
+      final sounds = RecordingSoundEffectPlayer();
+      final game = await pumpWith(tester, sounds);
+      final controller = game.descendants().whereType<Grid>().first.controller;
+
+      controller.onStrategyResult(result(6));
+      controller.onStrategyResult(result(8));
+
+      expect(sounds.played, hasLength(2));
+    });
+
+    testWidgets('is silent while nothing was solved', (tester) async {
+      final sounds = RecordingSoundEffectPlayer();
+
+      await pumpWith(tester, sounds);
+
+      expect(sounds.played, isEmpty);
+    });
+
+    testWidgets('still counts the points when the audio is broken', (
+      tester,
+    ) async {
+      final game = await pumpWith(
+        tester,
+        RecordingSoundEffectPlayer(failing: true),
+      );
+
+      game.descendants().whereType<Grid>().first.controller.onStrategyResult(
+        result(6),
+      );
+      await tester.pump();
+
+      expect(_endlessGame(game).scoreKeeper.total, 6);
+    });
+  });
+
+  group('welcome music', () {
+    testWidgets('plays in a loop as soon as the welcome screen is there', (
+      tester,
+    ) async {
+      final music = RecordingMusicPlayer();
+
+      await _pumpGame(tester, musicPlayer: music);
+
+      expect(music.played, [WelcomeScreen.musicFile]);
+      expect(music.isSilent, isFalse);
+    });
+
+    testWidgets('stops when the endless game starts', (tester) async {
+      final music = RecordingMusicPlayer();
+      final game = await _pumpGame(tester, musicPlayer: music);
+
+      _welcomeScreen(game).cards.first.press();
+      await _settle(tester);
+
+      expect(music.isSilent, isTrue);
+    });
+
+    testWidgets('stops when the tutorial starts', (tester) async {
+      final music = RecordingMusicPlayer();
+      final game = await _pumpGame(tester, musicPlayer: music);
+
+      _welcomeScreen(game).cards.first.secondaryButton!.press();
+      await _settle(tester);
+
+      expect(music.isSilent, isTrue);
+    });
+
+    testWidgets('plays again after coming back to the welcome screen', (
+      tester,
+    ) async {
+      final music = RecordingMusicPlayer();
+      final game = await _pumpEndlessGameWith(tester, music);
+      await _pressStop(tester, game);
+
+      _stopDialog(game)!.yesButton.press();
+      await _settle(tester);
+
+      expect(music.played, hasLength(2));
+      expect(music.isSilent, isFalse);
+    });
+
+    testWidgets('does not disturb the game when the audio is broken', (
+      tester,
+    ) async {
+      final game = await _pumpGame(
+        tester,
+        musicPlayer: RecordingMusicPlayer(failing: true),
+      );
+
+      expect(game.descendants().whereType<WelcomeScreen>(), hasLength(1));
+      _welcomeScreen(game).cards.first.press();
+      await _settle(tester);
+
+      expect(game.router.currentRoute.name, TetrisGame.endlessRoute);
+    });
+
+    testWidgets('is silent when no music player is given', (tester) async {
+      final game = await _pumpGame(tester);
+
+      expect(game.descendants().whereType<WelcomeScreen>(), hasLength(1));
+    });
   });
 
   group('high score on the welcome screen', () {

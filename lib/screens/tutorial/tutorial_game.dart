@@ -1,5 +1,8 @@
 import 'dart:async';
 
+import 'package:calc_tetris/audio/sound_effect_player.dart';
+import 'package:calc_tetris/audio/sound_files.dart';
+import 'package:calc_tetris/audio/sound_on_score_recorder.dart';
 import 'package:calc_tetris/block/math/math_single_block_component_factory.dart';
 import 'package:calc_tetris/block/math/scoring/score_keeper.dart';
 import 'package:calc_tetris/block/math/seed/next_block_planner.dart';
@@ -36,6 +39,7 @@ class TutorialGame extends PositionComponent implements GridRoundListener {
   final void Function()? onQuit;
 
   final ScoreKeeper scoreKeeper;
+  final SoundEffectPlayer _soundEffectPlayer;
   late final TutorialRunner runner;
 
   final SkyBackground background = SkyBackground();
@@ -61,8 +65,10 @@ class TutorialGame extends PositionComponent implements GridRoundListener {
   TutorialGame({
     this.onQuit,
     ScoreKeeper? scoreKeeper,
+    SoundEffectPlayer? soundEffectPlayer,
     List<TutorialStep>? steps,
-  }) : scoreKeeper = scoreKeeper ?? ScoreKeeper() {
+  }) : scoreKeeper = scoreKeeper ?? ScoreKeeper(),
+       _soundEffectPlayer = soundEffectPlayer ?? SilentSoundEffectPlayer() {
     runner = TutorialRunner(
       steps: steps ?? tutorialScript(),
       onFinished: () => onQuit?.call(),
@@ -152,7 +158,11 @@ class TutorialGame extends PositionComponent implements GridRoundListener {
       position: Vector2.zero(),
     );
     board = BlockBoard(
-      scoreRecorder: scoreKeeper,
+      scoreRecorder: SoundOnScoreRecorder(
+        inner: scoreKeeper,
+        player: _soundEffectPlayer,
+        fileName: SoundFiles.solvedEquation,
+      ),
       solutionStrategy: ValidEquationSolutionStrategy(),
       singleBlockComponentFactory: newComponentFromBlockModel,
       nextBlockPlanner: planner,

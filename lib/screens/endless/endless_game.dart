@@ -1,5 +1,8 @@
 import 'dart:developer' as dev;
 
+import 'package:calc_tetris/audio/sound_effect_player.dart';
+import 'package:calc_tetris/audio/sound_files.dart';
+import 'package:calc_tetris/audio/sound_on_score_recorder.dart';
 import 'package:calc_tetris/block/math/math_single_block_component_factory.dart';
 import 'package:calc_tetris/block/math/scoring/score_keeper.dart';
 import 'package:calc_tetris/block/math/seed/generators/guided_compoundblock_model_generator.dart';
@@ -26,13 +29,16 @@ class EndlessGame extends PositionComponent implements GameOverListener {
 
   final DatabaseService _databaseService;
   final ScoreKeeper _scoreKeeper;
+  final SoundEffectPlayer _soundEffectPlayer;
 
   EndlessGame({
     this.onQuit,
     DatabaseService? databaseService,
     ScoreKeeper? scoreKeeper,
+    SoundEffectPlayer? soundEffectPlayer,
   }) : _databaseService = databaseService ?? InMemoryDatabaseService(),
-       _scoreKeeper = scoreKeeper ?? ScoreKeeper();
+       _scoreKeeper = scoreKeeper ?? ScoreKeeper(),
+       _soundEffectPlayer = soundEffectPlayer ?? SilentSoundEffectPlayer();
 
   final SkyBackground background = SkyBackground();
 
@@ -61,7 +67,11 @@ class EndlessGame extends PositionComponent implements GameOverListener {
     );
     add(header);
     board = BlockBoard(
-      scoreRecorder: _scoreKeeper,
+      scoreRecorder: SoundOnScoreRecorder(
+        inner: _scoreKeeper,
+        player: _soundEffectPlayer,
+        fileName: SoundFiles.solvedEquation,
+      ),
       solutionStrategy: ValidEquationSolutionStrategy(),
       singleBlockComponentFactory: newComponentFromBlockModel,
       nextBlockPlanner: _nextBlockPlanner,
@@ -126,6 +136,8 @@ class EndlessGame extends PositionComponent implements GameOverListener {
   }
 
   GameDimensions get gameDimensions => _gameDimensions;
+
+  ScoreKeeper get scoreKeeper => _scoreKeeper;
 
   /// The blocks that landed in the grid, indexed `[x][y]`.
   List<List<SingleBlock?>> get gridContent => _gridContentHolder.call();

@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:calc_tetris/audio/music_player.dart';
+import 'package:calc_tetris/audio/sound_effect_player.dart';
 import 'package:calc_tetris/persistence/database_service.dart';
 import 'package:calc_tetris/persistence/in_memory_database_service.dart';
 import 'package:calc_tetris/screens/endless/endless_game.dart';
@@ -29,9 +31,16 @@ class TetrisGame extends FlameGame {
   );
 
   final DatabaseService _databaseService;
+  final MusicPlayer _musicPlayer;
+  final SoundEffectPlayer _soundEffectPlayer;
 
-  TetrisGame({DatabaseService? databaseService})
-    : _databaseService = databaseService ?? InMemoryDatabaseService();
+  TetrisGame({
+    DatabaseService? databaseService,
+    MusicPlayer? musicPlayer,
+    SoundEffectPlayer? soundEffectPlayer,
+  }) : _databaseService = databaseService ?? InMemoryDatabaseService(),
+       _musicPlayer = musicPlayer ?? SilentMusicPlayer(),
+       _soundEffectPlayer = soundEffectPlayer ?? SilentSoundEffectPlayer();
 
   late final RouterComponent router = RouterComponent(
     initialRoute: welcomeRoute,
@@ -39,6 +48,7 @@ class TetrisGame extends FlameGame {
       welcomeRoute: Route(
         () => WelcomeScreen(
           databaseService: _databaseService,
+          musicPlayer: _musicPlayer,
           onStartEndless: () {
             surroundColors.value = _endlessSurround;
             router.pushReplacementNamed(endlessRoute);
@@ -53,6 +63,7 @@ class TetrisGame extends FlameGame {
       endlessRoute: Route(
         () => EndlessGame(
           databaseService: _databaseService,
+          soundEffectPlayer: _soundEffectPlayer,
           onQuit: () {
             surroundColors.value = _welcomeSurround;
             router.pushReplacementNamed(welcomeRoute);
@@ -62,6 +73,7 @@ class TetrisGame extends FlameGame {
       ),
       tutorialRoute: Route(
         () => TutorialGame(
+          soundEffectPlayer: _soundEffectPlayer,
           onQuit: () {
             surroundColors.value = _welcomeSurround;
             router.pushReplacementNamed(welcomeRoute);

@@ -38,6 +38,7 @@ dependencies:
   uuid: ^4.6.0
   sqflite: ^2.4.6
   path: ^1.9.1
+  flame_audio: ^2.12.2
 
 dev_dependencies:
   flutter_test:
@@ -67,6 +68,8 @@ flutter:
     - assets/images/background_mittelalter.png
     - assets/images/mascot.png
     - assets/images/trophy.png
+    - assets/music/welcome.m4a
+    - assets/sounds/bell.m4a
 
   fonts:
     - family: Fredoka

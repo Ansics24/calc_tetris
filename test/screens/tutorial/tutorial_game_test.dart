@@ -1,3 +1,5 @@
+import 'package:calc_tetris/audio/sound_effect_player.dart';
+import 'package:calc_tetris/audio/sound_files.dart';
 import 'package:calc_tetris/grid/grid.dart';
 import 'package:calc_tetris/layout/board/block_board.dart';
 import 'package:calc_tetris/layout/header/stop_button.dart';
@@ -12,6 +14,8 @@ import 'package:calc_tetris/screens/welcome/welcome_screen.dart';
 import 'package:calc_tetris/tetris_game.dart';
 import 'package:flame/game.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+import '../../support/recording_sound_effect_player.dart';
 
 Future<void> _settle(WidgetTester tester) async {
   await tester.pump();
@@ -28,8 +32,12 @@ Future<void> _settle(WidgetTester tester) async {
 Future<TetrisGame> _pumpTutorial(
   WidgetTester tester, {
   InMemoryDatabaseService? databaseService,
+  SoundEffectPlayer? soundEffectPlayer,
 }) async {
-  final game = TetrisGame(databaseService: databaseService);
+  final game = TetrisGame(
+    databaseService: databaseService,
+    soundEffectPlayer: soundEffectPlayer,
+  );
   await tester.pumpWidget(GameWidget(game: game));
   await tester.pump();
   await _settle(tester);
@@ -197,6 +205,42 @@ void main() {
     tutorial.onRoundFinished(0);
 
     expect(tutorial.runner.attempt, 1);
+  });
+
+  _tutorialTest('rings the bell when the equation was solved', (tester) async {
+    final sounds = RecordingSoundEffectPlayer();
+    final game = await _pumpTutorial(tester, soundEffectPlayer: sounds);
+    await _continue(tester, game);
+    expect(sounds.played, isEmpty);
+    _steerBlock(_grid(game)!, script[1] as PlayStep);
+
+    await _place(tester, game);
+
+    expect(sounds.played, [SoundFiles.solvedEquation]);
+  });
+
+  _tutorialTest('is silent when the block solves nothing', (tester) async {
+    final sounds = RecordingSoundEffectPlayer();
+    final game = await _pumpTutorial(tester, soundEffectPlayer: sounds);
+    await _continue(tester, game);
+
+    await _place(tester, game); // right where it spawned
+
+    expect(sounds.played, isEmpty);
+  });
+
+  _tutorialTest('does not break when the audio is broken', (tester) async {
+    final game = await _pumpTutorial(
+      tester,
+      soundEffectPlayer: RecordingSoundEffectPlayer(failing: true),
+    );
+    await _continue(tester, game);
+    _steerBlock(_grid(game)!, script[1] as PlayStep);
+
+    await _place(tester, game);
+
+    expect(_tutorial(game).scoreKeeper.total, 6);
+    expect(_overlay(game)!.messageText.text, (script[2] as MessageStep).text);
   });
 
   _tutorialTest('counts the points of the solved equation in the tutorial', (

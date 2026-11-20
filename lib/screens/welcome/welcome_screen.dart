@@ -1,5 +1,6 @@
 import 'dart:developer' as dev;
 
+import 'package:calc_tetris/audio/music_player.dart';
 import 'package:calc_tetris/persistence/database_service.dart';
 import 'package:calc_tetris/persistence/in_memory_database_service.dart';
 import 'package:calc_tetris/persistence/model/game_mode_name.dart';
@@ -15,6 +16,7 @@ import 'package:flutter/painting.dart';
 /// per game mode below.
 class WelcomeScreen extends PositionComponent {
   static const String gameName = 'Magic Blocks';
+  static const String musicFile = 'welcome.m4a';
   static const String endlessDescription =
       'Löse Gleichungen, sammle Punkte und verbessere deinen persönlichen Highscore.';
 
@@ -42,12 +44,15 @@ class WelcomeScreen extends PositionComponent {
   late final List<GameModeCard> cards;
 
   final DatabaseService _databaseService;
+  final MusicPlayer _musicPlayer;
 
   WelcomeScreen({
     DatabaseService? databaseService,
     void Function()? onStartEndless,
     void Function()? onStartTutorial,
-  }) : _databaseService = databaseService ?? InMemoryDatabaseService() {
+    MusicPlayer? musicPlayer,
+  }) : _databaseService = databaseService ?? InMemoryDatabaseService(),
+       _musicPlayer = musicPlayer ?? SilentMusicPlayer() {
     cards = [
       GameModeCard(
         title: 'Endlosspiel',
@@ -70,6 +75,30 @@ class WelcomeScreen extends PositionComponent {
     await add(title);
     await addAll(cards);
     await loadHighScores();
+    await _playMusic();
+  }
+
+  /// Starts the endless music. Broken audio must not disturb the game.
+  Future<void> _playMusic() async {
+    try {
+      await _musicPlayer.playLoop(musicFile);
+    } catch (error) {
+      dev.log('Could not play the welcome music: $error');
+    }
+  }
+
+  @override
+  void onRemove() {
+    _stopMusic();
+    super.onRemove();
+  }
+
+  Future<void> _stopMusic() async {
+    try {
+      await _musicPlayer.stop();
+    } catch (error) {
+      dev.log('Could not stop the welcome music: $error');
+    }
   }
 
   /// Shows the stored high scores on the cards. A card keeps showing 0 if

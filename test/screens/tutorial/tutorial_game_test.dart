@@ -2,6 +2,7 @@ import 'package:calc_tetris/audio/sound_effect_player.dart';
 import 'package:calc_tetris/audio/sound_files.dart';
 import 'package:calc_tetris/grid/grid.dart';
 import 'package:calc_tetris/layout/board/block_board.dart';
+import 'package:calc_tetris/layout/header/confirm_button.dart';
 import 'package:calc_tetris/layout/header/stop_button.dart';
 import 'package:calc_tetris/persistence/in_memory_database_service.dart';
 import 'package:calc_tetris/persistence/model/game_mode_name.dart';
@@ -205,6 +206,55 @@ void main() {
     tutorial.onRoundFinished(0);
 
     expect(tutorial.runner.attempt, 1);
+  });
+
+  _tutorialTest('plays the placing sound when the OK button is pressed', (
+    tester,
+  ) async {
+    final sounds = RecordingSoundEffectPlayer();
+    final game = await _pumpTutorial(tester, soundEffectPlayer: sounds);
+    await _continue(tester, game);
+
+    game.descendants().whereType<ConfirmButton>().first.press();
+
+    expect(sounds.played, [SoundFiles.blockPlaced]);
+    // the block solves nothing, so the step starts over
+    for (var i = 0; i < 4; i++) {
+      await tester.pump(const Duration(seconds: 1));
+    }
+    await tester.pump(const Duration(milliseconds: 100));
+  });
+
+  _tutorialTest('plays the placing sound before the bell', (tester) async {
+    final sounds = RecordingSoundEffectPlayer();
+    final game = await _pumpTutorial(tester, soundEffectPlayer: sounds);
+    await _continue(tester, game);
+    _steerBlock(_grid(game)!, script[1] as PlayStep);
+
+    game.descendants().whereType<ConfirmButton>().first.press();
+    for (var i = 0; i < 6; i++) {
+      await tester.pump(const Duration(seconds: 1));
+    }
+
+    expect(sounds.played, [SoundFiles.blockPlaced, SoundFiles.solvedEquation]);
+  });
+
+  _tutorialTest('does not break when the placing sound is broken', (
+    tester,
+  ) async {
+    final game = await _pumpTutorial(
+      tester,
+      soundEffectPlayer: RecordingSoundEffectPlayer(failing: true),
+    );
+    await _continue(tester, game);
+    _steerBlock(_grid(game)!, script[1] as PlayStep);
+
+    game.descendants().whereType<ConfirmButton>().first.press();
+    for (var i = 0; i < 6; i++) {
+      await tester.pump(const Duration(seconds: 1));
+    }
+
+    expect(_tutorial(game).scoreKeeper.total, 6);
   });
 
   _tutorialTest('rings the bell when the equation was solved', (tester) async {

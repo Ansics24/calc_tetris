@@ -1,5 +1,3 @@
-import 'dart:developer' as dev;
-
 import 'package:calc_tetris/audio/sound_effect_player.dart';
 import 'package:calc_tetris/block/math/scoring/score_keeper.dart';
 
@@ -20,15 +18,7 @@ class SoundOnScoreRecorder implements ScoreRecorder {
   void add(int points) {
     _inner.add(points);
     if (points > 0) {
-      _playSound();
-    }
-  }
-
-  Future<void> _playSound() async {
-    try {
-      await _player.play(_fileName);
-    } catch (error) {
-      dev.log('Could not play the sound $_fileName: $error');
+      _player.playSafely(_fileName);
     }
   }
 }

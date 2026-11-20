@@ -182,6 +182,54 @@ void main() {
     });
   });
 
+  group('sound of placing a block in the endless game', () {
+    testWidgets('plays when the block is placed with the OK button', (
+      tester,
+    ) async {
+      final sounds = RecordingSoundEffectPlayer();
+      final game = await _pumpGame(tester, soundEffectPlayer: sounds);
+      _welcomeScreen(game).cards.first.press();
+      await _settle(tester);
+      await tester.pump(const Duration(seconds: 1));
+
+      game.descendants().whereType<ConfirmButton>().first.press();
+
+      expect(sounds.played, [SoundFiles.blockPlaced]);
+      await tester.pump(const Duration(seconds: 3));
+    });
+
+    testWidgets('plays only once while the block is landing', (tester) async {
+      final sounds = RecordingSoundEffectPlayer();
+      final game = await _pumpGame(tester, soundEffectPlayer: sounds);
+      _welcomeScreen(game).cards.first.press();
+      await _settle(tester);
+      await tester.pump(const Duration(seconds: 1));
+      final button = game.descendants().whereType<ConfirmButton>().first;
+
+      button.press();
+      button.press();
+
+      expect(sounds.played, [SoundFiles.blockPlaced]);
+      await tester.pump(const Duration(seconds: 3));
+    });
+
+    testWidgets('is silent while the first block is still flying in', (
+      tester,
+    ) async {
+      final sounds = RecordingSoundEffectPlayer();
+      final game = await _pumpGame(tester, soundEffectPlayer: sounds);
+      _welcomeScreen(game).cards.first.press();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 50));
+
+      game.descendants().whereType<ConfirmButton>().firstOrNull?.press();
+
+      expect(sounds.played, isEmpty);
+      await _settle(tester);
+      await tester.pump(const Duration(seconds: 3));
+    });
+  });
+
   group('welcome music', () {
     testWidgets('plays in a loop as soon as the welcome screen is there', (
       tester,

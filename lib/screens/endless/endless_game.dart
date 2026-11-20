@@ -57,7 +57,11 @@ class EndlessGame extends PositionComponent implements GameOverListener {
     add(background);
     late final BlockBoard board;
     final header = Header(
-      onConfirmPressed: () => board.placeCurrentBlock(),
+      onConfirmPressed: () {
+        if (board.placeCurrentBlock()) {
+          _soundEffectPlayer.playSafely(SoundFiles.blockPlaced);
+        }
+      },
       onStopPressed: _askToStop,
       scoreKeeper: _scoreKeeper,
       nextBlockPlanner: _nextBlockPlanner,

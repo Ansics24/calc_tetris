@@ -144,6 +144,17 @@ void main() {
     });
   });
 
+  group('placing the current block', () {
+    testWidgets('says whether the block is being placed', (tester) async {
+      final pumped = await _pump(tester, chooser: _Chooser());
+
+      expect(pumped.board.placeCurrentBlock(), isTrue);
+      expect(pumped.board.placeCurrentBlock(), isFalse);
+
+      await tester.pump(const Duration(seconds: 2));
+    });
+  });
+
   group('round listener and spawning', () {
     testWidgets('informs the listener and spawns nothing when switched off', (
       tester,

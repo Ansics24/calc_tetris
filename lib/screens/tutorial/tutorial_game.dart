@@ -149,7 +149,11 @@ class TutorialGame extends PositionComponent implements GridRoundListener {
     _gridContentHolder = GridContentHolder();
     late final BlockBoard board;
     final header = Header(
-      onConfirmPressed: () => board.placeCurrentBlock(),
+      onConfirmPressed: () {
+        if (board.placeCurrentBlock()) {
+          _soundEffectPlayer.playSafely(SoundFiles.blockPlaced);
+        }
+      },
       onStopPressed: _askToStop,
       scoreKeeper: scoreKeeper,
       nextBlockPlanner: planner,

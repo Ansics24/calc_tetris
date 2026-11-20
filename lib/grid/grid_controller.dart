@@ -105,9 +105,10 @@ class GridController implements PositionInGridAware {
     }
   }
 
-  void landCurrentBlockOnGrid() {
+  /// Starts the landing. Returns false if the block is landing already.
+  bool landCurrentBlockOnGrid() {
     if (_landing) {
-      return;
+      return false;
     }
     _landing = true;
     currentBlock!.add(
@@ -123,6 +124,7 @@ class GridController implements PositionInGridAware {
         ),
       ),
     );
+    return true;
   }
 
   void onBlockLanded() {
@@ -275,12 +277,14 @@ class GridController implements PositionInGridAware {
     onPositionUpdated(withAnimation: false);
   }
 
-  /// Puts the block into the grid exactly where it stands now.
-  void placeCurrentBlock() {
+  /// Puts the block into the grid exactly where it stands now. Returns true if
+  /// the block starts to land, false if there is nothing to place right now
+  /// (no block, still flying in, or already landing).
+  bool placeCurrentBlock() {
     if (_spawning || currentBlock == null) {
-      return;
+      return false;
     }
-    landCurrentBlockOnGrid();
+    return landCurrentBlockOnGrid();
   }
 
   @override

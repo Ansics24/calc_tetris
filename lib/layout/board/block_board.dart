@@ -65,6 +65,6 @@ class BlockBoard extends PositionComponent {
   }
 
   /// Puts the block currently controlled by the player into the grid where it
-  /// stands.
-  void placeCurrentBlock() => _grid.controller.placeCurrentBlock();
+  /// stands. Returns false if there was nothing to place right now.
+  bool placeCurrentBlock() => _grid.controller.placeCurrentBlock();
 }

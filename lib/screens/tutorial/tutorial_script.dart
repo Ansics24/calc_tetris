@@ -1,6 +1,8 @@
-import 'package:calc_tetris/layout/game_dimensions.dart';
 import 'package:calc_tetris/screens/tutorial/tutorial_step.dart';
 import 'package:calc_tetris/util/int_vector_2.dart';
+
+/// The size of the grid all tutorial boards use.
+final IntVector2 tutorialGridSize = IntVector2.square(11);
 
 /// The steps of the tutorial in the order the player goes through them.
 ///
@@ -88,8 +90,8 @@ List<TutorialStep> tutorialScript() => [
 /// The rows of a grid that is empty except for the given [rows]. A text of a
 /// row starts at the left border of the grid; `.` marks an empty cell.
 List<String> _grid(Map<int, String> rows) {
-  final width = GameDimensions.gridBlockCount.x;
-  final height = GameDimensions.gridBlockCount.y;
+  final width = tutorialGridSize.x;
+  final height = tutorialGridSize.y;
   return List.generate(
     height,
     (y) => (rows[y] ?? '').padRight(width, '.'),

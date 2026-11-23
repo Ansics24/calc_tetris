@@ -15,7 +15,6 @@ import 'package:calc_tetris/grid/model/grid_model.dart';
 import 'package:calc_tetris/grid/queries/grid_content_holder.dart';
 import 'package:calc_tetris/grid/visuals/grid_frame.dart';
 import 'package:calc_tetris/grid/visuals/grid_line.dart';
-import 'package:calc_tetris/layout/board/block_board.dart';
 import 'package:calc_tetris/screens/gameover/game_over_listener.dart';
 import 'package:calc_tetris/util/int_vector_2.dart';
 import 'package:flame/components.dart';
@@ -41,6 +40,8 @@ class Grid extends PositionComponent {
     SpawnPositionChooser? spawnPositionChooser,
     bool spawnNextBlockAfterRound = true,
     this._initialContent,
+    super.size,
+    super.position,
   }) : _singleBlockComponentFactory = singleBlockComponentFactory {
     _gridModel = GridModel(
       size: _blockCount,
@@ -62,17 +63,25 @@ class Grid extends PositionComponent {
     );
   }
 
+  /// The grid is given the area it may use ([size] and [position]). Once
+  /// loaded it makes its cells as big as the area allows, centers itself in
+  /// the area and takes the size of its cells as its own.
   @override
   FutureOr<void> onLoad() {
-    var boardSize = findParent<BlockBoard>()!.size;
+    final boardSize = size.clone();
+    final boardPosition = position.clone();
 
     final double calcCellSizeBasedOnY = boardSize.y / _blockCount.y;
     final double calcCellSizeBasedOnX = boardSize.x / _blockCount.x;
     _cellSize = min(calcCellSizeBasedOnX, calcCellSizeBasedOnY);
     _gridModel.cellSize = _cellSize;
 
-    position.x = (boardSize.x - (_cellSize * _blockCount.x)) / 2;
-    position.y = (boardSize.y - (_cellSize * _blockCount.y)) / 2;
+    final gridSize = Vector2(
+      _cellSize * _blockCount.x,
+      _cellSize * _blockCount.y,
+    );
+    size = gridSize;
+    position = boardPosition + (boardSize - gridSize) / 2;
 
     dev.log('Cell based on x: $calcCellSizeBasedOnX');
     dev.log('Cell based on y: $calcCellSizeBasedOnY');
@@ -146,4 +155,8 @@ class Grid extends PositionComponent {
       IntVector2(_gridModel.model.length, _gridModel.model[0].length);
 
   GridController get controller => _gridController;
+
+  /// Where new blocks fly in from. Can be set after the grid was created.
+  set spawnOrigin(SpawnOrigin spawnOrigin) =>
+      _gridController.spawnOrigin = spawnOrigin;
 }

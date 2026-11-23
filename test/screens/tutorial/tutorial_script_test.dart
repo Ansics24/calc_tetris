@@ -3,7 +3,6 @@ import 'package:calc_tetris/block/math/valid_equation_solution_strategy.dart';
 import 'package:calc_tetris/block/model/null_block.dart';
 import 'package:calc_tetris/block/model/single_block.dart';
 import 'package:calc_tetris/grid/model/grid_model.dart';
-import 'package:calc_tetris/layout/game_dimensions.dart';
 import 'package:calc_tetris/screens/tutorial/scripted_block_generator.dart';
 import 'package:calc_tetris/screens/tutorial/tutorial_script.dart';
 import 'package:calc_tetris/screens/tutorial/tutorial_step.dart';
@@ -142,9 +141,9 @@ void main() {
   group('play steps', () {
     test('fit into the grid of the game', () {
       for (final step in playSteps) {
-        expect(step.gridRows, hasLength(GameDimensions.gridBlockCount.y));
+        expect(step.gridRows, hasLength(tutorialGridSize.y));
         for (final row in step.gridRows) {
-          expect(row, hasLength(GameDimensions.gridBlockCount.x));
+          expect(row, hasLength(tutorialGridSize.x));
         }
       }
     });

@@ -1,7 +1,6 @@
 import 'package:calc_tetris/audio/sound_effect_player.dart';
 import 'package:calc_tetris/audio/sound_files.dart';
 import 'package:calc_tetris/grid/grid.dart';
-import 'package:calc_tetris/layout/board/block_board.dart';
 import 'package:calc_tetris/layout/header/confirm_button.dart';
 import 'package:calc_tetris/layout/header/stop_button.dart';
 import 'package:calc_tetris/persistence/in_memory_database_service.dart';
@@ -130,7 +129,7 @@ void main() {
 
     expect(game.router.currentRoute.name, TetrisGame.tutorialRoute);
     expect(_overlay(game)!.messageText.text, (script[0] as MessageStep).text);
-    expect(game.descendants().whereType<BlockBoard>(), isEmpty);
+    expect(game.descendants().whereType<Grid>(), isEmpty);
   });
 
   _tutorialTest('shows the board and the hint after the first message', (
@@ -171,7 +170,7 @@ void main() {
     await _place(tester, game);
 
     expect(_overlay(game)!.messageText.text, (script[2] as MessageStep).text);
-    expect(game.descendants().whereType<BlockBoard>(), isEmpty);
+    expect(game.descendants().whereType<Grid>(), isEmpty);
   });
 
   _tutorialTest('waits with the next step until the score has counted up', (
@@ -187,7 +186,7 @@ void main() {
 
     expect(tutorial.runner.current, isA<PlayStep>());
     expect(_overlay(game), isNull);
-    expect(game.descendants().whereType<BlockBoard>(), isNotEmpty);
+    expect(game.descendants().whereType<Grid>(), isNotEmpty);
 
     // the count up takes 1.2 seconds, then a short pause follows
     for (var i = 0; i < 4; i++) {

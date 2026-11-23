@@ -9,8 +9,8 @@ import 'package:calc_tetris/block/math/seed/generators/guided_compoundblock_mode
 import 'package:calc_tetris/block/math/seed/next_block_planner.dart';
 import 'package:calc_tetris/block/math/valid_equation_solution_strategy.dart';
 import 'package:calc_tetris/block/model/single_block.dart';
+import 'package:calc_tetris/grid/grid.dart';
 import 'package:calc_tetris/grid/queries/grid_content_holder.dart';
-import 'package:calc_tetris/layout/board/block_board.dart';
 import 'package:calc_tetris/layout/footer/footer.dart';
 import 'package:calc_tetris/layout/game_dimensions.dart';
 import 'package:calc_tetris/layout/header/header.dart';
@@ -21,6 +21,7 @@ import 'package:calc_tetris/screens/gameover/game_over_hint.dart';
 import 'package:calc_tetris/screens/gameover/game_over_listener.dart';
 import 'package:calc_tetris/screens/stopgame/stop_game_dialog.dart';
 import 'package:calc_tetris/screens/welcome/sky_background.dart';
+import 'package:calc_tetris/util/int_vector_2.dart';
 import 'package:flame/components.dart';
 
 class EndlessGame extends PositionComponent implements GameOverListener {
@@ -43,7 +44,9 @@ class EndlessGame extends PositionComponent implements GameOverListener {
   final SkyBackground background = SkyBackground();
 
   StopGameDialog? _stopDialog;
-  final GameDimensions _gameDimensions = GameDimensions();
+  final GameDimensions _gameDimensions = GameDimensions(
+    gridBlockCount: IntVector2.square(11),
+  );
   final GridContentHolder _gridContentHolder = GridContentHolder();
   late final NextBlockPlanner _nextBlockPlanner = NextBlockPlanner(
     generator: GuidedCompoundblockModelGenerator(
@@ -55,10 +58,26 @@ class EndlessGame extends PositionComponent implements GameOverListener {
   void onMount() {
     super.onMount();
     add(background);
-    late final BlockBoard board;
+
+    final grid = Grid(
+      blockCount: _gameDimensions.gridBlockCount,
+      solutionStrategy: ValidEquationSolutionStrategy(),
+      nextBlockPlanner: _nextBlockPlanner,
+      singleBlockComponentFactory: newComponentFromBlockModel,
+      gridContentHolder: _gridContentHolder,
+      scoreRecorder: SoundOnScoreRecorder(
+        inner: _scoreKeeper,
+        player: _soundEffectPlayer,
+        fileName: SoundFiles.solvedEquation,
+      ),
+      gameOverListener: this,
+      size: _gameDimensions.sizeBlockBoard,
+      position: Vector2(0, _gameDimensions.sizeHeader.y),
+    );
+
     final header = Header(
       onConfirmPressed: () {
-        if (board.placeCurrentBlock()) {
+        if (grid.controller.placeCurrentBlock()) {
           _soundEffectPlayer.playSafely(SoundFiles.blockPlaced);
         }
       },
@@ -70,22 +89,9 @@ class EndlessGame extends PositionComponent implements GameOverListener {
       position: Vector2.zero(),
     );
     add(header);
-    board = BlockBoard(
-      scoreRecorder: SoundOnScoreRecorder(
-        inner: _scoreKeeper,
-        player: _soundEffectPlayer,
-        fileName: SoundFiles.solvedEquation,
-      ),
-      solutionStrategy: ValidEquationSolutionStrategy(),
-      singleBlockComponentFactory: newComponentFromBlockModel,
-      nextBlockPlanner: _nextBlockPlanner,
-      gridContentHolder: _gridContentHolder,
-      spawnOrigin: header.nextBlockDisplay,
-      gameOverListener: this,
-      size: _gameDimensions.sizeBlockBoard,
-      position: Vector2(0, _gameDimensions.sizeHeader.y),
-    );
-    add(board);
+
+    grid.spawnOrigin = header.nextBlockDisplay;
+    add(grid);
     add(
       Footer(
         size: _gameDimensions.sizeFooter,

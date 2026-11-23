@@ -31,7 +31,7 @@ class GridController implements PositionInGridAware {
 
   final NextBlockPlanner _nextBlockPlanner;
   final SpawnPositionChooser _spawnPositionChooser;
-  final SpawnOrigin? _spawnOrigin;
+  SpawnOrigin? _spawnOrigin;
   CompoundBlockComponent? currentBlock;
   IntVector2? currentBlockGridPosition;
 
@@ -53,6 +53,10 @@ class GridController implements PositionInGridAware {
   int _roundPoints = 0;
 
   bool get isGameOver => _gameOver;
+
+  /// Where new blocks fly in from. Can be set once the origin exists, which
+  /// may be later than the controller.
+  set spawnOrigin(SpawnOrigin? origin) => _spawnOrigin = origin;
 
   GridController({
     required this._gridModel,

@@ -4,7 +4,9 @@ import 'package:calc_tetris/util/int_vector_2.dart';
 import 'package:flame/game.dart';
 
 class GameDimensions {
-  static final IntVector2 gridBlockCount = IntVector2.square(11);
+  final IntVector2 gridBlockCount;
+
+  GameDimensions({required this.gridBlockCount});
 
   static final double _borderLeftRightPercentage = 0.1;
   static final double _borderTopPercentage = 0.3;

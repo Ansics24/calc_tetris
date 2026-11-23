@@ -8,9 +8,9 @@ import 'package:calc_tetris/block/math/scoring/score_keeper.dart';
 import 'package:calc_tetris/block/math/seed/next_block_planner.dart';
 import 'package:calc_tetris/block/math/valid_equation_solution_strategy.dart';
 import 'package:calc_tetris/block/model/single_block.dart';
+import 'package:calc_tetris/grid/grid.dart';
 import 'package:calc_tetris/grid/grid_round_listener.dart';
 import 'package:calc_tetris/grid/queries/grid_content_holder.dart';
-import 'package:calc_tetris/layout/board/block_board.dart';
 import 'package:calc_tetris/layout/game_dimensions.dart';
 import 'package:calc_tetris/layout/header/header.dart';
 import 'package:calc_tetris/screens/stopgame/stop_game_dialog.dart';
@@ -43,7 +43,9 @@ class TutorialGame extends PositionComponent implements GridRoundListener {
   late final TutorialRunner runner;
 
   final SkyBackground background = SkyBackground();
-  final GameDimensions _gameDimensions = GameDimensions();
+  final GameDimensions _gameDimensions = GameDimensions(
+    gridBlockCount: tutorialGridSize,
+  );
   late final TextBoxComponent hintText = TextBoxComponent(
     text: '',
     textRenderer: TextPaint(
@@ -147,10 +149,27 @@ class TutorialGame extends PositionComponent implements GridRoundListener {
       generator: ScriptedBlockGenerator(step.blockRows),
     );
     _gridContentHolder = GridContentHolder();
-    late final BlockBoard board;
+    final grid = Grid(
+      blockCount: _gameDimensions.gridBlockCount,
+      solutionStrategy: ValidEquationSolutionStrategy(),
+      nextBlockPlanner: planner,
+      singleBlockComponentFactory: newComponentFromBlockModel,
+      gridContentHolder: _gridContentHolder,
+      scoreRecorder: SoundOnScoreRecorder(
+        inner: scoreKeeper,
+        player: _soundEffectPlayer,
+        fileName: SoundFiles.solvedEquation,
+      ),
+      roundListener: this,
+      spawnPositionChooser: FixedSpawnPositionChooser(step.spawnPosition),
+      spawnNextBlockAfterRound: false,
+      initialContent: blocksFromRows(step.gridRows),
+      size: _gameDimensions.sizeBlockBoard,
+      position: Vector2(0, _gameDimensions.sizeHeader.y),
+    );
     final header = Header(
       onConfirmPressed: () {
-        if (board.placeCurrentBlock()) {
+        if (grid.controller.placeCurrentBlock()) {
           _soundEffectPlayer.playSafely(SoundFiles.blockPlaced);
         }
       },
@@ -161,27 +180,10 @@ class TutorialGame extends PositionComponent implements GridRoundListener {
       size: _gameDimensions.sizeHeader,
       position: Vector2.zero(),
     );
-    board = BlockBoard(
-      scoreRecorder: SoundOnScoreRecorder(
-        inner: scoreKeeper,
-        player: _soundEffectPlayer,
-        fileName: SoundFiles.solvedEquation,
-      ),
-      solutionStrategy: ValidEquationSolutionStrategy(),
-      singleBlockComponentFactory: newComponentFromBlockModel,
-      nextBlockPlanner: planner,
-      gridContentHolder: _gridContentHolder,
-      spawnOrigin: header.nextBlockDisplay,
-      roundListener: this,
-      spawnPositionChooser: FixedSpawnPositionChooser(step.spawnPosition),
-      spawnNextBlockAfterRound: false,
-      initialContent: blocksFromRows(step.gridRows),
-      size: _gameDimensions.sizeBlockBoard,
-      position: Vector2(0, _gameDimensions.sizeHeader.y),
-    );
+    grid.spawnOrigin = header.nextBlockDisplay;
     _header = header;
     _addStepComponent(header);
-    _addStepComponent(board);
+    _addStepComponent(grid);
   }
 
   void _addStepComponent(Component component) {

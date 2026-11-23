@@ -3,6 +3,7 @@ import 'package:calc_tetris/audio/sound_effect_player.dart';
 import 'package:calc_tetris/audio/sound_files.dart';
 import 'package:calc_tetris/block/solution_strategy_singlerun_result.dart';
 import 'package:calc_tetris/grid/grid.dart';
+import 'package:calc_tetris/layout/footer/cannon_button.dart';
 import 'package:calc_tetris/layout/header/confirm_button.dart';
 import 'package:calc_tetris/layout/header/stop_button.dart';
 import 'package:calc_tetris/persistence/database_service.dart';
@@ -118,6 +119,30 @@ void main() {
 
     expect(game.router.currentRoute.name, TetrisGame.tutorialRoute);
     expect(game.descendants().whereType<WelcomeScreen>(), isEmpty);
+  });
+
+  group('footer of the endless game', () {
+    testWidgets('shows the cannon power-up with none available', (
+      tester,
+    ) async {
+      final game = await _pumpEndlessGame(tester);
+
+      final buttons = game.descendants().whereType<CannonButton>();
+      expect(buttons, hasLength(1));
+      expect(buttons.single.count, 0);
+      expect(buttons.single.badgeText, '0');
+    });
+
+    testWidgets('puts the button below the grid', (tester) async {
+      final game = await _pumpEndlessGame(tester);
+
+      final endless = _endlessGame(game);
+      final button = game.descendants().whereType<CannonButton>().single;
+      final footerTop =
+          endless.gameDimensions.sizeHeader.y +
+          endless.gameDimensions.sizeBlockBoard.y;
+      expect(button.absolutePosition.y, greaterThanOrEqualTo(footerTop));
+    });
   });
 
   group('sound of a solved equation in the endless game', () {

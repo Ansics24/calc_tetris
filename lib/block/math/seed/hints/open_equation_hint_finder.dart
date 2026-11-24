@@ -1,4 +1,8 @@
+import 'dart:math';
+
 import 'package:calc_tetris/block/math/model/equation.dart';
+import 'package:calc_tetris/block/math/scoring/digit_multiplier_score_calculator.dart';
+import 'package:calc_tetris/block/math/scoring/score_calculator.dart';
 import 'package:calc_tetris/block/math/seed/block_tokens.dart';
 import 'package:calc_tetris/block/math/seed/hints/open_equation_hints.dart';
 import 'package:calc_tetris/block/model/single_block.dart';
@@ -6,16 +10,18 @@ import 'package:calc_tetris/block/model/single_block.dart';
 /// Looks for empty cells next to existing blocks and finds out which tokens
 /// would help to finish an equation there.
 class OpenEquationHintFinder {
+  final ScoreCalculator _scoreCalculator;
+
+  OpenEquationHintFinder({ScoreCalculator? scoreCalculator})
+    : _scoreCalculator = scoreCalculator ?? DigitMultiplierScoreCalculator();
+
   /// [grid] is indexed `[x][y]`, y grows downwards.
   OpenEquationHints find(List<List<SingleBlock?>> grid) {
-    final completions = <String>{};
-    final partials = <String>{};
+    final completions = <String, int>{};
+    final partials = <String, int>{};
     final extensions = <String>{};
     if (grid.isEmpty) {
-      return OpenEquationHints(
-        completions: completions,
-        extensions: extensions,
-      );
+      return OpenEquationHints(completions: {}, extensions: extensions);
     }
     for (final row in _rows(grid)) {
       _scan(row, requireSupport: false, completions, partials, extensions);
@@ -24,8 +30,10 @@ class OpenEquationHintFinder {
       _scan(column, requireSupport: true, completions, partials, extensions);
     }
     return OpenEquationHints(
-      completions: completions,
-      partialCompletions: partials,
+      completions: completions.keys.toSet(),
+      completionPoints: completions,
+      partialCompletions: partials.keys.toSet(),
+      partialCompletionPoints: partials,
       extensions: extensions,
     );
   }
@@ -39,8 +47,8 @@ class OpenEquationHintFinder {
 
   void _scan(
     List<SingleBlock?> line,
-    Set<String> completions,
-    Set<String> partialCompletions,
+    Map<String, int> completions,
+    Map<String, int> partialCompletions,
     Set<String> extensions, {
     required bool requireSupport,
   }) {
@@ -54,16 +62,25 @@ class OpenEquationHintFinder {
       }
       for (final token in BlockTokens.all) {
         final run = _runWith(line, i, token);
+        final partialPoints = _bestPartialPoints(run, i - _runStart(line, i));
         if (_completesEquation(run)) {
-          completions.add(token);
-        } else if (_completesPartOfRun(run, i - _runStart(line, i))) {
-          partialCompletions.add(token);
+          _keepBest(completions, token, _points(run));
+        } else if (partialPoints != null) {
+          _keepBest(partialCompletions, token, partialPoints);
         } else if (_canBePartOfEquation(run)) {
           extensions.add(token);
         }
       }
     }
   }
+
+  void _keepBest(Map<String, int> points, String token, int value) {
+    points[token] = max(points[token] ?? 0, value);
+  }
+
+  int _points(List<String> tokens) => _scoreCalculator.calculate(
+    Equation.fromBlocks(tokens.map(BlockTokens.blockFor)),
+  );
 
   int _runStart(List<SingleBlock?> line, int index) {
     var start = index;
@@ -106,17 +123,19 @@ class OpenEquationHintFinder {
     return Equation.fromBlocks(tokens.map(BlockTokens.blockFor)).isCorrect();
   }
 
-  /// Whether a part of the run that includes the token at [tokenIndex] is a
-  /// correct equation.
-  bool _completesPartOfRun(List<String> tokens, int tokenIndex) {
+  /// The points of the best correct equation that is a part of the run and
+  /// includes the token at [tokenIndex], or null if there is none.
+  int? _bestPartialPoints(List<String> tokens, int tokenIndex) {
+    int? best;
     for (var start = 0; start <= tokenIndex; start++) {
       for (var end = tokenIndex + 1; end <= tokens.length; end++) {
-        if (_completesEquation(tokens.sublist(start, end))) {
-          return true;
+        final part = tokens.sublist(start, end);
+        if (_completesEquation(part)) {
+          best = max(best ?? 0, _points(part));
         }
       }
     }
-    return false;
+    return best;
   }
 
   /// Whether [tokens] could be a part of a valid equation.

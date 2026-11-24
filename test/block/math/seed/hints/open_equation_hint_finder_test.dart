@@ -1,7 +1,19 @@
+import 'package:calc_tetris/block/math/model/equation.dart';
+import 'package:calc_tetris/block/math/scoring/score_calculator.dart';
 import 'package:calc_tetris/block/math/seed/hints/open_equation_hint_finder.dart';
+import 'package:calc_tetris/block/math/seed/hints/open_equation_hints.dart';
 import 'package:test/test.dart';
 
 import '../support/grid_fixtures.dart';
+
+class _ConstantScore implements ScoreCalculator {
+  final int points;
+
+  _ConstantScore(this.points);
+
+  @override
+  int calculate(Equation equation) => points;
+}
 
 void main() {
   final finder = OpenEquationHintFinder();
@@ -126,6 +138,110 @@ void main() {
       final hints = finder.find(gridFromRows(['.....', '.....']));
 
       expect(hints.extensions, isEmpty);
+    });
+  });
+
+  group('points of the completions', () {
+    test('are the points the completed equation earns', () {
+      final hints = finder.find(gridFromRows(['1+2=.']));
+
+      expect(hints.completionPoints, {'3': 6});
+    });
+
+    test('count every number of the equation', () {
+      final hints = finder.find(gridFromRows(['1+2+3=.']));
+
+      expect(hints.completionPoints, {'6': 8});
+    });
+
+    test('count the digits of multi digit numbers', () {
+      final hints = finder.find(gridFromRows(['24+12=3.']));
+
+      // three numbers, two digits each for 24, 12 and 36: 3 * 2 * (2+2+2)
+      expect(hints.completionPoints, {'6': 36});
+    });
+
+    test('tell the better completion apart from the worse one', () {
+      final hints = finder.find(
+        gridFromRows([
+          '1+2+3=.',
+          '.......',
+          '2+3=...',
+        ]),
+      );
+
+      expect(hints.completionPoints['6'], 8);
+      expect(hints.completionPoints['5'], 6);
+    });
+
+    test('keep the best points when a token completes several equations', () {
+      final hints = finder.find(
+        gridFromRows([
+          '1+2=...',
+          '.......',
+          '1+1+1=.',
+        ]),
+      );
+
+      expect(hints.completions, contains('3'));
+      expect(hints.completionPoints['3'], 8);
+    });
+
+    test('exist for every completion', () {
+      final hints = finder.find(
+        gridFromRows(['1+2=.', '.....', '9-4=.', '.....', '1+.=3']),
+      );
+
+      expect(hints.completionPoints.keys.toSet(), hints.completions);
+    });
+
+    test('use the given score calculator', () {
+      final hints = OpenEquationHintFinder(
+        scoreCalculator: _ConstantScore(100),
+      ).find(gridFromRows(['1+2=.']));
+
+      expect(hints.completionPoints, {'3': 100});
+    });
+
+    test('are empty on an empty grid', () {
+      final hints = finder.find(gridFromRows(['.....', '.....']));
+
+      expect(hints.completionPoints, isEmpty);
+      expect(hints.partialCompletionPoints, isEmpty);
+    });
+  });
+
+  group('points of the partial completions', () {
+    test('are the points of the equation inside the longer row', () {
+      final hints = finder.find(gridFromRows(['=8+1=.']));
+
+      expect(hints.partialCompletionPoints['9'], 6);
+    });
+
+    test('exist for every partial completion', () {
+      final hints = finder.find(gridFromRows(['7=8+1=.-']));
+
+      expect(
+        hints.partialCompletionPoints.keys.toSet(),
+        hints.partialCompletions,
+      );
+    });
+
+    test('use the given score calculator', () {
+      final hints = OpenEquationHintFinder(
+        scoreCalculator: _ConstantScore(100),
+      ).find(gridFromRows(['=8+1=.']));
+
+      expect(hints.partialCompletionPoints['9'], 100);
+    });
+  });
+
+  group('hints without points', () {
+    test('know no points by default', () {
+      final hints = OpenEquationHints(completions: {'3'}, extensions: {});
+
+      expect(hints.completionPoints, isEmpty);
+      expect(hints.partialCompletionPoints, isEmpty);
     });
   });
 }

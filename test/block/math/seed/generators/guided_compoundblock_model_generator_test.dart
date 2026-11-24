@@ -1,6 +1,8 @@
 import 'dart:math';
 
 import 'package:calc_tetris/block/math/seed/generators/guided_compoundblock_model_generator.dart';
+import 'package:calc_tetris/block/math/seed/hints/open_equation_hint_finder.dart';
+import 'package:calc_tetris/block/math/seed/hints/open_equation_hints.dart';
 import 'package:calc_tetris/block/model/null_block.dart';
 import 'package:calc_tetris/block/model/single_block.dart';
 import 'package:calc_tetris/block/shapes/compound_block_shape.dart';
@@ -23,6 +25,31 @@ List<String> _tokensOf(List<List<SingleBlock>> model) => model
     .where((block) => block is! NullBlock)
     .map((block) => block.toString())
     .toList();
+
+class _FixedHintFinder implements OpenEquationHintFinder {
+  final OpenEquationHints hints;
+
+  _FixedHintFinder(this.hints);
+
+  @override
+  OpenEquationHints find(List<List<SingleBlock?>> grid) => hints;
+}
+
+/// The single token the generator makes of [hints], tried with many seeds.
+Set<String> _chosenTokens(OpenEquationHints hints, {int seeds = 60}) {
+  return {
+    for (var seed = 0; seed < seeds; seed++)
+      _tokensOf(
+        GuidedCompoundblockModelGenerator(
+          gridContent: () => [],
+          shapeChooser: _FixedShapeChooser(CompoundBlockShape.i1x1),
+          random: Random(seed),
+          hintFinder: _FixedHintFinder(hints),
+          hintChance: 1,
+        ).generate(),
+      ).single,
+  };
+}
 
 bool _isDigit(String token) => RegExp(r'^\d$').hasMatch(token);
 
@@ -221,6 +248,112 @@ void main() {
 
       rows = ['3+4=.'];
       expect(_tokensOf(generator.generate()), ['7']);
+    });
+  });
+
+  group('the hint that brings the most points', () {
+    test('is chosen among several completions', () {
+      final hints = OpenEquationHints(
+        completions: {'2', '5', '7'},
+        completionPoints: {'2': 6, '5': 8, '7': 6},
+        extensions: {},
+      );
+
+      expect(_chosenTokens(hints), {'5'});
+    });
+
+    test('is chosen among completions with a big difference', () {
+      final hints = OpenEquationHints(
+        completions: {'1', '2', '3', '4'},
+        completionPoints: {'1': 6, '2': 36, '3': 8, '4': 24},
+        extensions: {},
+      );
+
+      expect(_chosenTokens(hints), {'2'});
+    });
+
+    test('is picked at random among completions with equal points', () {
+      final hints = OpenEquationHints(
+        completions: {'2', '7', '9'},
+        completionPoints: {'2': 8, '7': 8, '9': 6},
+        extensions: {},
+      );
+
+      expect(_chosenTokens(hints), {'2', '7'});
+    });
+
+    test('is a completion, even if a partial one is worth more', () {
+      final hints = OpenEquationHints(
+        completions: {'2'},
+        completionPoints: {'2': 6},
+        partialCompletions: {'9'},
+        partialCompletionPoints: {'9': 36},
+        extensions: {},
+      );
+
+      expect(_chosenTokens(hints), {'2'});
+    });
+
+    test('is chosen among partial completions when there is no completion', () {
+      final hints = OpenEquationHints(
+        completions: {},
+        partialCompletions: {'4', '9'},
+        partialCompletionPoints: {'4': 6, '9': 36},
+        extensions: {'1'},
+      );
+
+      expect(_chosenTokens(hints), {'9'});
+    });
+
+    test('is picked at random among partials with equal points', () {
+      final hints = OpenEquationHints(
+        completions: {},
+        partialCompletions: {'4', '9'},
+        partialCompletionPoints: {'4': 6, '9': 6},
+        extensions: {},
+      );
+
+      expect(_chosenTokens(hints), {'4', '9'});
+    });
+
+    test('stays random for completions whose points are not known', () {
+      final hints = OpenEquationHints(
+        completions: {'2', '7'},
+        extensions: {},
+      );
+
+      expect(_chosenTokens(hints), {'2', '7'});
+    });
+
+    test('prefers a completion with known points over unknown ones', () {
+      final hints = OpenEquationHints(
+        completions: {'2', '7'},
+        completionPoints: {'7': 6},
+        extensions: {},
+      );
+
+      expect(_chosenTokens(hints), {'7'});
+    });
+
+    test('does not touch extensions, they stay random', () {
+      final hints = OpenEquationHints(
+        completions: {},
+        extensions: {'1', '2'},
+      );
+
+      expect(_chosenTokens(hints), {'1', '2'});
+    });
+
+    test('works with the real hint finder', () {
+      final generator = _generator(
+        gridRows: () => ['1+2+3=.', '.......', '2+3=...'],
+        hintChance: 1,
+      );
+
+      for (var i = 0; i < 50; i++) {
+        // 1+2+3=6 earns 8 points, 2+3=5 only 6
+        expect(_tokensOf(generator.generate()), ['6']);
+      }
     });
   });
 }

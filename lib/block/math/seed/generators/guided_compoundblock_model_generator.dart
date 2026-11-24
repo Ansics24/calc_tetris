@@ -64,18 +64,34 @@ class GuidedCompoundblockModelGenerator implements CompoundblockModelGenerator {
     return tokens..shuffle(_random);
   }
 
+  /// A token that helps with an open equation: the one that earns the most
+  /// points among the completions, or among the partial completions if there
+  /// is no completion. Extensions are picked at random.
   String? _pickHint() {
     final hints = _hintFinder.find(_gridContent());
-    final candidates = hints.completions.isNotEmpty
-        ? hints.completions
-        : hints.partialCompletions.isNotEmpty
-        ? hints.partialCompletions
-        : hints.extensions;
-    if (candidates.isEmpty) {
+    if (hints.completions.isNotEmpty) {
+      return _pickBest(hints.completions, hints.completionPoints);
+    }
+    if (hints.partialCompletions.isNotEmpty) {
+      return _pickBest(hints.partialCompletions, hints.partialCompletionPoints);
+    }
+    if (hints.extensions.isEmpty) {
       return null;
     }
-    return candidates.elementAt(_random.nextInt(candidates.length));
+    return _pickRandom(hints.extensions);
   }
+
+  /// One of the candidates with the most points, picked at random if several
+  /// earn the same. Candidates without known points count as 0.
+  String _pickBest(Set<String> candidates, Map<String, int> points) {
+    final best = candidates.map((c) => points[c] ?? 0).reduce(max);
+    return _pickRandom(
+      candidates.where((c) => (points[c] ?? 0) == best).toList(),
+    );
+  }
+
+  String _pickRandom(Iterable<String> candidates) =>
+      candidates.elementAt(_random.nextInt(candidates.length));
 
   String _randomSingleToken() {
     final roll = _random.nextInt(100);

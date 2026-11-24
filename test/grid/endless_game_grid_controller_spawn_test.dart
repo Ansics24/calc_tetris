@@ -4,7 +4,7 @@ import 'package:calc_tetris/block/math/model/math_number_block.dart';
 import 'package:calc_tetris/block/math/seed/compoundblock_model_generator.dart';
 import 'package:calc_tetris/block/math/seed/next_block_planner.dart';
 import 'package:calc_tetris/block/model/single_block.dart';
-import 'package:calc_tetris/grid/grid_controller.dart';
+import 'package:calc_tetris/grid/endless_game_grid_controller.dart';
 import 'package:calc_tetris/grid/model/grid_model.dart';
 import 'package:calc_tetris/util/int_vector_2.dart';
 import 'package:test/test.dart';
@@ -26,7 +26,7 @@ void main() {
     final grid = newTestGrid(size, nextBlockPlanner: planner);
     final model = GridModel(size: size, gridComponent: grid)..cellSize = 50;
     final planned = planner.upcoming;
-    final controller = GridController(
+    final controller = EndlessGameGridController(
       gridModel: model,
       grid: grid,
       solutionStrategy: UnusedStrategy(),

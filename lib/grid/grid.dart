@@ -2,20 +2,13 @@ import 'dart:async';
 import 'dart:developer' as dev;
 import 'dart:math';
 
-import 'package:calc_tetris/block/math/scoring/score_keeper.dart';
-import 'package:calc_tetris/block/math/seed/next_block_planner.dart';
-import 'package:calc_tetris/block/math/seed/spawn_origin.dart';
-import 'package:calc_tetris/block/math/seed/spawn_position_chooser.dart';
 import 'package:calc_tetris/block/model/single_block.dart';
 import 'package:calc_tetris/block/single_block_component_factory.dart';
-import 'package:calc_tetris/block/solution_strategy.dart';
 import 'package:calc_tetris/grid/grid_controller.dart';
-import 'package:calc_tetris/grid/grid_round_listener.dart';
 import 'package:calc_tetris/grid/model/grid_model.dart';
 import 'package:calc_tetris/grid/queries/grid_content_holder.dart';
 import 'package:calc_tetris/grid/visuals/grid_frame.dart';
 import 'package:calc_tetris/grid/visuals/grid_line.dart';
-import 'package:calc_tetris/screens/gameover/game_over_listener.dart';
 import 'package:calc_tetris/util/int_vector_2.dart';
 import 'package:flame/components.dart';
 
@@ -29,38 +22,19 @@ class Grid extends PositionComponent {
 
   Grid({
     required this._blockCount,
-    required SolutionStrategy solutionStrategy,
-    required NextBlockPlanner nextBlockPlanner,
-    required SingleBlockComponentFactory singleBlockComponentFactory,
+    required this._singleBlockComponentFactory,
+    required GridControllerFactory controllerFactory,
     GridContentHolder? gridContentHolder,
-    SpawnOrigin? spawnOrigin,
-    ScoreRecorder? scoreRecorder,
-    GameOverListener? gameOverListener,
-    GridRoundListener? roundListener,
-    SpawnPositionChooser? spawnPositionChooser,
-    bool spawnNextBlockAfterRound = true,
     this._initialContent,
     super.size,
     super.position,
-  }) : _singleBlockComponentFactory = singleBlockComponentFactory {
+  }) {
     _gridModel = GridModel(
       size: _blockCount,
       gridComponent: this,
     );
     gridContentHolder?.attach(_gridModel);
-    _gridController = GridController(
-      gridModel: _gridModel,
-      grid: this,
-      solutionStrategy: solutionStrategy,
-      nextBlockPlanner: nextBlockPlanner,
-      singleBlockComponentFactory: singleBlockComponentFactory,
-      spawnOrigin: spawnOrigin,
-      scoreRecorder: scoreRecorder,
-      gameOverListener: gameOverListener,
-      roundListener: roundListener,
-      spawnPositionChooser: spawnPositionChooser,
-      spawnNextBlockAfterRound: spawnNextBlockAfterRound,
-    );
+    _gridController = controllerFactory(_gridModel, this);
   }
 
   /// The grid is given the area it may use ([size] and [position]). Once
@@ -155,8 +129,4 @@ class Grid extends PositionComponent {
       IntVector2(_gridModel.model.length, _gridModel.model[0].length);
 
   GridController get controller => _gridController;
-
-  /// Where new blocks fly in from. Can be set after the grid was created.
-  set spawnOrigin(SpawnOrigin spawnOrigin) =>
-      _gridController.spawnOrigin = spawnOrigin;
 }

@@ -75,8 +75,7 @@ enum CompoundBlockShape {
 
   const CompoundBlockShape({
     required this._generateEmptyFunction,
-    this.enabled = true,
-  });
+  }) : enabled = true;
 
   List<List<SingleBlock?>> get maskedModel => _generateEmptyFunction();
 }

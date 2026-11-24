@@ -6,7 +6,7 @@ import 'package:calc_tetris/block/math/seed/compoundblock_model_generator.dart';
 import 'package:calc_tetris/block/math/seed/next_block_planner.dart';
 import 'package:calc_tetris/block/math/seed/spawn_position_chooser.dart';
 import 'package:calc_tetris/block/solution_strategy.dart';
-import 'package:calc_tetris/grid/grid_controller.dart';
+import 'package:calc_tetris/grid/endless_game_grid_controller.dart';
 import 'package:calc_tetris/grid/model/grid_model.dart';
 import 'package:calc_tetris/screens/gameover/game_over_listener.dart';
 import 'package:calc_tetris/util/int_vector_2.dart';
@@ -48,7 +48,11 @@ class _UnusedStrategy implements SolutionStrategy {
       throw StateError('strategy must not be used');
 }
 
-({GridController controller, GridModel model, NextBlockPlanner planner})
+({
+  EndlessGameGridController controller,
+  GridModel model,
+  NextBlockPlanner planner,
+})
 _setUp({
   required GameOverListener listener,
   required SpawnPositionChooser chooser,
@@ -65,7 +69,7 @@ _setUp({
     );
   }
   final planner = NextBlockPlanner(generator: _TwoWideGenerator());
-  final controller = GridController(
+  final controller = EndlessGameGridController(
     gridModel: model,
     grid: grid,
     solutionStrategy: _UnusedStrategy(),
@@ -173,8 +177,8 @@ void main() {
     setUp.controller.spawnNextBlock();
 
     setUp.controller.spawnNextBlock();
-    setUp.controller.moveBlockLeft();
-    setUp.controller.moveBlockRight();
+    setUp.controller.onBlockDraggedLeft();
+    setUp.controller.onBlockDraggedRight();
 
     expect(listener.calls, 1);
     expect(setUp.controller.currentBlock, isNull);

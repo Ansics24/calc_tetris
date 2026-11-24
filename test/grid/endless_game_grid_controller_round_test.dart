@@ -4,7 +4,7 @@ import 'package:calc_tetris/block/math/seed/compoundblock_model_generator.dart';
 import 'package:calc_tetris/block/math/seed/next_block_planner.dart';
 import 'package:calc_tetris/block/model/single_block.dart';
 import 'package:calc_tetris/block/solution_strategy_singlerun_result.dart';
-import 'package:calc_tetris/grid/grid_controller.dart';
+import 'package:calc_tetris/grid/endless_game_grid_controller.dart';
 import 'package:calc_tetris/grid/grid_round_listener.dart';
 import 'package:calc_tetris/grid/model/grid_model.dart';
 import 'package:calc_tetris/util/int_vector_2.dart';
@@ -26,7 +26,7 @@ class _RecordingRoundListener implements GridRoundListener {
   void onRoundFinished(int pointsEarned) => points.add(pointsEarned);
 }
 
-GridController _controller({
+EndlessGameGridController _controller({
   GridRoundListener? roundListener,
   bool spawnNextBlockAfterRound = true,
 }) {
@@ -34,7 +34,7 @@ GridController _controller({
   final planner = NextBlockPlanner(generator: _OneCellGenerator());
   final grid = newTestGrid(size, nextBlockPlanner: planner);
   final model = GridModel(size: size, gridComponent: grid)..cellSize = 50;
-  return GridController(
+  return EndlessGameGridController(
     gridModel: model,
     grid: grid,
     solutionStrategy: UnusedStrategy(),

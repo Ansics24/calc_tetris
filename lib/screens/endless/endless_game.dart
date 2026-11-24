@@ -9,6 +9,7 @@ import 'package:calc_tetris/block/math/seed/generators/guided_compoundblock_mode
 import 'package:calc_tetris/block/math/seed/next_block_planner.dart';
 import 'package:calc_tetris/block/math/valid_equation_solution_strategy.dart';
 import 'package:calc_tetris/block/model/single_block.dart';
+import 'package:calc_tetris/grid/endless_game_grid_controller.dart';
 import 'package:calc_tetris/grid/grid.dart';
 import 'package:calc_tetris/grid/queries/grid_content_holder.dart';
 import 'package:calc_tetris/layout/footer/footer.dart';
@@ -59,18 +60,25 @@ class EndlessGame extends PositionComponent implements GameOverListener {
     super.onMount();
     add(background);
 
+    late final EndlessGameGridController gridController;
     final grid = Grid(
       blockCount: _gameDimensions.gridBlockCount,
-      solutionStrategy: ValidEquationSolutionStrategy(),
-      nextBlockPlanner: _nextBlockPlanner,
       singleBlockComponentFactory: newComponentFromBlockModel,
       gridContentHolder: _gridContentHolder,
-      scoreRecorder: SoundOnScoreRecorder(
-        inner: _scoreKeeper,
-        player: _soundEffectPlayer,
-        fileName: SoundFiles.solvedEquation,
-      ),
-      gameOverListener: this,
+      controllerFactory: (gridModel, grid) =>
+          gridController = EndlessGameGridController(
+            gridModel: gridModel,
+            grid: grid,
+            solutionStrategy: ValidEquationSolutionStrategy(),
+            nextBlockPlanner: _nextBlockPlanner,
+            singleBlockComponentFactory: newComponentFromBlockModel,
+            scoreRecorder: SoundOnScoreRecorder(
+              inner: _scoreKeeper,
+              player: _soundEffectPlayer,
+              fileName: SoundFiles.solvedEquation,
+            ),
+            gameOverListener: this,
+          ),
       size: _gameDimensions.sizeBlockBoard,
       position: Vector2(0, _gameDimensions.sizeHeader.y),
     );
@@ -90,7 +98,7 @@ class EndlessGame extends PositionComponent implements GameOverListener {
     );
     add(header);
 
-    grid.spawnOrigin = header.nextBlockDisplay;
+    gridController.spawnOrigin = header.nextBlockDisplay;
     add(grid);
     add(
       Footer(

@@ -2,6 +2,7 @@ import 'package:calc_tetris/block/math/math_single_block_component_factory.dart'
 import 'package:calc_tetris/block/math/seed/generators/random_compoundblock_model_generator.dart';
 import 'package:calc_tetris/block/math/seed/next_block_planner.dart';
 import 'package:calc_tetris/block/solution_strategy.dart';
+import 'package:calc_tetris/grid/endless_game_grid_controller.dart';
 import 'package:calc_tetris/grid/grid.dart';
 import 'package:calc_tetris/util/int_vector_2.dart';
 
@@ -18,9 +19,20 @@ Grid newTestGrid(
   NextBlockPlanner? nextBlockPlanner,
 }) => Grid(
   blockCount: size,
-  solutionStrategy: UnusedStrategy(),
-  nextBlockPlanner:
-      nextBlockPlanner ??
-      NextBlockPlanner(generator: RandomCompoundblockModelGenerator()),
   singleBlockComponentFactory: newComponentFromBlockModel,
+  controllerFactory: (gridModel, grid) => EndlessGameGridController(
+    gridModel: gridModel,
+    grid: grid,
+    solutionStrategy: UnusedStrategy(),
+    nextBlockPlanner:
+        nextBlockPlanner ??
+        NextBlockPlanner(generator: RandomCompoundblockModelGenerator()),
+    singleBlockComponentFactory: newComponentFromBlockModel,
+  ),
 );
+
+extension EndlessGridTestAccess on Grid {
+  /// The controller of the grid as the [EndlessGameGridController].
+  EndlessGameGridController get endlessController =>
+      controller as EndlessGameGridController;
+}

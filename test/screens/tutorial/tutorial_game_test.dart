@@ -16,6 +16,7 @@ import 'package:flame/game.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/recording_sound_effect_player.dart';
+import '../../support/test_grid.dart';
 
 Future<void> _settle(WidgetTester tester) async {
   await tester.pump();
@@ -74,7 +75,7 @@ Future<void> _continue(WidgetTester tester, TetrisGame game) async {
 
 /// Moves the controlled block step by step to [target] (rotating first).
 void _steerBlock(Grid grid, PlayStep step, {bool toSolution = true}) {
-  final controller = grid.controller;
+  final controller = grid.endlessController;
   for (var i = 0; i < step.solutionRotations && toSolution; i++) {
     controller.currentBlock!.rotate();
   }
@@ -84,18 +85,18 @@ void _steerBlock(Grid grid, PlayStep step, {bool toSolution = true}) {
   final target = step.solutionPosition;
   // down first, so the block never has to cross the prepared blocks
   while (controller.currentBlockGridPosition!.y < target.y) {
-    controller.moveBlockDown();
+    controller.onBlockDraggedDown();
   }
   while (controller.currentBlockGridPosition!.x < target.x) {
-    controller.moveBlockRight();
+    controller.onBlockDraggedRight();
   }
   while (controller.currentBlockGridPosition!.x > target.x) {
-    controller.moveBlockLeft();
+    controller.onBlockDraggedLeft();
   }
 }
 
 Future<void> _place(WidgetTester tester, TetrisGame game) async {
-  _grid(game)!.controller.placeCurrentBlock();
+  _grid(game)!.endlessController.placeCurrentBlock();
   await tester.pump();
   // landing animation, solving, removing the solved blocks, counting up the
   // score and the short pause before the next step
@@ -155,7 +156,7 @@ void main() {
     await _continue(tester, game);
 
     final step = script[1] as PlayStep;
-    final position = _grid(game)!.controller.currentBlockGridPosition!;
+    final position = _grid(game)!.endlessController.currentBlockGridPosition!;
     expect(position.x, step.spawnPosition.x);
     expect(position.y, step.spawnPosition.y);
   });
@@ -322,7 +323,7 @@ void main() {
     expect(_tutorial(game).scoreKeeper.total, 0);
     // a fresh board with the prepared equation and a block ready to be moved
     final grid = _grid(game)!;
-    expect(grid.controller.currentBlock, isNotNull);
+    expect(grid.endlessController.currentBlock, isNotNull);
     expect(_tutorial(game).gridContent[2][9], isNotNull);
   });
 

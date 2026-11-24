@@ -19,6 +19,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'support/recording_music_player.dart';
 import 'support/recording_sound_effect_player.dart';
+import 'support/test_grid.dart';
 
 Future<TetrisGame> _pumpGame(
   WidgetTester tester, {
@@ -164,9 +165,14 @@ void main() {
       final sounds = RecordingSoundEffectPlayer();
       final game = await pumpWith(tester, sounds);
 
-      game.descendants().whereType<Grid>().first.controller.onStrategyResult(
-        result(6),
-      );
+      game
+          .descendants()
+          .whereType<Grid>()
+          .first
+          .endlessController
+          .onStrategyResult(
+            result(6),
+          );
 
       expect(sounds.played, [SoundFiles.solvedEquation]);
     });
@@ -174,7 +180,11 @@ void main() {
     testWidgets('rings once for every solved result', (tester) async {
       final sounds = RecordingSoundEffectPlayer();
       final game = await pumpWith(tester, sounds);
-      final controller = game.descendants().whereType<Grid>().first.controller;
+      final controller = game
+          .descendants()
+          .whereType<Grid>()
+          .first
+          .endlessController;
 
       controller.onStrategyResult(result(6));
       controller.onStrategyResult(result(8));
@@ -198,9 +208,14 @@ void main() {
         RecordingSoundEffectPlayer(failing: true),
       );
 
-      game.descendants().whereType<Grid>().first.controller.onStrategyResult(
-        result(6),
-      );
+      game
+          .descendants()
+          .whereType<Grid>()
+          .first
+          .endlessController
+          .onStrategyResult(
+            result(6),
+          );
       await tester.pump();
 
       expect(_endlessGame(game).scoreKeeper.total, 6);
@@ -439,8 +454,8 @@ void main() {
 
     /// The grid cells the controlled block covers right now.
     Set<Vector2> coveredCells(Grid grid) {
-      final start = grid.controller.currentBlockGridPosition!;
-      return grid.controller.currentBlock!
+      final start = grid.endlessController.currentBlockGridPosition!;
+      return grid.endlessController.currentBlock!
           .getLocalSingleBlockPositions()
           .map((p) => Vector2(start.x + p.x * 1.0, start.y + p.y * 1.0))
           .toSet();
@@ -466,13 +481,13 @@ void main() {
       final grid = game.descendants().whereType<Grid>().first;
       // the block may spawn at any border, so it can be blocked in one
       // direction
-      final startY = grid.controller.currentBlockGridPosition!.y;
-      grid.controller.moveBlockDown();
-      if (grid.controller.currentBlockGridPosition!.y == startY) {
-        grid.controller.moveBlockUp();
+      final startY = grid.endlessController.currentBlockGridPosition!.y;
+      grid.endlessController.onBlockDraggedDown();
+      if (grid.endlessController.currentBlockGridPosition!.y == startY) {
+        grid.endlessController.onBlockDraggedUp();
       }
       final expected = coveredCells(grid);
-      expect(grid.controller.currentBlockGridPosition!.y, isNot(startY));
+      expect(grid.endlessController.currentBlockGridPosition!.y, isNot(startY));
 
       await pressConfirm(tester, game);
 
@@ -481,7 +496,11 @@ void main() {
 
     testWidgets('spawns the next block afterwards', (tester) async {
       final game = await _pumpGameWithArrivedBlock(tester);
-      final controller = game.descendants().whereType<Grid>().first.controller;
+      final controller = game
+          .descendants()
+          .whereType<Grid>()
+          .first
+          .endlessController;
       final first = controller.currentBlock;
 
       await pressConfirm(tester, game);

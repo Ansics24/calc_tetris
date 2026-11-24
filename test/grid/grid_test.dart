@@ -8,12 +8,17 @@ import 'package:calc_tetris/block/math/seed/spawn_position_chooser.dart';
 import 'package:calc_tetris/block/math/valid_equation_solution_strategy.dart';
 import 'package:calc_tetris/block/model/single_block.dart';
 import 'package:calc_tetris/block/single_block_component.dart';
+import 'package:calc_tetris/grid/endless_game_grid_controller.dart';
 import 'package:calc_tetris/grid/grid.dart';
+import 'package:calc_tetris/grid/grid_controller.dart';
 import 'package:calc_tetris/grid/grid_round_listener.dart';
+import 'package:calc_tetris/grid/model/grid_model.dart';
 import 'package:calc_tetris/grid/queries/grid_content_holder.dart';
 import 'package:calc_tetris/util/int_vector_2.dart';
 import 'package:flame/game.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+import '../support/test_grid.dart';
 
 class _OneCellGenerator implements CompoundblockModelGenerator {
   @override
@@ -25,6 +30,33 @@ class _OneCellGenerator implements CompoundblockModelGenerator {
 class _Chooser implements SpawnPositionChooser {
   @override
   IntVector2 choose(List<IntVector2> candidates) => IntVector2(4, 3);
+}
+
+class _FakeGridController implements GridController {
+  int spawns = 0;
+  int placements = 0;
+  final List<String> moves = [];
+
+  @override
+  void spawnNextBlock() => spawns++;
+
+  @override
+  bool placeCurrentBlock() {
+    placements++;
+    return true;
+  }
+
+  @override
+  void onBlockDraggedLeft() => moves.add('left');
+
+  @override
+  void onBlockDraggedRight() => moves.add('right');
+
+  @override
+  void onBlockDraggedUp() => moves.add('up');
+
+  @override
+  void onBlockDraggedDown() => moves.add('down');
 }
 
 class _Listener implements GridRoundListener {
@@ -58,6 +90,24 @@ List<List<SingleBlock?>> _initialContent() {
   return content;
 }
 
+GridControllerFactory _controllerFactory({
+  SpawnPositionChooser? chooser,
+  GridRoundListener? listener,
+  bool spawnNextBlockAfterRound = true,
+  SpawnOrigin? spawnOrigin,
+}) =>
+    (gridModel, grid) => EndlessGameGridController(
+      gridModel: gridModel,
+      grid: grid,
+      solutionStrategy: ValidEquationSolutionStrategy(),
+      nextBlockPlanner: NextBlockPlanner(generator: _OneCellGenerator()),
+      singleBlockComponentFactory: newComponentFromBlockModel,
+      spawnPositionChooser: chooser,
+      roundListener: listener,
+      spawnNextBlockAfterRound: spawnNextBlockAfterRound,
+      spawnOrigin: spawnOrigin,
+    );
+
 Future<({FlameGame game, Grid grid, GridContentHolder holder})> _pump(
   WidgetTester tester, {
   List<List<SingleBlock?>>? initialContent,
@@ -65,6 +115,7 @@ Future<({FlameGame game, Grid grid, GridContentHolder holder})> _pump(
   GridRoundListener? listener,
   bool spawnNextBlockAfterRound = true,
   SpawnOrigin? spawnOrigin,
+  GridControllerFactory? controllerFactory,
   Vector2? areaSize,
   Vector2? areaPosition,
   bool settle = true,
@@ -73,20 +124,20 @@ Future<({FlameGame game, Grid grid, GridContentHolder holder})> _pump(
   final game = FlameGame();
   final grid = Grid(
     blockCount: _blockCount,
-    solutionStrategy: ValidEquationSolutionStrategy(),
     singleBlockComponentFactory: newComponentFromBlockModel,
-    nextBlockPlanner: NextBlockPlanner(generator: _OneCellGenerator()),
+    controllerFactory:
+        controllerFactory ??
+        _controllerFactory(
+          chooser: chooser,
+          listener: listener,
+          spawnNextBlockAfterRound: spawnNextBlockAfterRound,
+          spawnOrigin: spawnOrigin,
+        ),
     gridContentHolder: holder,
     initialContent: initialContent,
-    spawnPositionChooser: chooser,
-    roundListener: listener,
-    spawnNextBlockAfterRound: spawnNextBlockAfterRound,
     size: areaSize ?? Vector2(440, 440),
     position: areaPosition,
   );
-  if (spawnOrigin != null) {
-    grid.spawnOrigin = spawnOrigin;
-  }
   await tester.pumpWidget(GameWidget(game: game));
   await tester.pump();
   game.add(grid);
@@ -99,6 +150,78 @@ Future<({FlameGame game, Grid grid, GridContentHolder holder})> _pump(
 }
 
 void main() {
+  group('controller of the game mode', () {
+    testWidgets('is created by the mode with the model and the grid', (
+      tester,
+    ) async {
+      GridModel? givenModel;
+      Grid? givenGrid;
+      final control = _FakeGridController();
+
+      final pumped = await _pump(
+        tester,
+        controllerFactory: (gridModel, grid) {
+          givenModel = gridModel;
+          givenGrid = grid;
+          return control;
+        },
+      );
+
+      expect(givenGrid, same(pumped.grid));
+      expect(givenModel, isNotNull);
+      expect(givenModel!.gridComponent, same(pumped.grid));
+      expect(pumped.grid.controller, same(control));
+    });
+
+    testWidgets('can be any grid control', (tester) async {
+      final control = _FakeGridController();
+
+      final pumped = await _pump(
+        tester,
+        controllerFactory: (gridModel, grid) => control,
+      );
+
+      pumped.grid.controller.onBlockDraggedLeft();
+      expect(pumped.grid.controller.placeCurrentBlock(), isTrue);
+      expect(control.moves, ['left']);
+      expect(control.placements, 1);
+    });
+
+    testWidgets('is told to spawn the first block once the grid is loaded', (
+      tester,
+    ) async {
+      final control = _FakeGridController();
+
+      await _pump(tester, controllerFactory: (gridModel, grid) => control);
+
+      expect(control.spawns, 1);
+    });
+
+    testWidgets('is created only once', (tester) async {
+      var created = 0;
+
+      await _pump(
+        tester,
+        controllerFactory: (gridModel, grid) {
+          created++;
+          return _FakeGridController();
+        },
+      );
+
+      expect(created, 1);
+    });
+
+    test(
+      'is the grid controller interface when it is an EndlessGameGridController',
+      () {
+        final grid = newTestGrid(IntVector2(3, 3));
+
+        expect(grid.controller, isA<GridController>());
+        expect(grid.endlessController, isA<EndlessGameGridController>());
+      },
+    );
+  });
+
   group('layout in its area', () {
     testWidgets('makes the cells as big as the area allows', (tester) async {
       final pumped = await _pump(tester, areaSize: Vector2(440, 330));
@@ -145,7 +268,7 @@ void main() {
   });
 
   group('spawn origin', () {
-    testWidgets('can be set after the grid was created', (tester) async {
+    testWidgets('is the one the controller of the mode got', (tester) async {
       final pumped = await _pump(
         tester,
         spawnOrigin: _Origin(Vector2(200, 100), 20),
@@ -155,7 +278,7 @@ void main() {
 
       // the first block starts as big as the cells of the origin
       expect(
-        pumped.grid.controller.currentBlock!.scale.x,
+        pumped.grid.endlessController.currentBlock!.scale.x,
         closeTo(20 / pumped.grid.cellSize, 0.2),
       );
     });
@@ -165,7 +288,7 @@ void main() {
     ) async {
       final pumped = await _pump(tester, chooser: _Chooser());
 
-      expect(pumped.grid.controller.currentBlock!.scale.x, 1);
+      expect(pumped.grid.endlessController.currentBlock!.scale.x, 1);
     });
   });
 
@@ -210,7 +333,7 @@ void main() {
     testWidgets('is in place before the first block spawns', (tester) async {
       final pumped = await _pump(tester, initialContent: _initialContent());
 
-      final spawn = pumped.grid.controller.currentBlockGridPosition!;
+      final spawn = pumped.grid.endlessController.currentBlockGridPosition!;
       expect(spawn.y == 9 && (spawn.x == 2 || spawn.x == 3), isFalse);
     });
   });
@@ -221,7 +344,7 @@ void main() {
     ) async {
       final pumped = await _pump(tester, chooser: _Chooser());
 
-      final position = pumped.grid.controller.currentBlockGridPosition!;
+      final position = pumped.grid.endlessController.currentBlockGridPosition!;
       expect(position.x, 4);
       expect(position.y, 3);
     });
@@ -231,8 +354,8 @@ void main() {
     testWidgets('says whether the block is being placed', (tester) async {
       final pumped = await _pump(tester, chooser: _Chooser());
 
-      expect(pumped.grid.controller.placeCurrentBlock(), isTrue);
-      expect(pumped.grid.controller.placeCurrentBlock(), isFalse);
+      expect(pumped.grid.endlessController.placeCurrentBlock(), isTrue);
+      expect(pumped.grid.endlessController.placeCurrentBlock(), isFalse);
 
       await tester.pump(const Duration(seconds: 2));
     });
@@ -249,9 +372,9 @@ void main() {
         chooser: _Chooser(),
         spawnNextBlockAfterRound: false,
       );
-      final controller = pumped.grid.controller;
+      final controller = pumped.grid.endlessController;
 
-      pumped.grid.controller.placeCurrentBlock();
+      pumped.grid.endlessController.placeCurrentBlock();
       await tester.pump();
       await tester.pump(const Duration(seconds: 1));
       await tester.pump(const Duration(seconds: 1));

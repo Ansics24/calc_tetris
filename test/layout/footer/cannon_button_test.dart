@@ -173,6 +173,22 @@ void main() {
       );
     });
 
+    test('shows no badge when it is switched off', () async {
+      final button = CannonButton(showBadge: false, size: Vector2.all(_size));
+      final badge = button.badgeRect;
+      final pixels = await _render(button);
+
+      expect(button.showBadge, isFalse);
+      expect(
+        pixels.at(badge.center.dx.toInt(), badge.top.toInt() + 3).a,
+        isNot(1),
+      );
+    });
+
+    test('shows the badge by default', () {
+      expect(_button().showBadge, isTrue);
+    });
+
     test('paints the badge in the error color of the game theme', () async {
       final pixels = await _render(_button());
       final badge = _button().badgeRect;

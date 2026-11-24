@@ -18,8 +18,15 @@ abstract class PowerUpButton extends PositionComponent {
 
   int _count;
 
-  PowerUpButton({int count = 0, super.size, super.position})
-    : _count = _checked(count);
+  /// False for a power-up that only flies around and has no count to show.
+  final bool showBadge;
+
+  PowerUpButton({
+    int count = 0,
+    this.showBadge = true,
+    super.size,
+    super.position,
+  }) : _count = _checked(count);
 
   /// How many of these power-ups are left in the current round.
   int get count => _count;
@@ -80,7 +87,9 @@ abstract class PowerUpButton extends PositionComponent {
         height: circle.width * 0.8,
       ),
     );
-    _renderBadge(canvas);
+    if (showBadge) {
+      _renderBadge(canvas);
+    }
   }
 
   void _renderBadge(Canvas canvas) {

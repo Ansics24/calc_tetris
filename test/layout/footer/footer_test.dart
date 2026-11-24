@@ -1,3 +1,4 @@
+import 'package:calc_tetris/grid/power_up_found_listener.dart';
 import 'package:calc_tetris/layout/footer/cannon_button.dart';
 import 'package:calc_tetris/layout/footer/footer.dart';
 import 'package:flame/components.dart';
@@ -6,6 +7,12 @@ import 'package:test/test.dart';
 Footer _footer() => Footer(size: Vector2(400, 80), position: Vector2(0, 720));
 
 void main() {
+  test('gives the button of a power-up kind', () {
+    final footer = _footer();
+
+    expect(footer.buttonFor(PowerUpType.cannon), same(footer.cannonButton));
+  });
+
   group('cannon button', () {
     test('is part of the footer', () {
       final footer = _footer();

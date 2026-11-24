@@ -11,8 +11,10 @@ import 'package:calc_tetris/block/math/valid_equation_solution_strategy.dart';
 import 'package:calc_tetris/block/model/single_block.dart';
 import 'package:calc_tetris/grid/endless_game_grid_controller.dart';
 import 'package:calc_tetris/grid/grid.dart';
+import 'package:calc_tetris/grid/power_up_found_listener.dart';
 import 'package:calc_tetris/grid/queries/grid_content_holder.dart';
 import 'package:calc_tetris/layout/footer/footer.dart';
+import 'package:calc_tetris/layout/footer/power_up_found_animation.dart';
 import 'package:calc_tetris/layout/game_dimensions.dart';
 import 'package:calc_tetris/layout/header/header.dart';
 import 'package:calc_tetris/persistence/database_service.dart';
@@ -25,19 +27,23 @@ import 'package:calc_tetris/screens/welcome/sky_background.dart';
 import 'package:calc_tetris/util/int_vector_2.dart';
 import 'package:flame/components.dart';
 
-class EndlessGame extends PositionComponent implements GameOverListener {
+class EndlessGame extends PositionComponent
+    implements GameOverListener, PowerUpFoundListener {
   /// Called when the player confirmed to end the game.
   final void Function()? onQuit;
 
   final DatabaseService _databaseService;
   final ScoreKeeper _scoreKeeper;
   final SoundEffectPlayer _soundEffectPlayer;
+  final Map<PowerUpType, double>? _powerUpFindChances;
+  late final Footer _footer;
 
   EndlessGame({
     this.onQuit,
     DatabaseService? databaseService,
     ScoreKeeper? scoreKeeper,
     SoundEffectPlayer? soundEffectPlayer,
+    this._powerUpFindChances,
   }) : _databaseService = databaseService ?? InMemoryDatabaseService(),
        _scoreKeeper = scoreKeeper ?? ScoreKeeper(),
        _soundEffectPlayer = soundEffectPlayer ?? SilentSoundEffectPlayer();
@@ -78,6 +84,8 @@ class EndlessGame extends PositionComponent implements GameOverListener {
               fileName: SoundFiles.solvedEquation,
             ),
             gameOverListener: this,
+            powerUpFoundListener: this,
+            powerUpFindChances: _powerUpFindChances,
           ),
       size: _gameDimensions.sizeBlockBoard,
       position: Vector2(0, _gameDimensions.sizeHeader.y),
@@ -100,13 +108,25 @@ class EndlessGame extends PositionComponent implements GameOverListener {
 
     gridController.spawnOrigin = header.nextBlockDisplay;
     add(grid);
+    _footer = Footer(
+      size: _gameDimensions.sizeFooter,
+      position: Vector2(
+        0,
+        gameDimensions.sizeHeader.y + gameDimensions.sizeBlockBoard.y,
+      ),
+    );
+    add(_footer);
+  }
+
+  /// Lets the found power-up fly into the footer.
+  @override
+  void onPowerUpFound(PowerUpType type, Vector2 foundPositionAbsoluteCenter) {
     add(
-      Footer(
-        size: _gameDimensions.sizeFooter,
-        position: Vector2(
-          0,
-          gameDimensions.sizeHeader.y + gameDimensions.sizeBlockBoard.y,
-        ),
+      PowerUpFoundAnimation(
+        type: type,
+        foundPositionAbsoluteCenter: foundPositionAbsoluteCenter,
+        targetButton: _footer.buttonFor(type),
+        startCellSize: _gameDimensions.gridCellSize,
       ),
     );
   }

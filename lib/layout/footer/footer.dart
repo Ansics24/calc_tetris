@@ -1,6 +1,8 @@
 import 'dart:math';
 
+import 'package:calc_tetris/grid/power_up_found_listener.dart';
 import 'package:calc_tetris/layout/footer/cannon_button.dart';
+import 'package:calc_tetris/layout/footer/powerup_button.dart';
 import 'package:flame/components.dart';
 
 /// Space below the grid. Shows the power-ups the player can use.
@@ -14,6 +16,11 @@ class Footer extends PositionComponent {
     _layout();
     add(cannonButton);
   }
+
+  /// The button that shows the power-ups of the given kind.
+  PowerUpButton buttonFor(PowerUpType type) => switch (type) {
+    PowerUpType.cannon => cannonButton,
+  };
 
   /// Centers the power-up buttons.
   void _layout() {

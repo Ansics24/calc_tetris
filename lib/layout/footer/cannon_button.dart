@@ -7,7 +7,12 @@ import 'package:calc_tetris/theme/light_theme.dart';
 /// Button of the cannon power-up. The cannon can shoot blocks that already
 /// landed in the grid.
 class CannonButton extends PowerUpButton {
-  CannonButton({super.count, super.size, super.position});
+  CannonButton({
+    super.count,
+    super.showBadge,
+    super.size,
+    super.position,
+  });
 
   /// Everything is drawn in a square of this edge length and scaled to the
   /// area.

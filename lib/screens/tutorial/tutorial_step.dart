@@ -25,6 +25,9 @@ class PlayStep extends TutorialStep {
   final IntVector2 solutionPosition;
   final int solutionRotations;
 
+  /// Solving this step finds the player a cannon.
+  final bool findsCannon;
+
   PlayStep({
     required this.hint,
     required this.gridRows,
@@ -32,5 +35,27 @@ class PlayStep extends TutorialStep {
     required this.spawnPosition,
     required this.solutionPosition,
     required this.solutionRotations,
+    this.findsCannon = false,
+  });
+}
+
+/// A prepared board where the player learns to use the cannon. First the
+/// player activates it ([hint]), then shoots away the blocks at [targets]
+/// ([activeHint]).
+class CannonStep extends TutorialStep {
+  final String hint;
+  final String activeHint;
+  final List<String> gridRows;
+  final List<String> blockRows;
+  final IntVector2 spawnPosition;
+  final List<IntVector2> targets;
+
+  CannonStep({
+    required this.hint,
+    required this.activeHint,
+    required this.gridRows,
+    required this.blockRows,
+    required this.spawnPosition,
+    required this.targets,
   });
 }

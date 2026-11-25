@@ -71,6 +71,7 @@ flutter:
     - assets/music/welcome.m4a
     - assets/sounds/bell.m4a
     - assets/sounds/cork.m4a
+    - assets/sounds/canon.m4a
 
   fonts:
     - family: Fredoka

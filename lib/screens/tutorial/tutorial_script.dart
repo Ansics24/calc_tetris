@@ -8,7 +8,7 @@ final IntVector2 tutorialGridSize = IntVector2.square(11);
 ///
 /// Explains: 1. moving the block, 2. rotating it, 3. horizontal equations,
 /// 4. vertical equations, 5. that more numbers and multi digit numbers earn
-/// more points.
+/// more points, 6. the cannon power-up.
 ///
 /// Blocks enter the grid at its upper border, and a block is moved down
 /// first and sideways afterwards, so it never has to cross the prepared
@@ -79,6 +79,27 @@ List<TutorialStep> tutorialScript() => [
     spawnPosition: IntVector2(7, 0),
     solutionPosition: IntVector2(5, 9),
     solutionRotations: 0,
+    findsCannon: true,
+  ),
+  MessageStep(
+    'Glückwunsch, du hast eine Kanone gefunden! '
+    'Powerups kannst du beim Lösen von Gleichungen finden.',
+  ),
+  MessageStep(
+    'Die Kanone zerstört Steine, die schon im Feld liegen. '
+    'Sie hat mehrere Schüsse, jeder Tipp ins Feld ist einer.',
+  ),
+  CannonStep(
+    hint: 'Tippe unten auf die Kanone.',
+    activeHint: 'Tippe auf die drei Steine unten.',
+    gridRows: _grid({10: '...7+9'}),
+    blockRows: ['=5'],
+    spawnPosition: IntVector2(7, 0),
+    targets: [IntVector2(3, 10), IntVector2(4, 10), IntVector2(5, 10)],
+  ),
+  MessageStep(
+    'Sehr gut! Im Spiel bleibt die Kanone aktiv, bis alle Schüsse '
+    'verbraucht sind. Dann geht es normal weiter.',
   ),
   MessageStep(
     'Geschafft! Jetzt kennst du alles, was du fürs Spielen brauchst. '

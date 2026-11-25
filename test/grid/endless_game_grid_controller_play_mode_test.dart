@@ -108,7 +108,7 @@ void main() {
 
       controller.playMode = _inUse;
 
-      expect(controller.currentBlock!.opacity, 0.5);
+      expect(controller.currentBlock!.opacity, 0.2);
     });
 
     test('draws a block that arrives later half transparent too', () {
@@ -116,7 +116,7 @@ void main() {
 
       controller.spawnNextBlock();
 
-      expect(controller.currentBlock!.opacity, 0.5);
+      expect(controller.currentBlock!.opacity, 0.2);
     });
 
     test('can be set without a block', () {

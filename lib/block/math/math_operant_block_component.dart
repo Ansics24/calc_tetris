@@ -3,6 +3,7 @@ import 'package:calc_tetris/block/math/appearance/tile_colors.dart';
 import 'package:calc_tetris/block/math/model/math_operant_block.dart';
 import 'package:calc_tetris/block/math/model/math_operant_type.dart';
 import 'package:calc_tetris/block/single_block_component.dart';
+import 'package:flutter/painting.dart';
 
 class MathOperantBlockComponent extends SingleBlockComponent<MathOperantBlock> {
   final MathOperantBlock _model;
@@ -25,4 +26,7 @@ class MathOperantBlockComponent extends SingleBlockComponent<MathOperantBlock> {
 
   @override
   MathOperantBlock get model => _model;
+
+  @override
+  Color get shatterColor => (_isPlus ? TileColors.plus : TileColors.minus).base;
 }

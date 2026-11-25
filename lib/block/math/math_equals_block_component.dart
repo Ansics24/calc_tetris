@@ -2,6 +2,7 @@ import 'package:calc_tetris/block/math/appearance/block_tile.dart';
 import 'package:calc_tetris/block/math/appearance/tile_colors.dart';
 import 'package:calc_tetris/block/math/model/math_equals_block.dart';
 import 'package:calc_tetris/block/single_block_component.dart';
+import 'package:flutter/painting.dart';
 
 class MathEqualsBlockComponent extends SingleBlockComponent<MathEqualsBlock> {
   final MathEqualsBlock _model;
@@ -16,4 +17,7 @@ class MathEqualsBlockComponent extends SingleBlockComponent<MathEqualsBlock> {
 
   @override
   MathEqualsBlock get model => _model;
+
+  @override
+  Color get shatterColor => TileColors.equals.base;
 }

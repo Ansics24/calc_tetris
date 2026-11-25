@@ -11,7 +11,12 @@ import 'package:calc_tetris/block/model/single_block.dart';
 import 'package:calc_tetris/grid/endless_game_grid_controller.dart';
 import 'package:calc_tetris/grid/grid.dart';
 import 'package:calc_tetris/grid/grid_round_listener.dart';
+import 'package:calc_tetris/grid/power_up_found_listener.dart';
+import 'package:calc_tetris/grid/power_up_used_listener.dart';
 import 'package:calc_tetris/grid/queries/grid_content_holder.dart';
+import 'package:calc_tetris/layout/footer/footer.dart';
+import 'package:calc_tetris/layout/footer/power_up_found_animation.dart';
+import 'package:calc_tetris/layout/footer/power_up_handler.dart';
 import 'package:calc_tetris/layout/game_dimensions.dart';
 import 'package:calc_tetris/layout/header/header.dart';
 import 'package:calc_tetris/screens/stopgame/stop_game_dialog.dart';
@@ -25,13 +30,18 @@ import 'package:calc_tetris/screens/tutorial/tutorial_step.dart';
 import 'package:calc_tetris/screens/welcome/sky_background.dart';
 import 'package:calc_tetris/theme/light_theme.dart';
 import 'package:calc_tetris/theme/text_theme.dart';
+import 'package:calc_tetris/util/int_vector_2.dart';
 import 'package:flame/components.dart';
 
 /// Explains the game with prepared boards. Its points are counted on its own
 /// and never saved, so they can not reach the highscore.
-class TutorialGame extends PositionComponent implements GridRoundListener {
+class TutorialGame extends PositionComponent
+    implements GridRoundListener, PowerUpFoundListener, PowerUpUsedListener {
   /// Pause after the score has counted up, so the player sees the result.
   static const double _afterCountUpPause = 0.5;
+
+  /// Pause after the last shot, so the player sees the blocks break apart.
+  static const double _afterShotsPause = 1;
 
   static const String retryNotice =
       'Das passt noch nicht. Versuche es noch einmal!';
@@ -65,6 +75,15 @@ class TutorialGame extends PositionComponent implements GridRoundListener {
   int? _pendingPoints;
   double _pause = 0;
 
+  /// Appears once the tutorial is about the cannon and stays from then on.
+  Footer? _footer;
+
+  /// Handles the cannon during a cannon step.
+  PowerUpHandler? _powerUps;
+
+  /// What happens after the shots of a cannon step, once they are shown.
+  void Function()? _afterShots;
+
   TutorialGame({
     this.onQuit,
     ScoreKeeper? scoreKeeper,
@@ -95,9 +114,14 @@ class TutorialGame extends PositionComponent implements GridRoundListener {
   }
 
   /// A round without points restarts the step at once. Points are first
-  /// counted up in the score display, only then the tutorial goes on.
+  /// counted up in the score display, only then the tutorial goes on. Putting
+  /// the block down in a cannon step restarts it.
   @override
   void onRoundFinished(int pointsEarned) {
+    if (runner.current is CannonStep) {
+      runner.restartStep();
+      return;
+    }
     if (pointsEarned > 0) {
       _pendingPoints = pointsEarned;
       _pause = 0;
@@ -106,11 +130,64 @@ class TutorialGame extends PositionComponent implements GridRoundListener {
     runner.onRoundFinished(pointsEarned);
   }
 
+  /// Lets the found power-up fly into the footer.
+  @override
+  void onPowerUpFound(PowerUpType type, Vector2 foundPositionAbsoluteCenter) {
+    add(
+      PowerUpFoundAnimation(
+        type: type,
+        foundPositionAbsoluteCenter: foundPositionAbsoluteCenter,
+        targetButton: _requireFooter().buttonFor(type),
+        startCellSize: _gameDimensions.gridCellSize,
+      ),
+    );
+  }
+
+  /// Counts the shot and looks whether the goal of the cannon step is reached.
+  @override
+  void onPowerUpUsed(PowerUpType type) {
+    final step = runner.current;
+    final powerUps = _powerUps;
+    if (step is! CannonStep || powerUps == null || _afterShots != null) {
+      return;
+    }
+    powerUps.onPowerUpUsed(type);
+    if (step.targets.every(_isEmpty)) {
+      _afterShots = runner.onCannonStepCompleted;
+      _pause = 0;
+    } else if (!powerUps.playMode.isPowerUpInUse) {
+      _afterShots = runner.restartStep;
+      _pause = 0;
+    }
+  }
+
+  bool _isEmpty(IntVector2 cell) => gridContent[cell.x][cell.y] == null;
+
   @override
   void update(double dt) {
     super.update(dt);
+    _continueAfterShots(dt);
+    _continueAfterPoints(dt);
+  }
+
+  void _continueAfterShots(double dt) {
+    final next = _afterShots;
+    if (next == null) {
+      return;
+    }
+    _pause += dt;
+    if (_pause >= _afterShotsPause) {
+      _afterShots = null;
+      next();
+    }
+  }
+
+  /// Waits for the score to count up and for a found power-up to arrive.
+  void _continueAfterPoints(double dt) {
     final points = _pendingPoints;
-    if (points == null || (_header?.isScoreCountingUp ?? false)) {
+    if (points == null ||
+        (_header?.isScoreCountingUp ?? false) ||
+        children.whereType<PowerUpFoundAnimation>().isNotEmpty) {
       return;
     }
     _pause += dt;
@@ -127,6 +204,9 @@ class TutorialGame extends PositionComponent implements GridRoundListener {
     _stepComponents.clear();
     _header = null;
     _pendingPoints = null;
+    _afterShots = null;
+    _powerUps?.reset();
+    _powerUps = null;
     final step = runner.current;
     switch (step) {
       case MessageStep():
@@ -140,14 +220,72 @@ class TutorialGame extends PositionComponent implements GridRoundListener {
           ),
         );
       case PlayStep():
+        if (step.findsCannon) {
+          _requireFooter();
+        }
         hintText.text = runner.attempt > 0 ? retryNotice : step.hint;
-        _showBoard(step);
+        _showBoard(
+          gridRows: step.gridRows,
+          blockRows: step.blockRows,
+          spawnPosition: step.spawnPosition,
+          findsCannon: step.findsCannon,
+        );
+      case CannonStep():
+        _showCannonStep(step);
     }
   }
 
-  void _showBoard(PlayStep step) {
+  void _showCannonStep(CannonStep step) {
+    final footer = _requireFooter();
+    footer.cannonButton.count = 1;
+    hintText.text = runner.attempt > 0 ? retryNotice : step.hint;
+    final gridController = _showBoard(
+      gridRows: step.gridRows,
+      blockRows: step.blockRows,
+      spawnPosition: step.spawnPosition,
+    );
+    _powerUps = PowerUpHandler(
+      footer: footer,
+      soundEffectPlayer: _soundEffectPlayer,
+      onPlayModeChanged: (mode) {
+        gridController.playMode = mode;
+        if (mode.isPowerUpInUse) {
+          hintText.text = step.activeHint;
+        }
+      },
+    );
+  }
+
+  /// The footer, added on first use. It is narrow and sits on the right, the
+  /// hint text uses the space left of it.
+  Footer _requireFooter() {
+    final existing = _footer;
+    if (existing != null) {
+      return existing;
+    }
+    final height = _gameDimensions.sizeFooter.y;
+    final footer = Footer(
+      size: Vector2.all(height),
+      position: Vector2(
+        size.x - height,
+        _gameDimensions.sizeHeader.y + _gameDimensions.sizeBlockBoard.y,
+      ),
+      onPowerUpSelected: (type) => _powerUps?.onPowerUpSelected(type),
+    );
+    _footer = footer;
+    add(footer);
+    _layoutHint();
+    return footer;
+  }
+
+  EndlessGameGridController _showBoard({
+    required List<String> gridRows,
+    required List<String> blockRows,
+    required IntVector2 spawnPosition,
+    bool findsCannon = false,
+  }) {
     final planner = NextBlockPlanner(
-      generator: ScriptedBlockGenerator(step.blockRows),
+      generator: ScriptedBlockGenerator(blockRows),
     );
     _gridContentHolder = GridContentHolder();
     late final EndlessGameGridController gridController;
@@ -155,7 +293,7 @@ class TutorialGame extends PositionComponent implements GridRoundListener {
       blockCount: _gameDimensions.gridBlockCount,
       singleBlockComponentFactory: newComponentFromBlockModel,
       gridContentHolder: _gridContentHolder,
-      initialContent: blocksFromRows(step.gridRows),
+      initialContent: blocksFromRows(gridRows),
       controllerFactory: (gridModel, grid) =>
           gridController = EndlessGameGridController(
             gridModel: gridModel,
@@ -169,8 +307,12 @@ class TutorialGame extends PositionComponent implements GridRoundListener {
               fileName: SoundFiles.solvedEquation,
             ),
             roundListener: this,
-            spawnPositionChooser: FixedSpawnPositionChooser(step.spawnPosition),
+            spawnPositionChooser: FixedSpawnPositionChooser(spawnPosition),
             spawnNextBlockAfterRound: false,
+            // only the prepared step finds a cannon, and surely
+            powerUpFoundListener: findsCannon ? this : null,
+            powerUpFindChances: {PowerUpType.cannon: 1},
+            powerUpUsedListener: this,
           ),
       size: _gameDimensions.sizeBlockBoard,
       position: Vector2(0, _gameDimensions.sizeHeader.y),
@@ -192,6 +334,7 @@ class TutorialGame extends PositionComponent implements GridRoundListener {
     _header = header;
     _addStepComponent(header);
     _addStepComponent(grid);
+    return gridController;
   }
 
   void _addStepComponent(Component component) {
@@ -224,7 +367,10 @@ class TutorialGame extends PositionComponent implements GridRoundListener {
         _gameDimensions.sizeHeader.y + _gameDimensions.sizeBlockBoard.y + 8,
       )
       ..boxConfig = TextBoxConfig(
-        maxWidth: (size.x - 2 * margin).clamp(40, double.infinity),
+        maxWidth: (size.x - 2 * margin - (_footer?.width ?? 0)).clamp(
+          40,
+          double.infinity,
+        ),
       );
   }
 

@@ -5,4 +5,7 @@ abstract final class SoundFiles {
 
   /// Plays when the player puts a block into the grid.
   static const String blockPlaced = 'cork.m4a';
+
+  /// Plays when the cannon is fired.
+  static const String cannonShot = 'canon.m4a';
 }

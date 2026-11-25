@@ -134,6 +134,46 @@ void main() {
     });
   });
 
+  group('while a power-up is in use', () {
+    test('has no uses counter at the start', () {
+      expect(_button().activeUses, isNull);
+      expect(_button().usesText, isNull);
+    });
+
+    test('shows the uses left', () {
+      final button = _button(count: 2)..activeUses = 8;
+
+      expect(button.usesText, '8');
+      expect(button.badgeText, '2');
+    });
+
+    test('is very transparent, so the number can be read', () async {
+      final normal = await _render(_button());
+      final active = await _render(_button()..activeUses = 8);
+
+      expect(active.at(32, 56).a, lessThan(0.4));
+      expect(normal.at(32, 56).a, 1);
+    });
+
+    test('is shown normally again when the counter is cleared', () async {
+      final button = _button()
+        ..activeUses = 8
+        ..activeUses = null;
+
+      final pixels = await _render(button);
+
+      expect(pixels.at(32, 56).a, 1);
+    });
+
+    test('renders for every number of uses', () {
+      for (final uses in [0, 1, 8]) {
+        final button = _button()..activeUses = uses;
+
+        expect(() => button.render(Canvas(PictureRecorder())), returnsNormally);
+      }
+    });
+  });
+
   group('look', () {
     test('renders for every kind of count', () {
       for (final count in [0, 1, 42, 99, 100]) {

@@ -11,8 +11,9 @@ import 'package:calc_tetris/grid/visuals/grid_frame.dart';
 import 'package:calc_tetris/grid/visuals/grid_line.dart';
 import 'package:calc_tetris/util/int_vector_2.dart';
 import 'package:flame/components.dart';
+import 'package:flame/events.dart';
 
-class Grid extends PositionComponent {
+class Grid extends PositionComponent with TapCallbacks {
   final IntVector2 _blockCount;
   double _cellSize = 0;
   late final GridModel _gridModel;
@@ -121,6 +122,17 @@ class Grid extends PositionComponent {
         ),
       );
     }
+  }
+
+  @override
+  void onTapUp(TapUpEvent event) {
+    final position = event.localPosition;
+    _gridController.onCellTapped(
+      IntVector2(
+        (position.x / _cellSize).floor(),
+        (position.y / _cellSize).floor(),
+      ),
+    );
   }
 
   double get cellSize => _cellSize;

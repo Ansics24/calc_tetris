@@ -7,12 +7,15 @@ import 'package:calc_tetris/block/math/seed/spawn_origin.dart';
 import 'package:calc_tetris/block/math/seed/spawn_position_chooser.dart';
 import 'package:calc_tetris/block/math/valid_equation_solution_strategy.dart';
 import 'package:calc_tetris/block/model/single_block.dart';
+import 'package:calc_tetris/block/shatter_animation.dart';
 import 'package:calc_tetris/block/single_block_component.dart';
 import 'package:calc_tetris/grid/endless_game_grid_controller.dart';
 import 'package:calc_tetris/grid/grid.dart';
 import 'package:calc_tetris/grid/grid_controller.dart';
 import 'package:calc_tetris/grid/grid_round_listener.dart';
 import 'package:calc_tetris/grid/model/grid_model.dart';
+import 'package:calc_tetris/grid/play_mode.dart';
+import 'package:calc_tetris/grid/power_up_found_listener.dart';
 import 'package:calc_tetris/grid/queries/grid_content_holder.dart';
 import 'package:calc_tetris/util/int_vector_2.dart';
 import 'package:flame/game.dart';
@@ -36,9 +39,13 @@ class _FakeGridController implements GridController {
   int spawns = 0;
   int placements = 0;
   final List<String> moves = [];
+  final List<(int, int)> taps = [];
 
   @override
   void spawnNextBlock() => spawns++;
+
+  @override
+  void onCellTapped(IntVector2 cell) => taps.add((cell.x, cell.y));
 
   @override
   bool placeCurrentBlock() {
@@ -220,6 +227,53 @@ void main() {
         expect(grid.endlessController, isA<EndlessGameGridController>());
       },
     );
+  });
+
+  group('taps on the grid', () {
+    Future<void> tapAt(WidgetTester tester, Grid grid, Vector2 local) async {
+      await tester.tapAt(grid.absolutePositionOf(local).toOffset());
+      await tester.pump();
+    }
+
+    testWidgets('are told to the controller as the tapped cell', (
+      tester,
+    ) async {
+      final control = _FakeGridController();
+      final pumped = await _pump(
+        tester,
+        controllerFactory: (gridModel, grid) => control,
+      );
+      final cell = pumped.grid.cellSize;
+
+      await tapAt(tester, pumped.grid, Vector2(2.5 * cell, 1.5 * cell));
+      await tapAt(tester, pumped.grid, Vector2(0.1 * cell, 10.9 * cell));
+
+      expect(control.taps, [(2, 1), (0, 10)]);
+      // let the delayed timers of the tap run out
+      await tester.pump(const Duration(seconds: 1));
+    });
+
+    testWidgets('shatter the block a cannon shot hits', (tester) async {
+      final pumped = await _pump(tester, initialContent: _initialContent());
+      pumped.grid.endlessController.playMode = const PlayMode.powerUpInUse(
+        PowerUpType.cannon,
+      );
+      final cell = pumped.grid.cellSize;
+
+      await tapAt(tester, pumped.grid, Vector2(2.5 * cell, 9.5 * cell));
+      await tester.pump(const Duration(milliseconds: 50));
+
+      expect(pumped.holder()[2][9], isNull);
+      expect(pumped.holder()[3][9], isNotNull);
+      expect(
+        pumped.grid.children.whereType<SingleBlockComponent>(),
+        hasLength(1),
+      );
+      final shatter = pumped.grid.children.whereType<ShatterAnimation>();
+      expect(shatter, hasLength(1));
+      expect(shatter.single.position, Vector2(2 * cell, 9 * cell));
+      await tester.pump(const Duration(seconds: 2));
+    });
   });
 
   group('layout in its area', () {

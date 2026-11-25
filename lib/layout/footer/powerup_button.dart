@@ -25,6 +25,13 @@ abstract class PowerUpButton extends PositionComponent with TapCallbacks {
   /// A locked button can not be pressed.
   bool isLocked = false;
 
+  /// While the power-up is in use: how often it can still be used, otherwise
+  /// null. The button then shows this number and is very transparent.
+  int? activeUses;
+
+  /// How opaque the button is while its power-up is in use.
+  static const double _activeOpacity = 0.3;
+
   /// False for a power-up that only flies around and has no count to show.
   final bool showBadge;
 
@@ -51,6 +58,8 @@ abstract class PowerUpButton extends PositionComponent with TapCallbacks {
   int get count => _count;
 
   set count(int value) => _count = _checked(value);
+
+  String? get usesText => activeUses?.toString();
 
   String get badgeText =>
       _count > maxShownCount ? '$maxShownCount+' : '$_count';
@@ -84,6 +93,36 @@ abstract class PowerUpButton extends PositionComponent with TapCallbacks {
 
   @override
   void render(Canvas canvas) {
+    final uses = usesText;
+    if (uses == null) {
+      _renderButton(canvas);
+      return;
+    }
+    // fades the whole button, the number stays fully visible on top
+    canvas.saveLayer(
+      null,
+      Paint()..color = colorScheme.shadow.withValues(alpha: _activeOpacity),
+    );
+    _renderButton(canvas);
+    canvas.restore();
+    _renderUses(canvas, uses);
+  }
+
+  void _renderUses(Canvas canvas, String uses) {
+    TextPaint(
+      style: textTheme.displaySmall!.copyWith(
+        fontSize: circleRect.height * 0.65,
+        color: colorScheme.onSurface,
+      ),
+    ).render(
+      canvas,
+      uses,
+      Vector2(circleRect.center.dx, circleRect.center.dy),
+      anchor: Anchor.center,
+    );
+  }
+
+  void _renderButton(Canvas canvas) {
     final circle = circleRect;
     canvas.drawCircle(
       circle.center,

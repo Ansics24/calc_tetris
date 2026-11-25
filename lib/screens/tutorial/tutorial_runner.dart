@@ -49,9 +49,25 @@ class TutorialRunner {
     if (pointsEarned > 0) {
       _next();
     } else {
-      _attempt++;
-      _changes.add(null);
+      restartStep();
     }
+  }
+
+  /// The player reached the goal of the current cannon step.
+  void onCannonStepCompleted() {
+    if (_finished || current is! CannonStep) {
+      return;
+    }
+    _next();
+  }
+
+  /// Starts the current step over, e.g. after a failed attempt.
+  void restartStep() {
+    if (_finished || current is MessageStep) {
+      return;
+    }
+    _attempt++;
+    _changes.add(null);
   }
 
   void _next() {

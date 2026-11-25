@@ -12,6 +12,15 @@ PlayStep _play(String hint) => PlayStep(
   solutionRotations: 0,
 );
 
+CannonStep _cannon() => CannonStep(
+  hint: 'Aktiviere',
+  activeHint: 'Schieße',
+  gridRows: const ['2+3'],
+  blockRows: const ['=5'],
+  spawnPosition: IntVector2(0, 0),
+  targets: [IntVector2(0, 0)],
+);
+
 TutorialRunner _runner({void Function()? onFinished}) => TutorialRunner(
   steps: [MessageStep('Start'), _play('Ziehe'), MessageStep('Ende')],
   onFinished: onFinished ?? () {},
@@ -136,6 +145,50 @@ void main() {
       runner.onRoundFinished(6);
 
       expect(finished, 1);
+    });
+  });
+
+  group('cannon steps', () {
+    TutorialRunner cannonRunner() => TutorialRunner(
+      steps: [_cannon(), MessageStep('Ende')],
+      onFinished: () {},
+    );
+
+    test('go on when the cannon step is completed', () {
+      final runner = cannonRunner();
+
+      runner.onCannonStepCompleted();
+
+      expect((runner.current as MessageStep).text, 'Ende');
+    });
+
+    test('start over when restarted', () {
+      final runner = cannonRunner();
+      var changes = 0;
+      runner.changes.listen((_) => changes++);
+
+      runner.restartStep();
+
+      expect(runner.current, isA<CannonStep>());
+      expect(runner.attempt, 1);
+      expect(changes, 1);
+    });
+
+    test('ignore continue and round results', () {
+      final runner = cannonRunner();
+
+      runner.continueFromMessage();
+      runner.onRoundFinished(6);
+
+      expect(runner.current, isA<CannonStep>());
+    });
+
+    test('are the only steps that can be completed that way', () {
+      final runner = _runner();
+
+      runner.onCannonStepCompleted();
+
+      expect((runner.current as MessageStep).text, 'Start');
     });
   });
 }

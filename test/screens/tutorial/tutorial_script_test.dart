@@ -215,4 +215,86 @@ void main() {
       expect(vertical, hasLength(1));
     });
   });
+
+  group('the cannon', () {
+    final cannonSteps = script.whereType<CannonStep>().toList();
+
+    test('is found in the step about multi digit numbers', () {
+      final finding = playSteps.where((s) => s.findsCannon).toList();
+
+      expect(finding, hasLength(1));
+      expect(finding.single, same(playSteps.last));
+      expect(finding.single.hint, contains('Mehrstellige Zahlen'));
+    });
+
+    test('is explained after it was found and then used', () {
+      final found = script.indexOf(playSteps.last);
+      final use = script.indexOf(cannonSteps.single);
+
+      expect(use, greaterThan(found + 1));
+      for (var i = found + 1; i < use; i++) {
+        expect(script[i], isA<MessageStep>());
+      }
+      final text = script
+          .sublist(found + 1, use)
+          .cast<MessageStep>()
+          .map((m) => m.text.toLowerCase())
+          .join(' ');
+      expect(text, contains('kanone'));
+      expect(text, contains('8 schüsse'));
+    });
+
+    test('has a message afterwards, before the end', () {
+      final use = script.indexOf(cannonSteps.single);
+
+      expect(script[use + 1], isA<MessageStep>());
+      expect(use + 1, lessThan(script.length - 1));
+    });
+
+    test('is mentioned only after the points', () {
+      int first(String word) => script.indexWhere(
+        (s) => s is MessageStep && s.text.toLowerCase().contains(word),
+      );
+
+      expect(first('kanone'), greaterThan(first('punkte')));
+    });
+
+    test('has hints for activating and shooting', () {
+      expect(cannonSteps.single.hint.trim(), isNotEmpty);
+      expect(cannonSteps.single.activeHint.trim(), isNotEmpty);
+    });
+
+    test('fits into the grid of the game', () {
+      final step = cannonSteps.single;
+
+      expect(step.gridRows, hasLength(tutorialGridSize.y));
+      for (final row in step.gridRows) {
+        expect(row, hasLength(tutorialGridSize.x));
+      }
+    });
+
+    test('aims at blocks that exist, fewer than the shots', () {
+      final step = cannonSteps.single;
+      final grid = sampleGridFromRows(step.gridRows);
+
+      expect(step.targets, isNotEmpty);
+      expect(step.targets.length, lessThan(8));
+      for (final target in step.targets) {
+        expect(grid.findExistingBlockAt(target), isNotNull);
+      }
+    });
+
+    test('lets the block stand on free cells', () {
+      final step = cannonSteps.single;
+      final grid = sampleGridFromRows(step.gridRows);
+      final block = ScriptedBlockGenerator(step.blockRows).generate();
+      final covered = <IntVector2>[
+        for (var x = 0; x < block.length; x++)
+          for (var y = 0; y < block[x].length; y++)
+            if (block[x][y] is! NullBlock) step.spawnPosition.add(x, y),
+      ];
+
+      expect(grid.anyPositionBlocked(covered), isFalse);
+    });
+  });
 }

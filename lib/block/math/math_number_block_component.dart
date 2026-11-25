@@ -2,6 +2,7 @@ import 'package:calc_tetris/block/math/appearance/block_tile.dart';
 import 'package:calc_tetris/block/math/appearance/tile_colors.dart';
 import 'package:calc_tetris/block/math/model/math_number_block.dart';
 import 'package:calc_tetris/block/single_block_component.dart';
+import 'package:flutter/painting.dart';
 
 class MathNumberBlockComponent extends SingleBlockComponent<MathNumberBlock> {
   final MathNumberBlock _model;
@@ -22,4 +23,7 @@ class MathNumberBlockComponent extends SingleBlockComponent<MathNumberBlock> {
 
   @override
   MathNumberBlock get model => _model;
+
+  @override
+  Color get shatterColor => TileColors.forDigit(_model.number).base;
 }

@@ -1,6 +1,8 @@
 import 'package:calc_tetris/audio/sound_effect_player.dart';
 import 'package:calc_tetris/audio/sound_files.dart';
 import 'package:calc_tetris/grid/grid.dart';
+import 'package:calc_tetris/layout/footer/footer.dart';
+import 'package:calc_tetris/layout/footer/power_up_found_animation.dart';
 import 'package:calc_tetris/layout/header/confirm_button.dart';
 import 'package:calc_tetris/layout/header/stop_button.dart';
 import 'package:calc_tetris/persistence/in_memory_database_service.dart';
@@ -367,10 +369,13 @@ void main() {
 
     // play through the whole script without steering the block
     for (final step in script) {
-      if (step is MessageStep) {
-        runner.continueFromMessage();
-      } else {
-        runner.onRoundFinished(1);
+      switch (step) {
+        case MessageStep():
+          runner.continueFromMessage();
+        case PlayStep():
+          runner.onRoundFinished(1);
+        case CannonStep():
+          runner.onCannonStepCompleted();
       }
       await tester.pump(const Duration(seconds: 1));
     }
@@ -385,6 +390,182 @@ void main() {
 
     expect(_overlay(game)!.priority, greaterThanOrEqualTo(1000));
     expect(_overlay(game)!.size, _tutorial(game).size);
+  });
+
+  group('the cannon', () {
+    /// Goes through the steps until [reached], without playing them.
+    Future<void> skipTo(
+      WidgetTester tester,
+      TetrisGame game,
+      bool Function(TutorialStep) reached,
+    ) async {
+      final runner = _tutorial(game).runner;
+      while (!reached(runner.current)) {
+        switch (runner.current) {
+          case MessageStep():
+            runner.continueFromMessage();
+          case PlayStep():
+            runner.onRoundFinished(1);
+          case CannonStep():
+            runner.onCannonStepCompleted();
+        }
+        await tester.pump(const Duration(seconds: 1));
+      }
+      await tester.pump(const Duration(seconds: 1));
+      await tester.pump(const Duration(seconds: 1));
+    }
+
+    final cannonStep = script.whereType<CannonStep>().single;
+    final findingStep = script.whereType<PlayStep>().firstWhere(
+      (s) => s.findsCannon,
+    );
+
+    Footer footer(TetrisGame game) =>
+        game.descendants().whereType<Footer>().single;
+
+    Future<TetrisGame> atCannonStep(
+      WidgetTester tester, {
+      SoundEffectPlayer? sounds,
+    }) async {
+      final game = await _pumpTutorial(tester, soundEffectPlayer: sounds);
+      await skipTo(tester, game, (s) => s is CannonStep);
+      return game;
+    }
+
+    Future<void> shoot(
+      WidgetTester tester,
+      TetrisGame game,
+      int x,
+      int y,
+    ) async {
+      final grid = _grid(game)!;
+      await tester.tapAt(
+        grid
+            .absolutePositionOf(
+              Vector2((x + 0.5) * grid.cellSize, (y + 0.5) * grid.cellSize),
+            )
+            .toOffset(),
+      );
+      await tester.pump();
+    }
+
+    Future<void> activate(WidgetTester tester, TetrisGame game) async {
+      footer(game).cannonButton.press();
+      await tester.pump();
+    }
+
+    _tutorialTest('has no footer before it is about the cannon', (
+      tester,
+    ) async {
+      final game = await _pumpTutorial(tester);
+      await _continue(tester, game);
+
+      expect(game.descendants().whereType<Footer>(), isEmpty);
+    });
+
+    _tutorialTest('shows an empty cannon button in the finding step', (
+      tester,
+    ) async {
+      final game = await _pumpTutorial(tester);
+
+      await skipTo(
+        tester,
+        game,
+        (s) => s is PlayStep && s.findsCannon,
+      );
+
+      expect(footer(game).cannonButton.count, 0);
+    });
+
+    _tutorialTest('finds a cannon when the equation is solved', (
+      tester,
+    ) async {
+      final game = await _pumpTutorial(tester);
+      await skipTo(tester, game, (s) => s is PlayStep && s.findsCannon);
+      _steerBlock(_grid(game)!, findingStep);
+
+      await _place(tester, game);
+
+      expect(footer(game).cannonButton.count, 1);
+      expect(game.descendants().whereType<PowerUpFoundAnimation>(), isEmpty);
+      final next = script[script.indexOf(findingStep) + 1] as MessageStep;
+      expect(_overlay(game)!.messageText.text, next.text);
+    });
+
+    _tutorialTest('waits with a cannon for the player to activate it', (
+      tester,
+    ) async {
+      final game = await atCannonStep(tester);
+
+      expect(_overlay(game), isNull);
+      expect(_tutorial(game).hintText.text, cannonStep.hint);
+      expect(footer(game).cannonButton.count, 1);
+      expect(footer(game).cannonButton.activeUses, isNull);
+    });
+
+    _tutorialTest('explains shooting once the cannon is active', (
+      tester,
+    ) async {
+      final game = await atCannonStep(tester);
+
+      await activate(tester, game);
+
+      expect(footer(game).cannonButton.activeUses, 8);
+      expect(_tutorial(game).hintText.text, cannonStep.activeHint);
+      expect(_grid(game)!.endlessController.currentBlock!.isLocked, isTrue);
+    });
+
+    _tutorialTest('goes on when all targets are shot away', (tester) async {
+      final sounds = RecordingSoundEffectPlayer();
+      final game = await atCannonStep(tester, sounds: sounds);
+      await activate(tester, game);
+
+      for (final target in cannonStep.targets) {
+        await shoot(tester, game, target.x, target.y);
+      }
+      expect(
+        sounds.played,
+        List.filled(cannonStep.targets.length, SoundFiles.cannonShot),
+      );
+      for (var i = 0; i < 3; i++) {
+        await tester.pump(const Duration(seconds: 1));
+      }
+
+      final next = script[script.indexOf(cannonStep) + 1] as MessageStep;
+      expect(_overlay(game)!.messageText.text, next.text);
+    });
+
+    _tutorialTest('starts again when all shots are gone', (tester) async {
+      final game = await atCannonStep(tester);
+      await activate(tester, game);
+
+      for (var i = 0; i < 8; i++) {
+        await shoot(tester, game, i, 0);
+      }
+      for (var i = 0; i < 3; i++) {
+        await tester.pump(const Duration(seconds: 1));
+      }
+
+      expect(_tutorial(game).runner.current, isA<CannonStep>());
+      expect(_tutorial(game).runner.attempt, 1);
+      expect(_tutorial(game).hintText.text, TutorialGame.retryNotice);
+      expect(footer(game).cannonButton.count, 1);
+      expect(footer(game).cannonButton.activeUses, isNull);
+      final target = cannonStep.targets.first;
+      expect(_tutorial(game).gridContent[target.x][target.y], isNotNull);
+    });
+
+    _tutorialTest('starts again when the block is placed instead', (
+      tester,
+    ) async {
+      final game = await atCannonStep(tester);
+
+      await _place(tester, game);
+
+      expect(_tutorial(game).runner.current, isA<CannonStep>());
+      expect(_tutorial(game).runner.attempt, 1);
+      expect(footer(game).cannonButton.count, 1);
+    });
   });
 }
 

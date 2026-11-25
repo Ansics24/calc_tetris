@@ -8,6 +8,7 @@ import 'package:calc_tetris/block/math/seed/free_spawn_positions.dart';
 import 'package:calc_tetris/block/math/seed/next_block_planner.dart';
 import 'package:calc_tetris/block/math/seed/spawn_origin.dart';
 import 'package:calc_tetris/block/math/seed/spawn_position_chooser.dart';
+import 'package:calc_tetris/block/shatter_animation.dart';
 import 'package:calc_tetris/block/single_block_component_factory.dart';
 import 'package:calc_tetris/block/solution_strategy.dart';
 import 'package:calc_tetris/block/solution_strategy_executor.dart';
@@ -17,8 +18,10 @@ import 'package:calc_tetris/grid/grid_behaviour_settings.dart';
 import 'package:calc_tetris/grid/grid_controller.dart';
 import 'package:calc_tetris/grid/grid_round_listener.dart';
 import 'package:calc_tetris/grid/model/grid_model.dart';
+import 'package:calc_tetris/grid/model/grid_single_block_model.dart';
 import 'package:calc_tetris/grid/play_mode.dart';
 import 'package:calc_tetris/grid/power_up_found_listener.dart';
+import 'package:calc_tetris/grid/power_up_used_listener.dart';
 import 'package:calc_tetris/grid/queries/position_in_grid_aware.dart';
 import 'package:calc_tetris/screens/gameover/game_over_listener.dart';
 import 'package:calc_tetris/util/int_vector_2.dart';
@@ -59,6 +62,7 @@ class EndlessGameGridController implements GridController, PositionInGridAware {
   final GridRoundListener? _roundListener;
   final bool _spawnNextBlockAfterRound;
   final PowerUpFoundListener? _powerUpFoundListener;
+  final PowerUpUsedListener? _powerUpUsedListener;
   final Map<PowerUpType, double> _powerUpFindChances;
   final Random _random;
 
@@ -102,6 +106,7 @@ class EndlessGameGridController implements GridController, PositionInGridAware {
     this._roundListener,
     this._spawnNextBlockAfterRound = true,
     this._powerUpFoundListener,
+    this._powerUpUsedListener,
     Map<PowerUpType, double>? powerUpFindChances,
     Random? random,
   }) : _spawnPositionChooser =
@@ -329,6 +334,40 @@ class EndlessGameGridController implements GridController, PositionInGridAware {
       ),
       startPosition,
     );
+  }
+
+  /// With the cannon in use every tap on a cell of the grid is a shot. A shot
+  /// that hits a landed block breaks it apart.
+  @override
+  void onCellTapped(IntVector2 cell) {
+    if (_playMode.powerUpType != PowerUpType.cannon || !_isInGrid(cell)) {
+      return;
+    }
+    final hit = _gridModel.findExistingBlockAt(cell);
+    if (hit != null) {
+      _shatter(hit);
+    }
+    // last, because the last shot ends the power-up mode
+    _powerUpUsedListener?.onPowerUpUsed(PowerUpType.cannon);
+  }
+
+  bool _isInGrid(IntVector2 cell) =>
+      cell.x >= 0 &&
+      cell.y >= 0 &&
+      cell.x < _gridModel.model.length &&
+      cell.y < _gridModel.model[0].length;
+
+  void _shatter(GridSingleBlockModel block) {
+    final component = block.component;
+    _gridModel.remove(block);
+    _grid.add(
+      ShatterAnimation(
+        color: component.shatterColor,
+        size: Vector2.all(_grid.cellSize),
+        position: component.position.clone(),
+      ),
+    );
+    component.removeFromParent();
   }
 
   @override

@@ -71,8 +71,21 @@ class CompoundBlockComponent extends BlockComponent with TapCallbacks {
   }
 
   @override
+  void onTapDown(TapDownEvent event) {
+    // the grid only gets the tap up if it got the tap down too
+    if (isLocked) {
+      event.continuePropagation = true;
+    }
+  }
+
+  @override
   void onTapUp(TapUpEvent event) {
     super.onTapUp(event);
+    if (isLocked) {
+      // a locked block does not use taps, the grid below may need them
+      event.continuePropagation = true;
+      return;
+    }
     rotate();
   }
 

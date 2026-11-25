@@ -4,10 +4,11 @@ import 'dart:ui';
 import 'package:calc_tetris/theme/light_theme.dart';
 import 'package:calc_tetris/theme/text_theme.dart';
 import 'package:flame/components.dart';
+import 'package:flame/events.dart';
 
 /// Round button of a power-up with a badge showing how many of them the
 /// player has left. The picture of the power-up is up to the subclass.
-abstract class PowerUpButton extends PositionComponent {
+abstract class PowerUpButton extends PositionComponent with TapCallbacks {
   /// Higher counts are shown as `99+`.
   static const int maxShownCount = 99;
 
@@ -18,6 +19,12 @@ abstract class PowerUpButton extends PositionComponent {
 
   int _count;
 
+  /// Called when the player selects this power-up.
+  void Function()? onPressed;
+
+  /// A locked button can not be pressed.
+  bool isLocked = false;
+
   /// False for a power-up that only flies around and has no count to show.
   final bool showBadge;
 
@@ -27,6 +34,18 @@ abstract class PowerUpButton extends PositionComponent {
     super.size,
     super.position,
   }) : _count = _checked(count);
+
+  /// Reports that the player wants to use the power-up. Does nothing while the
+  /// button is locked or there is none left. The count is up to the game.
+  void press() {
+    if (isLocked || _count == 0) {
+      return;
+    }
+    onPressed?.call();
+  }
+
+  @override
+  void onTapUp(TapUpEvent event) => press();
 
   /// How many of these power-ups are left in the current round.
   int get count => _count;

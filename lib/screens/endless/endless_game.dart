@@ -11,7 +11,9 @@ import 'package:calc_tetris/block/math/valid_equation_solution_strategy.dart';
 import 'package:calc_tetris/block/model/single_block.dart';
 import 'package:calc_tetris/grid/endless_game_grid_controller.dart';
 import 'package:calc_tetris/grid/grid.dart';
+import 'package:calc_tetris/grid/play_mode.dart';
 import 'package:calc_tetris/grid/power_up_found_listener.dart';
+import 'package:calc_tetris/grid/power_up_selected_listener.dart';
 import 'package:calc_tetris/grid/queries/grid_content_holder.dart';
 import 'package:calc_tetris/layout/footer/footer.dart';
 import 'package:calc_tetris/layout/footer/power_up_found_animation.dart';
@@ -28,7 +30,7 @@ import 'package:calc_tetris/util/int_vector_2.dart';
 import 'package:flame/components.dart';
 
 class EndlessGame extends PositionComponent
-    implements GameOverListener, PowerUpFoundListener {
+    implements GameOverListener, PowerUpFoundListener, PowerUpSelectedListener {
   /// Called when the player confirmed to end the game.
   final void Function()? onQuit;
 
@@ -37,6 +39,8 @@ class EndlessGame extends PositionComponent
   final SoundEffectPlayer _soundEffectPlayer;
   final Map<PowerUpType, double>? _powerUpFindChances;
   late final Footer _footer;
+  late final EndlessGameGridController _gridController;
+  PlayMode _playMode = const PlayMode.defaultMode();
 
   EndlessGame({
     this.onQuit,
@@ -66,13 +70,12 @@ class EndlessGame extends PositionComponent
     super.onMount();
     add(background);
 
-    late final EndlessGameGridController gridController;
     final grid = Grid(
       blockCount: _gameDimensions.gridBlockCount,
       singleBlockComponentFactory: newComponentFromBlockModel,
       gridContentHolder: _gridContentHolder,
       controllerFactory: (gridModel, grid) =>
-          gridController = EndlessGameGridController(
+          _gridController = EndlessGameGridController(
             gridModel: gridModel,
             grid: grid,
             solutionStrategy: ValidEquationSolutionStrategy(),
@@ -106,7 +109,7 @@ class EndlessGame extends PositionComponent
     );
     add(header);
 
-    gridController.spawnOrigin = header.nextBlockDisplay;
+    _gridController.spawnOrigin = header.nextBlockDisplay;
     add(grid);
     _footer = Footer(
       size: _gameDimensions.sizeFooter,
@@ -114,6 +117,7 @@ class EndlessGame extends PositionComponent
         0,
         gameDimensions.sizeHeader.y + gameDimensions.sizeBlockBoard.y,
       ),
+      onPowerUpSelected: onPowerUpSelected,
     );
     add(_footer);
   }
@@ -129,6 +133,26 @@ class EndlessGame extends PositionComponent
         startCellSize: _gameDimensions.gridCellSize,
       ),
     );
+  }
+
+  PlayMode get playMode => _playMode;
+
+  /// Takes one of the power-ups and starts using it. Only possible in the
+  /// default mode and when there is one left.
+  @override
+  void onPowerUpSelected(PowerUpType type) {
+    final button = _footer.buttonFor(type);
+    if (_playMode.isPowerUpInUse || button.count == 0) {
+      return;
+    }
+    button.count -= 1;
+    _setPlayMode(PlayMode.powerUpInUse(type));
+  }
+
+  void _setPlayMode(PlayMode mode) {
+    _playMode = mode;
+    _gridController.playMode = mode;
+    _footer.isLocked = mode.isPowerUpInUse;
   }
 
   void _askToStop() {

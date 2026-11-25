@@ -12,9 +12,29 @@ class Footer extends PositionComponent {
 
   final CannonButton cannonButton = CannonButton();
 
-  Footer({super.size, super.position}) {
+  bool _locked = false;
+
+  /// [onPowerUpSelected] is told which power-up the player pressed.
+  Footer({
+    super.size,
+    super.position,
+    void Function(PowerUpType type)? onPowerUpSelected,
+  }) {
     _layout();
     add(cannonButton);
+    for (final type in PowerUpType.values) {
+      buttonFor(type).onPressed = () => onPowerUpSelected?.call(type);
+    }
+  }
+
+  bool get isLocked => _locked;
+
+  /// Locks or unlocks all power-up buttons.
+  set isLocked(bool locked) {
+    _locked = locked;
+    for (final type in PowerUpType.values) {
+      buttonFor(type).isLocked = locked;
+    }
   }
 
   /// The button that shows the power-ups of the given kind.

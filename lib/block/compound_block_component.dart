@@ -1,4 +1,5 @@
 import 'dart:developer' as developer;
+import 'dart:ui' show Color, Paint;
 
 import 'package:calc_tetris/block/behaviour/snap_to_grid_when_dragging_behaviour.dart';
 import 'package:calc_tetris/block/block_component.dart';
@@ -22,6 +23,12 @@ class CompoundBlockComponent extends BlockComponent with TapCallbacks {
   final PositionInGridAware _positionInGridAware;
   final SingleBlockComponentFactory _componentFactory;
   late double _cellSize;
+
+  /// A locked block can not be rotated.
+  bool isLocked = false;
+
+  /// How opaque the block is drawn, from 0 (invisible) to 1.
+  double opacity = 1;
 
   CompoundBlockComponent(
     this._model, {
@@ -49,12 +56,30 @@ class CompoundBlockComponent extends BlockComponent with TapCallbacks {
   }
 
   @override
+  void renderTree(Canvas canvas) {
+    if (opacity >= 1) {
+      super.renderTree(canvas);
+      return;
+    }
+    // draws the block with its tiles as a whole, then fades it
+    canvas.saveLayer(
+      null,
+      Paint()..color = Color.fromRGBO(0, 0, 0, opacity),
+    );
+    super.renderTree(canvas);
+    canvas.restore();
+  }
+
+  @override
   void onTapUp(TapUpEvent event) {
     super.onTapUp(event);
     rotate();
   }
 
   void rotate() {
+    if (isLocked) {
+      return;
+    }
     var newModel = List.generate(
       _model[0].length,
       (i) => List.generate(

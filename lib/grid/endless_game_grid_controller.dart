@@ -17,6 +17,7 @@ import 'package:calc_tetris/grid/grid_behaviour_settings.dart';
 import 'package:calc_tetris/grid/grid_controller.dart';
 import 'package:calc_tetris/grid/grid_round_listener.dart';
 import 'package:calc_tetris/grid/model/grid_model.dart';
+import 'package:calc_tetris/grid/play_mode.dart';
 import 'package:calc_tetris/grid/power_up_found_listener.dart';
 import 'package:calc_tetris/grid/queries/position_in_grid_aware.dart';
 import 'package:calc_tetris/screens/gameover/game_over_listener.dart';
@@ -65,6 +66,24 @@ class EndlessGameGridController implements GridController, PositionInGridAware {
   int _roundPoints = 0;
 
   bool get isGameOver => _gameOver;
+
+  PlayMode _playMode = const PlayMode.defaultMode();
+
+  PlayMode get playMode => _playMode;
+
+  /// While a power-up is in use the current block stands still: it can not be
+  /// moved, rotated or placed, and it is drawn half transparent.
+  set playMode(PlayMode mode) {
+    _playMode = mode;
+    _applyPlayMode();
+  }
+
+  void _applyPlayMode() {
+    final inUse = _playMode.isPowerUpInUse;
+    currentBlock
+      ?..isLocked = inUse
+      ..opacity = inUse ? 0.2 : 1;
+  }
 
   /// Where new blocks fly in from. Can be set once the origin exists, which
   /// may be later than the controller.
@@ -242,6 +261,7 @@ class EndlessGameGridController implements GridController, PositionInGridAware {
   ) {
     currentBlock = block;
     currentBlockGridPosition = startPosition;
+    _applyPlayMode();
 
     final targetPosition = _gridModel.gridPositionToAbsolutePosition(
       startPosition,
@@ -318,7 +338,7 @@ class EndlessGameGridController implements GridController, PositionInGridAware {
   void onBlockDraggedLeft() => _moveBlockHorizontally(-1);
 
   void _moveBlockHorizontally(int deltaX) {
-    if (_spawning || currentBlock == null) {
+    if (_spawning || currentBlock == null || _playMode.isPowerUpInUse) {
       return;
     }
     if (anyTargetPositionBlockedFromCurrentLocation(
@@ -340,7 +360,7 @@ class EndlessGameGridController implements GridController, PositionInGridAware {
   void onBlockDraggedUp() => _moveBlockVertically(-1);
 
   void _moveBlockVertically(int deltaY) {
-    if (_spawning || currentBlock == null) {
+    if (_spawning || currentBlock == null || _playMode.isPowerUpInUse) {
       return;
     }
     if (anyTargetPositionBlockedFromCurrentLocation(
@@ -358,7 +378,7 @@ class EndlessGameGridController implements GridController, PositionInGridAware {
   /// (no block, still flying in, or already landing).
   @override
   bool placeCurrentBlock() {
-    if (_spawning || currentBlock == null) {
+    if (_spawning || currentBlock == null || _playMode.isPowerUpInUse) {
       return false;
     }
     return landCurrentBlockOnGrid();

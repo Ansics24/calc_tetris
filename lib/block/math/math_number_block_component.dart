@@ -1,7 +1,7 @@
-import 'package:calc_tetris/block/math/appearance/block_tile.dart';
-import 'package:calc_tetris/block/math/appearance/tile_colors.dart';
-import 'package:calc_tetris/block/math/model/math_number_block.dart';
-import 'package:calc_tetris/block/single_block_component.dart';
+import 'package:magic_blocks/block/math/appearance/block_tile.dart';
+import 'package:magic_blocks/block/math/appearance/tile_colors.dart';
+import 'package:magic_blocks/block/math/model/math_number_block.dart';
+import 'package:magic_blocks/block/single_block_component.dart';
 import 'package:flutter/painting.dart';
 
 class MathNumberBlockComponent extends SingleBlockComponent<MathNumberBlock> {

@@ -1,6 +1,6 @@
 import 'dart:ui' as ui;
 
-import 'package:calc_tetris/theme/welcome_palette.dart';
+import 'package:magic_blocks/theme/welcome_palette.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/painting.dart';
 

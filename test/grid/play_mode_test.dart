@@ -1,5 +1,5 @@
-import 'package:calc_tetris/grid/play_mode.dart';
-import 'package:calc_tetris/grid/power_up_found_listener.dart';
+import 'package:magic_blocks/grid/play_mode.dart';
+import 'package:magic_blocks/grid/power_up_found_listener.dart';
 import 'package:test/test.dart';
 
 void main() {

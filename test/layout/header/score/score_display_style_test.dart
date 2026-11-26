@@ -1,6 +1,6 @@
-import 'package:calc_tetris/layout/header/score/score_display.dart';
-import 'package:calc_tetris/layout/header/score/score_display_style.dart';
-import 'package:calc_tetris/theme/light_theme.dart';
+import 'package:magic_blocks/layout/header/score/score_display.dart';
+import 'package:magic_blocks/layout/header/score/score_display_style.dart';
+import 'package:magic_blocks/theme/light_theme.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 import 'package:test/test.dart';

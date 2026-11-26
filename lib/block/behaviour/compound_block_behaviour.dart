@@ -1,6 +1,6 @@
-import 'package:calc_tetris/block/compound_block_component.dart';
-import 'package:calc_tetris/grid/grid.dart';
-import 'package:calc_tetris/grid/grid_controller.dart';
+import 'package:magic_blocks/block/compound_block_component.dart';
+import 'package:magic_blocks/grid/grid.dart';
+import 'package:magic_blocks/grid/grid_controller.dart';
 import 'package:flame/components.dart';
 
 abstract class CompoundBlockBehaviour extends PositionComponent {

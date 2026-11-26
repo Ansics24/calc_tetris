@@ -1,16 +1,16 @@
 import 'dart:developer' as developer;
 import 'dart:ui' show Color, Paint;
 
-import 'package:calc_tetris/block/behaviour/snap_to_grid_when_dragging_behaviour.dart';
-import 'package:calc_tetris/block/block_component.dart';
-import 'package:calc_tetris/block/model/null_block.dart';
-import 'package:calc_tetris/block/model/single_block.dart';
-import 'package:calc_tetris/block/single_block_component.dart';
-import 'package:calc_tetris/block/single_block_component_factory.dart';
-import 'package:calc_tetris/grid/grid.dart';
-import 'package:calc_tetris/grid/queries/grid_model_aware.dart';
-import 'package:calc_tetris/grid/queries/position_in_grid_aware.dart';
-import 'package:calc_tetris/util/int_vector_2.dart';
+import 'package:magic_blocks/block/behaviour/snap_to_grid_when_dragging_behaviour.dart';
+import 'package:magic_blocks/block/block_component.dart';
+import 'package:magic_blocks/block/model/null_block.dart';
+import 'package:magic_blocks/block/model/single_block.dart';
+import 'package:magic_blocks/block/single_block_component.dart';
+import 'package:magic_blocks/block/single_block_component_factory.dart';
+import 'package:magic_blocks/grid/grid.dart';
+import 'package:magic_blocks/grid/queries/grid_model_aware.dart';
+import 'package:magic_blocks/grid/queries/position_in_grid_aware.dart';
+import 'package:magic_blocks/util/int_vector_2.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/events.dart';
 import 'package:flame/image_composition.dart';

@@ -1,4 +1,4 @@
-import 'package:calc_tetris/grid/model/grid_single_block_model.dart';
+import 'package:magic_blocks/grid/model/grid_single_block_model.dart';
 
 class ConnectedBlocks {
   final List<GridSingleBlockModel> _horizontal;

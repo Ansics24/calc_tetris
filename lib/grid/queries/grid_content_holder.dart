@@ -1,5 +1,5 @@
-import 'package:calc_tetris/block/model/single_block.dart';
-import 'package:calc_tetris/grid/model/grid_model.dart';
+import 'package:magic_blocks/block/model/single_block.dart';
+import 'package:magic_blocks/grid/model/grid_model.dart';
 
 /// Gives access to the blocks of a grid that does not exist yet when the
 /// holder is created. Until a grid is attached the content is empty.

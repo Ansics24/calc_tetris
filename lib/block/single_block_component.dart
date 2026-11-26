@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import 'package:calc_tetris/block/block_component.dart';
-import 'package:calc_tetris/block/model/single_block.dart';
-import 'package:calc_tetris/grid/grid.dart';
-import 'package:calc_tetris/theme/light_theme.dart';
+import 'package:magic_blocks/block/block_component.dart';
+import 'package:magic_blocks/block/model/single_block.dart';
+import 'package:magic_blocks/grid/grid.dart';
+import 'package:magic_blocks/theme/light_theme.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/painting.dart';
 

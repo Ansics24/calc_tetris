@@ -1,4 +1,4 @@
-import 'package:calc_tetris/util/german_number_format.dart';
+import 'package:magic_blocks/util/german_number_format.dart';
 import 'package:test/test.dart';
 
 void main() {

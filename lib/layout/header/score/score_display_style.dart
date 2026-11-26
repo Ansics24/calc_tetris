@@ -1,4 +1,4 @@
-import 'package:calc_tetris/theme/text_theme.dart';
+import 'package:magic_blocks/theme/text_theme.dart';
 import 'package:flutter/material.dart';
 
 /// Look of the [ScoreDisplay]: any [BoxDecoration] (border, gradient, radius,

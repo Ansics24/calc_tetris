@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:calc_tetris/screens/tutorial/tutorial_step.dart';
+import 'package:magic_blocks/screens/tutorial/tutorial_step.dart';
 
 /// Leads through the steps of the tutorial. Knows nothing about the game, it
 /// only reacts to the player pressing "continue" and to finished rounds.

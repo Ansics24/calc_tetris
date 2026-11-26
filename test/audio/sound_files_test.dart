@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:calc_tetris/audio/sound_files.dart';
+import 'package:magic_blocks/audio/sound_files.dart';
 import 'package:test/test.dart';
 
 void main() {

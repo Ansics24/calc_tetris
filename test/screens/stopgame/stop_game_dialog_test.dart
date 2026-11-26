@@ -1,4 +1,4 @@
-import 'package:calc_tetris/screens/stopgame/stop_game_dialog.dart';
+import 'package:magic_blocks/screens/stopgame/stop_game_dialog.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:test/test.dart';

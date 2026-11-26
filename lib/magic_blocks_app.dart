@@ -1,16 +1,17 @@
-import 'package:calc_tetris/tetris_game.dart';
+import 'package:magic_blocks/magic_blocks_game.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 
 /// Root widget: hosts the game inside the safe area of the device, so camera
 /// cutouts and system bars never cover the game. The area around the game
 /// takes the colors the game asks for.
-class CalcTetrisApp extends StatelessWidget {
-  static const Key surroundKey = Key('calc-tetris-surround');
+class MagicBlocksApp extends StatelessWidget {
+  static const Key surroundKey = Key('magic-blocks-surround');
 
-  final TetrisGame game;
+  final MagicBlocksGame game;
 
-  CalcTetrisApp({super.key, TetrisGame? game}) : game = game ?? TetrisGame();
+  MagicBlocksApp({super.key, MagicBlocksGame? game})
+    : game = game ?? MagicBlocksGame();
 
   @override
   Widget build(BuildContext context) {

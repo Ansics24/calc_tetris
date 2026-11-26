@@ -1,4 +1,4 @@
-import 'package:calc_tetris/layout/header/stop_button.dart';
+import 'package:magic_blocks/layout/header/stop_button.dart';
 import 'package:flame/components.dart';
 import 'package:test/test.dart';
 

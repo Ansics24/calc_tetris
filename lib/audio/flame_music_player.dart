@@ -1,4 +1,4 @@
-import 'package:calc_tetris/audio/music_player.dart';
+import 'package:magic_blocks/audio/music_player.dart';
 import 'package:flame_audio/flame_audio.dart';
 
 /// Plays music with the background music player of `flame_audio`. It pauses

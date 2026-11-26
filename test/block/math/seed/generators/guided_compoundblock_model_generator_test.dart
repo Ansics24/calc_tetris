@@ -1,12 +1,12 @@
 import 'dart:math';
 
-import 'package:calc_tetris/block/math/seed/generators/guided_compoundblock_model_generator.dart';
-import 'package:calc_tetris/block/math/seed/hints/open_equation_hint_finder.dart';
-import 'package:calc_tetris/block/math/seed/hints/open_equation_hints.dart';
-import 'package:calc_tetris/block/model/null_block.dart';
-import 'package:calc_tetris/block/model/single_block.dart';
-import 'package:calc_tetris/block/shapes/compound_block_shape.dart';
-import 'package:calc_tetris/block/shapes/shape_chooser.dart';
+import 'package:magic_blocks/block/math/seed/generators/guided_compoundblock_model_generator.dart';
+import 'package:magic_blocks/block/math/seed/hints/open_equation_hint_finder.dart';
+import 'package:magic_blocks/block/math/seed/hints/open_equation_hints.dart';
+import 'package:magic_blocks/block/model/null_block.dart';
+import 'package:magic_blocks/block/model/single_block.dart';
+import 'package:magic_blocks/block/shapes/compound_block_shape.dart';
+import 'package:magic_blocks/block/shapes/shape_chooser.dart';
 import 'package:test/test.dart';
 
 import '../support/grid_fixtures.dart';
@@ -151,6 +151,17 @@ void main() {
     test('completes an open equation when the hint always applies', () {
       final generator = _generator(
         gridRows: () => ['1+2=.'],
+        hintChance: 1,
+      );
+
+      for (var i = 0; i < 50; i++) {
+        expect(_tokensOf(generator.generate()), ['3']);
+      }
+    });
+
+    test('completes an open vertical equation below it', () {
+      final generator = _generator(
+        gridRows: () => ['1', '+', '2', '=', '.', '.'],
         hintChance: 1,
       );
 

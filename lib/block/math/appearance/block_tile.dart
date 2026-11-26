@@ -1,5 +1,5 @@
-import 'package:calc_tetris/block/math/appearance/tile_colors.dart';
-import 'package:calc_tetris/theme/text_theme.dart';
+import 'package:magic_blocks/block/math/appearance/tile_colors.dart';
+import 'package:magic_blocks/theme/text_theme.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/painting.dart';
 

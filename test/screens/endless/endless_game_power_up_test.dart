@@ -1,10 +1,10 @@
-import 'package:calc_tetris/block/solution_strategy_singlerun_result.dart';
-import 'package:calc_tetris/grid/grid.dart';
-import 'package:calc_tetris/grid/power_up_found_listener.dart';
-import 'package:calc_tetris/layout/footer/cannon_button.dart';
-import 'package:calc_tetris/layout/footer/footer.dart';
-import 'package:calc_tetris/layout/footer/power_up_found_animation.dart';
-import 'package:calc_tetris/screens/endless/endless_game.dart';
+import 'package:magic_blocks/block/solution_strategy_singlerun_result.dart';
+import 'package:magic_blocks/grid/grid.dart';
+import 'package:magic_blocks/grid/power_up_found_listener.dart';
+import 'package:magic_blocks/layout/footer/cannon_button.dart';
+import 'package:magic_blocks/layout/footer/footer.dart';
+import 'package:magic_blocks/layout/footer/power_up_found_animation.dart';
+import 'package:magic_blocks/screens/endless/endless_game.dart';
 import 'package:flame/game.dart';
 import 'package:flutter_test/flutter_test.dart';
 

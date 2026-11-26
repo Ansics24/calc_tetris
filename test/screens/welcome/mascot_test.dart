@@ -1,8 +1,8 @@
 import 'dart:io';
-import 'dart:ui' show BlendMode;
 
-import 'package:calc_tetris/screens/welcome/mascot.dart';
-import 'package:test/test.dart';
+import 'package:magic_blocks/screens/welcome/mascot.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   test('its image exists and is registered as asset', () {
@@ -11,10 +11,6 @@ void main() {
       File('pubspec.yaml').readAsStringSync(),
       contains('assets/images/${Mascot.imageName}'),
     );
-  });
-
-  test('is only faintly visible so it does not distract', () {
-    expect(Mascot().opacity, inExclusiveRange(0, 0.6));
   });
 
   test('its image has a transparent background', () {
@@ -26,7 +22,12 @@ void main() {
     expect(header[25], 6);
   });
 
-  test('is drawn as it is, without blending', () {
-    expect(Mascot().paint.blendMode, BlendMode.srcOver);
+  testWidgets('is only faintly visible so it does not distract', (
+    tester,
+  ) async {
+    await tester.pumpWidget(const Mascot());
+
+    final image = tester.widget<Image>(find.byType(Image));
+    expect(image.opacity!.value, inExclusiveRange(0, 0.6));
   });
 }

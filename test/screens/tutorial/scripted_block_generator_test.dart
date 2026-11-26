@@ -1,9 +1,9 @@
-import 'package:calc_tetris/block/math/model/math_equals_block.dart';
-import 'package:calc_tetris/block/math/model/math_number_block.dart';
-import 'package:calc_tetris/block/math/seed/compoundblock_model_generator.dart';
-import 'package:calc_tetris/block/math/seed/next_block_planner.dart';
-import 'package:calc_tetris/block/model/null_block.dart';
-import 'package:calc_tetris/screens/tutorial/scripted_block_generator.dart';
+import 'package:magic_blocks/block/math/model/math_equals_block.dart';
+import 'package:magic_blocks/block/math/model/math_number_block.dart';
+import 'package:magic_blocks/block/math/seed/compoundblock_model_generator.dart';
+import 'package:magic_blocks/block/math/seed/next_block_planner.dart';
+import 'package:magic_blocks/block/model/null_block.dart';
+import 'package:magic_blocks/screens/tutorial/scripted_block_generator.dart';
 import 'package:test/test.dart';
 
 void main() {

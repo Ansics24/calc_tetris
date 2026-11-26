@@ -1,6 +1,6 @@
 {
-    "name": "calc_tetris",
-    "short_name": "calc_tetris",
+    "name": "Magic Blocks",
+    "short_name": "Magic Blocks",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

@@ -1,4 +1,4 @@
-import 'package:calc_tetris/block/model/single_block.dart';
+import 'package:magic_blocks/block/model/single_block.dart';
 import 'package:uuid/uuid.dart';
 
 /// A single block indicating that no block component should sit at this position

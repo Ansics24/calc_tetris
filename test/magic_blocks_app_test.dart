@@ -1,5 +1,5 @@
-import 'package:calc_tetris/calc_tetris_app.dart';
-import 'package:calc_tetris/tetris_game.dart';
+import 'package:magic_blocks/magic_blocks_app.dart';
+import 'package:magic_blocks/magic_blocks_game.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -19,11 +19,11 @@ void main() {
     tester.view.viewPadding = tester.view.padding;
     addTearDown(tester.view.reset);
 
-    await tester.pumpWidget(CalcTetrisApp(game: TetrisGame()));
+    await tester.pumpWidget(MagicBlocksApp(game: MagicBlocksGame()));
     await tester.pump();
     await tester.pump();
 
-    final rect = tester.getRect(find.byType(GameWidget<TetrisGame>));
+    final rect = tester.getRect(find.byType(GameWidget<MagicBlocksGame>));
     expect(rect.top, 40);
     expect(rect.bottom, 800 - 30);
     expect(rect.left, 10);
@@ -34,11 +34,11 @@ void main() {
   });
 
   testWidgets('starts its own game when none is given', (tester) async {
-    await tester.pumpWidget(CalcTetrisApp());
+    await tester.pumpWidget(MagicBlocksApp());
     await tester.pump();
     await tester.pump();
 
-    expect(find.byType(GameWidget<TetrisGame>), findsOneWidget);
+    expect(find.byType(GameWidget<MagicBlocksGame>), findsOneWidget);
 
     await tester.pump(const Duration(seconds: 1));
   });
@@ -46,8 +46,8 @@ void main() {
   testWidgets('paints the area around the game in the colors of the game', (
     tester,
   ) async {
-    final game = TetrisGame();
-    await tester.pumpWidget(CalcTetrisApp(game: game));
+    final game = MagicBlocksGame();
+    await tester.pumpWidget(MagicBlocksApp(game: game));
     await tester.pump();
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));
@@ -68,7 +68,7 @@ void main() {
 
 List<Color>? _surroundGradientColors(WidgetTester tester) {
   final surround = tester.widget<DecoratedBox>(
-    find.byKey(CalcTetrisApp.surroundKey),
+    find.byKey(MagicBlocksApp.surroundKey),
   );
   final decoration = surround.decoration as BoxDecoration;
   return (decoration.gradient as LinearGradient?)?.colors;

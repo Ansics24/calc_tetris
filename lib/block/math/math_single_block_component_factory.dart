@@ -1,13 +1,13 @@
-import 'package:calc_tetris/block/math/exceptions/no_matching_block_component_exception.dart';
-import 'package:calc_tetris/block/math/math_equals_block_component.dart';
-import 'package:calc_tetris/block/math/math_number_block_component.dart';
-import 'package:calc_tetris/block/math/math_operant_block_component.dart';
-import 'package:calc_tetris/block/math/model/math_equals_block.dart';
-import 'package:calc_tetris/block/math/model/math_number_block.dart';
-import 'package:calc_tetris/block/math/model/math_operant_block.dart';
-import 'package:calc_tetris/block/model/null_block.dart';
-import 'package:calc_tetris/block/model/single_block.dart';
-import 'package:calc_tetris/block/single_block_component.dart';
+import 'package:magic_blocks/block/math/exceptions/no_matching_block_component_exception.dart';
+import 'package:magic_blocks/block/math/math_equals_block_component.dart';
+import 'package:magic_blocks/block/math/math_number_block_component.dart';
+import 'package:magic_blocks/block/math/math_operant_block_component.dart';
+import 'package:magic_blocks/block/math/model/math_equals_block.dart';
+import 'package:magic_blocks/block/math/model/math_number_block.dart';
+import 'package:magic_blocks/block/math/model/math_operant_block.dart';
+import 'package:magic_blocks/block/model/null_block.dart';
+import 'package:magic_blocks/block/model/single_block.dart';
+import 'package:magic_blocks/block/single_block_component.dart';
 
 /// Creates the component for a single block model, or null if the model
 /// stands for an empty cell. Without a [cellSize] the component takes the

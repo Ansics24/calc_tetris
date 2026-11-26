@@ -1,7 +1,7 @@
-import 'package:calc_tetris/block/model/null_block.dart';
-import 'package:calc_tetris/block/model/single_block.dart';
-import 'package:calc_tetris/grid/model/grid_model.dart';
-import 'package:calc_tetris/util/int_vector_2.dart';
+import 'package:magic_blocks/block/model/null_block.dart';
+import 'package:magic_blocks/block/model/single_block.dart';
+import 'package:magic_blocks/grid/model/grid_model.dart';
+import 'package:magic_blocks/util/int_vector_2.dart';
 
 /// Returns the top left positions at which the block can enter the grid
 /// without overlapping an already blocked cell. [block] is indexed `[x][y]`,

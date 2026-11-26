@@ -1,4 +1,4 @@
-import 'package:calc_tetris/block/math/model/math_single_block.dart';
+import 'package:magic_blocks/block/math/model/math_single_block.dart';
 
 class Equation {
   static final regExp = RegExp(r'^\d+(?:[+-]\d+)*=\d+(?:[+-]\d+)*$');

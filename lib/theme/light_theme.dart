@@ -1,4 +1,4 @@
-import 'package:calc_tetris/theme/welcome_palette.dart';
+import 'package:magic_blocks/theme/welcome_palette.dart';
 import 'package:flutter/material.dart';
 
 /// Bright, friendly scheme of the whole game: white cards framed in sunny

@@ -1,10 +1,10 @@
-import 'package:calc_tetris/audio/sound_effect_player.dart';
-import 'package:calc_tetris/audio/sound_files.dart';
-import 'package:calc_tetris/grid/play_mode.dart';
-import 'package:calc_tetris/grid/power_up_found_listener.dart';
-import 'package:calc_tetris/grid/power_up_selected_listener.dart';
-import 'package:calc_tetris/grid/power_up_used_listener.dart';
-import 'package:calc_tetris/layout/footer/footer.dart';
+import 'package:magic_blocks/audio/sound_effect_player.dart';
+import 'package:magic_blocks/audio/sound_files.dart';
+import 'package:magic_blocks/grid/play_mode.dart';
+import 'package:magic_blocks/grid/power_up_found_listener.dart';
+import 'package:magic_blocks/grid/power_up_selected_listener.dart';
+import 'package:magic_blocks/grid/power_up_used_listener.dart';
+import 'package:magic_blocks/layout/footer/footer.dart';
 
 /// Lets the player use the power-ups of the footer: takes one when selected,
 /// counts its uses and switches between the modes. The game mode is told about

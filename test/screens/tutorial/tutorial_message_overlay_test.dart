@@ -1,4 +1,4 @@
-import 'package:calc_tetris/screens/tutorial/tutorial_message_overlay.dart';
+import 'package:magic_blocks/screens/tutorial/tutorial_message_overlay.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:test/test.dart';

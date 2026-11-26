@@ -1,5 +1,5 @@
-import 'package:calc_tetris/block/math/model/math_operant_type.dart';
-import 'package:calc_tetris/block/math/model/math_single_block.dart';
+import 'package:magic_blocks/block/math/model/math_operant_type.dart';
+import 'package:magic_blocks/block/math/model/math_single_block.dart';
 import 'package:uuid/uuid.dart';
 
 class MathOperantBlock extends MathSingleBlock {

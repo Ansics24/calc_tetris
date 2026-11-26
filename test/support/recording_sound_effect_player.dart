@@ -1,4 +1,4 @@
-import 'package:calc_tetris/audio/sound_effect_player.dart';
+import 'package:magic_blocks/audio/sound_effect_player.dart';
 
 /// Remembers which sounds it was asked to play instead of making any noise.
 class RecordingSoundEffectPlayer implements SoundEffectPlayer {

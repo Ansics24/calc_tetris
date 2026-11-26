@@ -1,4 +1,4 @@
-import 'package:calc_tetris/audio/music_player.dart';
+import 'package:magic_blocks/audio/music_player.dart';
 
 /// Remembers what it was asked to play instead of making any sound.
 class RecordingMusicPlayer implements MusicPlayer {

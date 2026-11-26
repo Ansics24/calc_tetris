@@ -1,4 +1,4 @@
-import 'package:calc_tetris/audio/sound_effect_player.dart';
+import 'package:magic_blocks/audio/sound_effect_player.dart';
 import 'package:test/test.dart';
 
 import '../support/recording_sound_effect_player.dart';

@@ -1,5 +1,5 @@
-import 'package:calc_tetris/persistence/model/game_mode.dart';
-import 'package:calc_tetris/persistence/model/game_mode_name.dart';
+import 'package:magic_blocks/persistence/model/game_mode.dart';
+import 'package:magic_blocks/persistence/model/game_mode_name.dart';
 import 'package:test/test.dart';
 
 void main() {

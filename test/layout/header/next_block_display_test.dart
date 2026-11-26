@@ -1,7 +1,7 @@
-import 'package:calc_tetris/block/math/model/math_number_block.dart';
-import 'package:calc_tetris/block/math/model/math_single_block.dart';
-import 'package:calc_tetris/block/model/null_block.dart';
-import 'package:calc_tetris/layout/header/next_block_display.dart';
+import 'package:magic_blocks/block/math/model/math_number_block.dart';
+import 'package:magic_blocks/block/math/model/math_single_block.dart';
+import 'package:magic_blocks/block/model/null_block.dart';
+import 'package:magic_blocks/layout/header/next_block_display.dart';
 import 'package:flame/components.dart';
 import 'package:test/test.dart';
 

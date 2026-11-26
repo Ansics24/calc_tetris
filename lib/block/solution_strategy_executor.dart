@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:calc_tetris/block/block_remover.dart';
-import 'package:calc_tetris/block/solution_strategy.dart';
-import 'package:calc_tetris/block/solution_strategy_singlerun_result.dart';
-import 'package:calc_tetris/grid/model/grid_model.dart';
-import 'package:calc_tetris/util/int_vector_2.dart';
+import 'package:magic_blocks/block/block_remover.dart';
+import 'package:magic_blocks/block/solution_strategy.dart';
+import 'package:magic_blocks/block/solution_strategy_singlerun_result.dart';
+import 'package:magic_blocks/grid/model/grid_model.dart';
+import 'package:magic_blocks/util/int_vector_2.dart';
 
 /// Runs a solution strategy once and removes the solved blocks. The result
 /// stream emits the result if blocks were solved and completes afterwards.

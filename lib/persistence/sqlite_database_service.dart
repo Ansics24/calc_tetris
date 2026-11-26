@@ -1,7 +1,7 @@
-import 'package:calc_tetris/persistence/database_service.dart';
-import 'package:calc_tetris/persistence/model/game_mode.dart';
-import 'package:calc_tetris/persistence/model/game_mode_name.dart';
-import 'package:calc_tetris/persistence/sql/game_mode.sql.dart';
+import 'package:magic_blocks/persistence/database_service.dart';
+import 'package:magic_blocks/persistence/model/game_mode.dart';
+import 'package:magic_blocks/persistence/model/game_mode_name.dart';
+import 'package:magic_blocks/persistence/sql/game_mode.sql.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite/sqflite.dart'
     show
@@ -14,7 +14,7 @@ import 'package:sqflite/sqflite.dart'
 
 /// Keeps the data in a SQLite database. It is opened on first use.
 class SqliteDatabaseService implements DatabaseService {
-  static const String _fileName = 'calc_tetris.db';
+  static const String _fileName = 'magic_blocks.db';
   static const int _version = 1;
 
   final DatabaseFactory _factory;

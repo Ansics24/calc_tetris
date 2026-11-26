@@ -1,9 +1,9 @@
-import 'package:calc_tetris/block/math/scoring/score_keeper.dart';
-import 'package:calc_tetris/persistence/in_memory_database_service.dart';
-import 'package:calc_tetris/persistence/model/game_mode_name.dart';
-import 'package:calc_tetris/screens/endless/endless_game.dart';
-import 'package:calc_tetris/screens/gameover/game_over_listener.dart';
-import 'package:calc_tetris/screens/welcome/sky_background.dart';
+import 'package:magic_blocks/block/math/scoring/score_keeper.dart';
+import 'package:magic_blocks/persistence/in_memory_database_service.dart';
+import 'package:magic_blocks/persistence/model/game_mode_name.dart';
+import 'package:magic_blocks/screens/endless/endless_game.dart';
+import 'package:magic_blocks/screens/gameover/game_over_listener.dart';
+import 'package:magic_blocks/screens/welcome/sky_background.dart';
 import 'package:flame/components.dart';
 import 'package:test/test.dart';
 

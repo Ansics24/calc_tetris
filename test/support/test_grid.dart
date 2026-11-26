@@ -1,10 +1,10 @@
-import 'package:calc_tetris/block/math/math_single_block_component_factory.dart';
-import 'package:calc_tetris/block/math/seed/generators/random_compoundblock_model_generator.dart';
-import 'package:calc_tetris/block/math/seed/next_block_planner.dart';
-import 'package:calc_tetris/block/solution_strategy.dart';
-import 'package:calc_tetris/grid/endless_game_grid_controller.dart';
-import 'package:calc_tetris/grid/grid.dart';
-import 'package:calc_tetris/util/int_vector_2.dart';
+import 'package:magic_blocks/block/math/math_single_block_component_factory.dart';
+import 'package:magic_blocks/block/math/seed/generators/random_compoundblock_model_generator.dart';
+import 'package:magic_blocks/block/math/seed/next_block_planner.dart';
+import 'package:magic_blocks/block/solution_strategy.dart';
+import 'package:magic_blocks/grid/endless_game_grid_controller.dart';
+import 'package:magic_blocks/grid/grid.dart';
+import 'package:magic_blocks/util/int_vector_2.dart';
 
 /// Never used in tests that do not let a block land.
 class UnusedStrategy implements SolutionStrategy {

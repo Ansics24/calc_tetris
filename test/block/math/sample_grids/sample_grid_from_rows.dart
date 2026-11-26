@@ -1,7 +1,7 @@
-import 'package:calc_tetris/block/math/math_single_block_component_factory.dart';
-import 'package:calc_tetris/block/math/seed/block_tokens.dart';
-import 'package:calc_tetris/grid/model/grid_model.dart';
-import 'package:calc_tetris/util/int_vector_2.dart';
+import 'package:magic_blocks/block/math/math_single_block_component_factory.dart';
+import 'package:magic_blocks/block/math/seed/block_tokens.dart';
+import 'package:magic_blocks/grid/model/grid_model.dart';
+import 'package:magic_blocks/util/int_vector_2.dart';
 
 import 'sample_grid_support.dart';
 

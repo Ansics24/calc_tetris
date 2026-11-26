@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:calc_tetris/block/remove_block_animation.dart';
+import 'package:magic_blocks/block/remove_block_animation.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 

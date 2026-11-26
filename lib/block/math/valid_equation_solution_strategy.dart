@@ -1,12 +1,12 @@
-import 'package:calc_tetris/block/math/model/equation.dart';
-import 'package:calc_tetris/block/math/model/math_single_block.dart';
-import 'package:calc_tetris/block/math/scoring/digit_multiplier_score_calculator.dart';
-import 'package:calc_tetris/block/math/scoring/score_calculator.dart';
-import 'package:calc_tetris/block/solution_strategy.dart';
-import 'package:calc_tetris/block/solution_strategy_singlerun_result.dart';
-import 'package:calc_tetris/grid/model/grid_model.dart';
-import 'package:calc_tetris/grid/model/grid_single_block_model.dart';
-import 'package:calc_tetris/util/int_vector_2.dart';
+import 'package:magic_blocks/block/math/model/equation.dart';
+import 'package:magic_blocks/block/math/model/math_single_block.dart';
+import 'package:magic_blocks/block/math/scoring/digit_multiplier_score_calculator.dart';
+import 'package:magic_blocks/block/math/scoring/score_calculator.dart';
+import 'package:magic_blocks/block/solution_strategy.dart';
+import 'package:magic_blocks/block/solution_strategy_singlerun_result.dart';
+import 'package:magic_blocks/grid/model/grid_model.dart';
+import 'package:magic_blocks/grid/model/grid_single_block_model.dart';
+import 'package:magic_blocks/util/int_vector_2.dart';
 
 class ValidEquationSolutionStrategy implements SolutionStrategy {
   final ScoreCalculator _scoreCalculator;

@@ -89,13 +89,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "calc_tetris" "\0"
+            VALUE "CompanyName", "de.schulte" "\0"
+            VALUE "FileDescription", "Magic Blocks" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "calc_tetris" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2026 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "calc_tetris.exe" "\0"
-            VALUE "ProductName", "calc_tetris" "\0"
+            VALUE "InternalName", "magic_blocks" "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2026 de.schulte. All rights reserved." "\0"
+            VALUE "OriginalFilename", "magic_blocks.exe" "\0"
+            VALUE "ProductName", "Magic Blocks" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

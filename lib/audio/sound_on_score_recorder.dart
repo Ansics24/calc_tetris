@@ -1,5 +1,5 @@
-import 'package:calc_tetris/audio/sound_effect_player.dart';
-import 'package:calc_tetris/block/math/scoring/score_keeper.dart';
+import 'package:magic_blocks/audio/sound_effect_player.dart';
+import 'package:magic_blocks/block/math/scoring/score_keeper.dart';
 
 /// Passes points on to another recorder and plays a sound whenever points
 /// were earned. Broken audio must not disturb the game.

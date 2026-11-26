@@ -1,4 +1,4 @@
-import 'package:calc_tetris/block/shatter_animation.dart';
+import 'package:magic_blocks/block/shatter_animation.dart';
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/painting.dart';

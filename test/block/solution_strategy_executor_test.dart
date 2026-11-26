@@ -1,12 +1,12 @@
-import 'package:calc_tetris/block/block_remover.dart';
-import 'package:calc_tetris/block/math/math_equals_block_component.dart';
-import 'package:calc_tetris/block/math/model/math_equals_block.dart';
-import 'package:calc_tetris/block/solution_strategy.dart';
-import 'package:calc_tetris/block/solution_strategy_executor.dart';
-import 'package:calc_tetris/block/solution_strategy_singlerun_result.dart';
-import 'package:calc_tetris/grid/model/grid_model.dart';
-import 'package:calc_tetris/grid/model/grid_single_block_model.dart';
-import 'package:calc_tetris/util/int_vector_2.dart';
+import 'package:magic_blocks/block/block_remover.dart';
+import 'package:magic_blocks/block/math/math_equals_block_component.dart';
+import 'package:magic_blocks/block/math/model/math_equals_block.dart';
+import 'package:magic_blocks/block/solution_strategy.dart';
+import 'package:magic_blocks/block/solution_strategy_executor.dart';
+import 'package:magic_blocks/block/solution_strategy_singlerun_result.dart';
+import 'package:magic_blocks/grid/model/grid_model.dart';
+import 'package:magic_blocks/grid/model/grid_single_block_model.dart';
+import 'package:magic_blocks/util/int_vector_2.dart';
 import 'package:test/test.dart';
 
 import '../support/test_grid.dart';

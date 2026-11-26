@@ -1,15 +1,15 @@
 import 'dart:developer';
 
-import 'package:calc_tetris/block/compound_block_component.dart';
-import 'package:calc_tetris/block/model/null_block.dart';
-import 'package:calc_tetris/block/single_block_component.dart';
-import 'package:calc_tetris/grid/exception/grid_position_occupied_exception.dart';
-import 'package:calc_tetris/grid/grid.dart';
-import 'package:calc_tetris/grid/model/connected_blocks.dart';
-import 'package:calc_tetris/grid/model/grid_single_block_model.dart';
-import 'package:calc_tetris/grid/queries/grid_model_aware.dart';
-import 'package:calc_tetris/grid/queries/position_in_grid_finder.dart';
-import 'package:calc_tetris/util/int_vector_2.dart';
+import 'package:magic_blocks/block/compound_block_component.dart';
+import 'package:magic_blocks/block/model/null_block.dart';
+import 'package:magic_blocks/block/single_block_component.dart';
+import 'package:magic_blocks/grid/exception/grid_position_occupied_exception.dart';
+import 'package:magic_blocks/grid/grid.dart';
+import 'package:magic_blocks/grid/model/connected_blocks.dart';
+import 'package:magic_blocks/grid/model/grid_single_block_model.dart';
+import 'package:magic_blocks/grid/queries/grid_model_aware.dart';
+import 'package:magic_blocks/grid/queries/position_in_grid_finder.dart';
+import 'package:magic_blocks/util/int_vector_2.dart';
 import 'package:flame/components.dart';
 import 'package:uuid/uuid.dart';
 

@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:calc_tetris/block/math/seed/compoundblock_model_generator.dart';
-import 'package:calc_tetris/block/model/single_block.dart';
+import 'package:magic_blocks/block/math/seed/compoundblock_model_generator.dart';
+import 'package:magic_blocks/block/model/single_block.dart';
 
 /// Plans the next compound block ahead of time, so it can be shown to the
 /// player before it is handed to the grid.

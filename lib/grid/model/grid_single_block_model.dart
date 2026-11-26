@@ -1,4 +1,4 @@
-import 'package:calc_tetris/block/single_block_component.dart';
+import 'package:magic_blocks/block/single_block_component.dart';
 
 class GridSingleBlockModel {
   final SingleBlockComponent _blockComponent;

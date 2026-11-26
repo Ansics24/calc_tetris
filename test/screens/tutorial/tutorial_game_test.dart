@@ -1,20 +1,20 @@
-import 'package:calc_tetris/audio/sound_effect_player.dart';
-import 'package:calc_tetris/audio/sound_files.dart';
-import 'package:calc_tetris/grid/grid.dart';
-import 'package:calc_tetris/layout/footer/footer.dart';
-import 'package:calc_tetris/layout/footer/power_up_found_animation.dart';
-import 'package:calc_tetris/layout/header/confirm_button.dart';
-import 'package:calc_tetris/layout/header/stop_button.dart';
-import 'package:calc_tetris/persistence/in_memory_database_service.dart';
-import 'package:calc_tetris/persistence/model/game_mode_name.dart';
-import 'package:calc_tetris/screens/stopgame/stop_game_dialog.dart';
-import 'package:calc_tetris/screens/tutorial/tutorial_game.dart';
-import 'package:calc_tetris/screens/tutorial/tutorial_message_overlay.dart';
-import 'package:calc_tetris/screens/tutorial/tutorial_script.dart';
-import 'package:calc_tetris/screens/tutorial/tutorial_step.dart';
-import 'package:calc_tetris/screens/welcome/welcome_screen.dart';
-import 'package:calc_tetris/tetris_game.dart';
-import 'package:flame/game.dart';
+import 'package:magic_blocks/magic_blocks_app.dart';
+import 'package:flame/components.dart';
+import 'package:magic_blocks/audio/sound_effect_player.dart';
+import 'package:magic_blocks/audio/sound_files.dart';
+import 'package:magic_blocks/grid/grid.dart';
+import 'package:magic_blocks/layout/footer/footer.dart';
+import 'package:magic_blocks/layout/footer/power_up_found_animation.dart';
+import 'package:magic_blocks/layout/header/confirm_button.dart';
+import 'package:magic_blocks/layout/header/stop_button.dart';
+import 'package:magic_blocks/persistence/in_memory_database_service.dart';
+import 'package:magic_blocks/persistence/model/game_mode_name.dart';
+import 'package:magic_blocks/screens/stopgame/stop_game_dialog.dart';
+import 'package:magic_blocks/screens/tutorial/tutorial_game.dart';
+import 'package:magic_blocks/screens/tutorial/tutorial_message_overlay.dart';
+import 'package:magic_blocks/screens/tutorial/tutorial_script.dart';
+import 'package:magic_blocks/screens/tutorial/tutorial_step.dart';
+import 'package:magic_blocks/magic_blocks_game.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/recording_sound_effect_player.dart';
@@ -32,42 +32,35 @@ Future<void> _settle(WidgetTester tester) async {
   }
 }
 
-Future<TetrisGame> _pumpTutorial(
+Future<MagicBlocksGame> _pumpTutorial(
   WidgetTester tester, {
   InMemoryDatabaseService? databaseService,
   SoundEffectPlayer? soundEffectPlayer,
 }) async {
-  final game = TetrisGame(
+  final game = MagicBlocksGame(
     databaseService: databaseService,
     soundEffectPlayer: soundEffectPlayer,
   );
-  await tester.pumpWidget(GameWidget(game: game));
+  await tester.pumpWidget(MagicBlocksApp(game: game));
   await tester.pump();
   await _settle(tester);
   await tester.pump(const Duration(seconds: 1));
-  game
-      .descendants()
-      .whereType<WelcomeScreen>()
-      .first
-      .cards
-      .first
-      .secondaryButton!
-      .press();
+  await tester.tap(find.text('Tutorial'));
   await _settle(tester);
   return game;
 }
 
-TutorialGame _tutorial(TetrisGame game) =>
+TutorialGame _tutorial(MagicBlocksGame game) =>
     game.descendants().whereType<TutorialGame>().first;
 
-TutorialMessageOverlay? _overlay(TetrisGame game) =>
+TutorialMessageOverlay? _overlay(MagicBlocksGame game) =>
     game.descendants().whereType<TutorialMessageOverlay>().firstOrNull;
 
-Grid? _grid(TetrisGame game) =>
+Grid? _grid(MagicBlocksGame game) =>
     game.descendants().whereType<Grid>().firstOrNull;
 
 /// Presses the button of the message that is shown.
-Future<void> _continue(WidgetTester tester, TetrisGame game) async {
+Future<void> _continue(WidgetTester tester, MagicBlocksGame game) async {
   _overlay(game)!.continueButton.press();
   await tester.pump();
   // the new board loads and the block flies in
@@ -97,7 +90,7 @@ void _steerBlock(Grid grid, PlayStep step, {bool toSolution = true}) {
   }
 }
 
-Future<void> _place(WidgetTester tester, TetrisGame game) async {
+Future<void> _place(WidgetTester tester, MagicBlocksGame game) async {
   _grid(game)!.endlessController.placeCurrentBlock();
   await tester.pump();
   // landing animation, solving, removing the solved blocks, counting up the
@@ -130,7 +123,7 @@ void main() {
   ) async {
     final game = await _pumpTutorial(tester);
 
-    expect(game.router.currentRoute.name, TetrisGame.tutorialRoute);
+    expect(game.router.currentRoute.name, MagicBlocksGame.tutorialRoute);
     expect(_overlay(game)!.messageText.text, (script[0] as MessageStep).text);
     expect(game.descendants().whereType<Grid>(), isEmpty);
   });
@@ -357,7 +350,7 @@ void main() {
     game.descendants().whereType<StopGameDialog>().first.yesButton.press();
     await _settle(tester);
 
-    expect(game.router.currentRoute.name, TetrisGame.welcomeRoute);
+    expect(game.router.currentRoute.name, MagicBlocksGame.welcomeRoute);
     expect(await service.loadGameMode(GameModeName.endless), isNull);
   });
 
@@ -381,7 +374,7 @@ void main() {
     }
     await _settle(tester);
 
-    expect(game.router.currentRoute.name, TetrisGame.welcomeRoute);
+    expect(game.router.currentRoute.name, MagicBlocksGame.welcomeRoute);
     expect(game.descendants().whereType<TutorialGame>(), isEmpty);
   });
 
@@ -396,7 +389,7 @@ void main() {
     /// Goes through the steps until [reached], without playing them.
     Future<void> skipTo(
       WidgetTester tester,
-      TetrisGame game,
+      MagicBlocksGame game,
       bool Function(TutorialStep) reached,
     ) async {
       final runner = _tutorial(game).runner;
@@ -420,10 +413,10 @@ void main() {
       (s) => s.findsCannon,
     );
 
-    Footer footer(TetrisGame game) =>
+    Footer footer(MagicBlocksGame game) =>
         game.descendants().whereType<Footer>().single;
 
-    Future<TetrisGame> atCannonStep(
+    Future<MagicBlocksGame> atCannonStep(
       WidgetTester tester, {
       SoundEffectPlayer? sounds,
     }) async {
@@ -434,7 +427,7 @@ void main() {
 
     Future<void> shoot(
       WidgetTester tester,
-      TetrisGame game,
+      MagicBlocksGame game,
       int x,
       int y,
     ) async {
@@ -449,7 +442,7 @@ void main() {
       await tester.pump();
     }
 
-    Future<void> activate(WidgetTester tester, TetrisGame game) async {
+    Future<void> activate(WidgetTester tester, MagicBlocksGame game) async {
       footer(game).cannonButton.press();
       await tester.pump();
     }
@@ -570,7 +563,7 @@ void main() {
 }
 
 /// Continues from the message that follows a solved step to the next board.
-Future<void> _continueToBoard(WidgetTester tester, TetrisGame game) async {
+Future<void> _continueToBoard(WidgetTester tester, MagicBlocksGame game) async {
   await _continue(tester, game); // message -> next message or board
   while (_overlay(game) != null) {
     await _continue(tester, game);

@@ -1,5 +1,5 @@
-import 'package:calc_tetris/block/model/null_block.dart';
-import 'package:calc_tetris/block/model/single_block.dart';
+import 'package:magic_blocks/block/model/null_block.dart';
+import 'package:magic_blocks/block/model/single_block.dart';
 
 List<List<SingleBlock?>> generateI3x1() {
   return List.generate(

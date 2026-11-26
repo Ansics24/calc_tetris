@@ -1,8 +1,8 @@
 import 'dart:math';
 import 'dart:ui';
 
-import 'package:calc_tetris/layout/footer/powerup_button.dart';
-import 'package:calc_tetris/theme/light_theme.dart';
+import 'package:magic_blocks/layout/footer/powerup_button.dart';
+import 'package:magic_blocks/theme/light_theme.dart';
 
 /// Button of the cannon power-up. The cannon can shoot blocks that already
 /// landed in the grid.

@@ -1,5 +1,5 @@
-import 'package:calc_tetris/block/math/seed/block_tokens.dart';
-import 'package:calc_tetris/block/model/single_block.dart';
+import 'package:magic_blocks/block/math/seed/block_tokens.dart';
+import 'package:magic_blocks/block/model/single_block.dart';
 
 /// Builds blocks from rows of text, indexed `[x][y]` with y growing
 /// downwards. A `.` is an empty cell, every other character is a block token

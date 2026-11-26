@@ -1,4 +1,4 @@
-import 'package:calc_tetris/layout/header/hud/header_layout.dart';
+import 'package:magic_blocks/layout/header/hud/header_layout.dart';
 import 'package:flame/components.dart';
 import 'package:test/test.dart';
 

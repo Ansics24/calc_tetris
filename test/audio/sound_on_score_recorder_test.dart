@@ -1,5 +1,5 @@
-import 'package:calc_tetris/audio/sound_on_score_recorder.dart';
-import 'package:calc_tetris/block/math/scoring/score_keeper.dart';
+import 'package:magic_blocks/audio/sound_on_score_recorder.dart';
+import 'package:magic_blocks/block/math/scoring/score_keeper.dart';
 import 'package:test/test.dart';
 
 import '../support/recording_sound_effect_player.dart';

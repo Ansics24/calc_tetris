@@ -1,5 +1,5 @@
-import 'package:calc_tetris/screens/tutorial/tutorial_step.dart';
-import 'package:calc_tetris/util/int_vector_2.dart';
+import 'package:magic_blocks/screens/tutorial/tutorial_step.dart';
+import 'package:magic_blocks/util/int_vector_2.dart';
 
 /// The size of the grid all tutorial boards use.
 final IntVector2 tutorialGridSize = IntVector2.square(11);

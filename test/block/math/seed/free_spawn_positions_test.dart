@@ -1,8 +1,8 @@
-import 'package:calc_tetris/block/math/model/math_number_block.dart';
-import 'package:calc_tetris/block/math/seed/free_spawn_positions.dart';
-import 'package:calc_tetris/block/model/null_block.dart';
-import 'package:calc_tetris/block/model/single_block.dart';
-import 'package:calc_tetris/grid/model/grid_model.dart';
+import 'package:magic_blocks/block/math/model/math_number_block.dart';
+import 'package:magic_blocks/block/math/seed/free_spawn_positions.dart';
+import 'package:magic_blocks/block/model/null_block.dart';
+import 'package:magic_blocks/block/model/single_block.dart';
+import 'package:magic_blocks/grid/model/grid_model.dart';
 import 'package:test/test.dart';
 
 import '../sample_grids/sample_grid_alternating_columns_5x1.dart';

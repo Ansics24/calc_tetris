@@ -1,5 +1,5 @@
-import 'package:calc_tetris/block/math/seed/spawn_position_chooser.dart';
-import 'package:calc_tetris/util/int_vector_2.dart';
+import 'package:magic_blocks/block/math/seed/spawn_position_chooser.dart';
+import 'package:magic_blocks/util/int_vector_2.dart';
 
 /// Lets the block always enter the grid at the same position.
 class FixedSpawnPositionChooser implements SpawnPositionChooser {

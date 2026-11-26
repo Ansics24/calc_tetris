@@ -1,4 +1,4 @@
-import 'package:calc_tetris/audio/sound_effect_player.dart';
+import 'package:magic_blocks/audio/sound_effect_player.dart';
 import 'package:flame_audio/flame_audio.dart';
 
 /// Plays sound effects with the audio player of `flame_audio`. Uses a cache of

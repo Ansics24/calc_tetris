@@ -1,11 +1,11 @@
-import 'package:calc_tetris/block/math/model/equation.dart';
-import 'package:calc_tetris/block/math/model/math_equals_block.dart';
-import 'package:calc_tetris/block/math/model/math_number_block.dart';
-import 'package:calc_tetris/block/math/model/math_operant_block.dart';
-import 'package:calc_tetris/block/math/model/math_operant_type.dart';
-import 'package:calc_tetris/block/math/model/math_single_block.dart';
-import 'package:calc_tetris/block/math/scoring/digit_multiplier_score_calculator.dart';
-import 'package:calc_tetris/block/math/scoring/score_calculator.dart';
+import 'package:magic_blocks/block/math/model/equation.dart';
+import 'package:magic_blocks/block/math/model/math_equals_block.dart';
+import 'package:magic_blocks/block/math/model/math_number_block.dart';
+import 'package:magic_blocks/block/math/model/math_operant_block.dart';
+import 'package:magic_blocks/block/math/model/math_operant_type.dart';
+import 'package:magic_blocks/block/math/model/math_single_block.dart';
+import 'package:magic_blocks/block/math/scoring/digit_multiplier_score_calculator.dart';
+import 'package:magic_blocks/block/math/scoring/score_calculator.dart';
 import 'package:test/test.dart';
 
 MathNumberBlock n(int digit) => MathNumberBlock(number: digit);

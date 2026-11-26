@@ -1,6 +1,6 @@
-import 'package:calc_tetris/grid/power_up_found_listener.dart';
-import 'package:calc_tetris/layout/footer/cannon_button.dart';
-import 'package:calc_tetris/layout/footer/powerup_button.dart';
+import 'package:magic_blocks/grid/power_up_found_listener.dart';
+import 'package:magic_blocks/layout/footer/cannon_button.dart';
+import 'package:magic_blocks/layout/footer/powerup_button.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flutter/animation.dart';

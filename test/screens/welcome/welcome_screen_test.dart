@@ -1,22 +1,18 @@
-import 'package:calc_tetris/persistence/database_service.dart';
-import 'package:calc_tetris/persistence/in_memory_database_service.dart';
-import 'package:calc_tetris/persistence/model/game_mode.dart';
-import 'package:calc_tetris/persistence/model/game_mode_name.dart';
-import 'package:calc_tetris/screens/welcome/welcome_screen.dart';
-import 'package:flame/components.dart';
-import 'package:test/test.dart';
+import 'package:magic_blocks/audio/music_player.dart';
+import 'package:magic_blocks/persistence/database_service.dart';
+import 'package:magic_blocks/persistence/in_memory_database_service.dart';
+import 'package:magic_blocks/persistence/model/game_mode.dart';
+import 'package:magic_blocks/persistence/model/game_mode_name.dart';
+import 'package:magic_blocks/screens/welcome/card_button.dart';
+import 'package:magic_blocks/screens/welcome/game_mode_card.dart';
+import 'package:magic_blocks/screens/welcome/mascot.dart';
+import 'package:magic_blocks/screens/welcome/welcome_screen.dart';
+import 'package:magic_blocks/theme/welcome_palette.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
 
-WelcomeScreen _screen({
-  DatabaseService? databaseService,
-  void Function()? onStart,
-  void Function()? onStartTutorial,
-}) {
-  return WelcomeScreen(
-    databaseService: databaseService,
-    onStartEndless: onStart,
-    onStartTutorial: onStartTutorial,
-  )..onGameResize(Vector2(400, 800));
-}
+import '../../support/load_game_font.dart';
+import '../../support/recording_music_player.dart';
 
 class _FailingDatabaseService implements DatabaseService {
   @override
@@ -28,194 +24,244 @@ class _FailingDatabaseService implements DatabaseService {
       Future.error(StateError('database is broken'));
 }
 
+Future<void> _pumpScreen(
+  WidgetTester tester, {
+  Size size = const Size(400, 800),
+  DatabaseService? databaseService,
+  MusicPlayer? musicPlayer,
+  void Function()? onStart,
+  void Function()? onStartTutorial,
+}) async {
+  tester.view.devicePixelRatio = 1;
+  tester.view.physicalSize = size;
+  addTearDown(tester.view.reset);
+  await tester.pumpWidget(
+    MaterialApp(
+      home: Scaffold(
+        body: WelcomeScreen(
+          databaseService: databaseService,
+          musicPlayer: musicPlayer,
+          onStartEndless: onStart,
+          onStartTutorial: onStartTutorial,
+        ),
+      ),
+    ),
+  );
+  await tester.pump();
+}
+
+Rect _card(WidgetTester tester) => tester.getRect(find.byType(GameModeCard));
+
+Rect _title(WidgetTester tester) =>
+    tester.getRect(find.text(WelcomeScreen.gameName));
+
 void main() {
-  _friendlyLookTests();
+  setUpAll(loadGameFont);
 
-  test('takes over the size of the game when it is resized', () {
-    expect(_screen().size, Vector2(400, 800));
+  _layoutTests();
+  _mascotTests();
+  _buttonTests();
+  _highScoreTests();
+  _musicTests();
+}
+
+void _layoutTests() {
+  testWidgets('shows the game name above the card', (tester) async {
+    await _pumpScreen(tester);
+
+    expect(WelcomeScreen.gameName, 'Magic Blocks');
+    expect(_title(tester).bottom, lessThanOrEqualTo(_card(tester).top));
   });
 
-  group('mascot', () {
-    test('is drawn above the sky but behind the cards', () {
-      final screen = _screen();
+  testWidgets('lets the card fill the width apart from a margin', (
+    tester,
+  ) async {
+    await _pumpScreen(tester);
 
-      expect(screen.mascot.priority, greaterThan(screen.background.priority));
-      expect(screen.mascot.priority, lessThan(screen.cards.first.priority));
-    });
-
-    test('reaches behind the first card', () {
-      final screen = _screen();
-
-      expect(
-        screen.mascot.toRect().overlaps(screen.cards.first.toRect()),
-        isTrue,
-      );
-    });
-
-    test('sits behind the title', () {
-      final screen = _screen();
-
-      expect(
-        screen.mascot.toRect().contains(screen.title.position.toOffset()),
-        isTrue,
-      );
-      expect(screen.mascot.priority, lessThan(screen.title.priority + 1));
-    });
-
-    test('stays inside the screen horizontally', () {
-      final screen = _screen();
-
-      expect(screen.mascot.x, greaterThanOrEqualTo(0));
-      expect(screen.mascot.x + screen.mascot.width, lessThanOrEqualTo(400));
-    });
-
-    test('stays inside the screen vertically', () {
-      final screen = _screen();
-
-      expect(screen.mascot.y, greaterThanOrEqualTo(0));
-      expect(screen.mascot.y + screen.mascot.height, lessThanOrEqualTo(800));
-    });
+    expect(_card(tester).left, 16);
+    expect(_card(tester).right, 400 - 16);
   });
 
-  test('shows the game name above the cards', () {
-    final screen = _screen();
+  testWidgets('shows the endless game card with a describing text', (
+    tester,
+  ) async {
+    await _pumpScreen(tester);
 
-    expect(screen.title.text, 'Magic Blocks');
-    expect(screen.title.y, lessThan(screen.cards.first.y));
+    expect(find.byType(GameModeCard), findsOneWidget);
+    expect(find.text('Endlosspiel'), findsOneWidget);
+    expect(find.text(WelcomeScreen.endlessDescription), findsOneWidget);
   });
 
-  test('lets the cards fill the width apart from a margin', () {
-    final card = _screen().cards.first;
+  testWidgets('covers the whole screen with the sky', (tester) async {
+    await _pumpScreen(tester);
 
-    expect(card.width, lessThan(400));
-    expect(card.x * 2 + card.width, 400);
+    final sky = find.byKey(WelcomeScreen.skyKey);
+    final decoration =
+        tester.widget<DecoratedBox>(sky).decoration as BoxDecoration;
+    expect(tester.getSize(sky), const Size(400, 800));
+    expect((decoration.gradient! as LinearGradient).colors, [
+      WelcomePalette.skyTop,
+      WelcomePalette.skyBottom,
+    ]);
   });
 
-  test('shows the endless game card with a describing text', () {
-    final screen = _screen();
+  testWidgets('scrolls instead of overflowing on a small screen', (
+    tester,
+  ) async {
+    await _pumpScreen(tester, size: const Size(320, 300));
 
-    expect(screen.cards, hasLength(1));
-    expect(screen.cards.first.titleText.text, 'Endlosspiel');
-    expect(
-      screen.cards.first.descriptionText.text,
-      WelcomeScreen.endlessDescription,
-    );
+    expect(tester.takeException(), isNull);
+    await tester.ensureVisible(find.byType(CardButton));
+    await tester.pump();
+    expect(_card(tester).bottom, lessThanOrEqualTo(300));
   });
 
-  group('tutorial button', () {
-    test('sits on the endless game card, there is no card of its own', () {
-      final screen = _screen();
+  testWidgets('copes with a large system font', (tester) async {
+    tester.platformDispatcher.textScaleFactorTestValue = 2;
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
 
-      expect(screen.cards, hasLength(1));
-      expect(screen.cards.first.secondaryButton, isNotNull);
-      expect(screen.cards.first.secondaryButton!.label, 'Tutorial');
-    });
+    await _pumpScreen(tester);
 
-    test('reports a press of the button as start of the tutorial', () {
-      var tutorial = 0;
-      var endless = 0;
-      final screen = _screen(
-        onStart: () => endless++,
-        onStartTutorial: () => tutorial++,
-      );
-
-      screen.cards.first.secondaryButton!.press();
-
-      expect(tutorial, 1);
-      expect(endless, 0);
-    });
-
-    test('does not disturb the press on the rest of the card', () {
-      var tutorial = 0;
-      var endless = 0;
-      final screen = _screen(
-        onStart: () => endless++,
-        onStartTutorial: () => tutorial++,
-      );
-
-      screen.cards.first.press();
-
-      expect(endless, 1);
-      expect(tutorial, 0);
-    });
-
-    test('stays inside the card', () {
-      final card = _screen().cards.first;
-      final button = card.secondaryButton!;
-
-      expect(button.x, greaterThanOrEqualTo(0));
-      expect(button.x + button.width, lessThanOrEqualTo(card.width));
-      expect(button.y + button.height, lessThanOrEqualTo(card.height));
-    });
-  });
-
-  group('high score of the endless game', () {
-    test('is 0 before it was loaded', () {
-      final screen = _screen();
-
-      expect(screen.cards.first.highScoreValue.text, '0');
-    });
-
-    test('is loaded from the database service', () async {
-      final service = InMemoryDatabaseService();
-      await service.saveHighscoreIfHigher(GameModeName.endless, 4711);
-      final screen = _screen(databaseService: service);
-
-      await screen.loadHighScores();
-
-      expect(screen.cards.first.highScoreValue.text, '4.711');
-    });
-
-    test('stays 0 when nothing was saved yet', () async {
-      final screen = _screen(databaseService: InMemoryDatabaseService());
-
-      await screen.loadHighScores();
-
-      expect(screen.cards.first.highScoreValue.text, '0');
-    });
-
-    test('stays 0 when the database can not be read', () async {
-      final screen = _screen(databaseService: _FailingDatabaseService());
-
-      await screen.loadHighScores();
-
-      expect(screen.cards.first.highScoreValue.text, '0');
-    });
-
-    test('works without a given database service', () async {
-      final screen = _screen();
-
-      await screen.loadHighScores();
-
-      expect(screen.cards.first.highScoreValue.text, '0');
-    });
-  });
-
-  test('reports a press on the endless game card', () {
-    var started = 0;
-    final screen = _screen(onStart: () => started++);
-
-    screen.cards.first.press();
-
-    expect(started, 1);
+    expect(tester.takeException(), isNull);
   });
 }
 
-void _friendlyLookTests() {
-  group('friendly look', () {
-    test('has a sky background covering the whole screen', () {
-      final screen = _screen();
+void _mascotTests() {
+  group('mascot on the screen', () {
+    Rect mascot(WidgetTester tester) => tester.getRect(find.byType(Mascot));
 
-      expect(screen.background.size, Vector2(400, 800));
-      expect(screen.background.position, Vector2.zero());
+    testWidgets('sits behind the title', (tester) async {
+      await _pumpScreen(tester);
+
+      expect(mascot(tester).contains(_title(tester).center), isTrue);
     });
 
-    test('draws the sky behind everything else', () {
-      expect(_screen().background.priority, lessThan(0));
+    testWidgets('reaches behind the card', (tester) async {
+      await _pumpScreen(tester);
+
+      expect(mascot(tester).overlaps(_card(tester)), isTrue);
     });
 
-    test('gives the cards enough height for the bigger texts', () {
-      expect(_screen().cards.first.height, greaterThanOrEqualTo(150));
+    testWidgets('is painted before title and card', (tester) async {
+      await _pumpScreen(tester);
+      final widgets = tester.allWidgets.toList();
+      int position(Finder finder) => widgets.indexOf(tester.widget(finder));
+
+      final mascotPosition = position(find.byType(Mascot));
+      expect(
+        mascotPosition,
+        lessThan(position(find.text(WelcomeScreen.gameName))),
+      );
+      expect(mascotPosition, lessThan(position(find.byType(GameModeCard))));
+    });
+
+    testWidgets('stays inside the screen', (tester) async {
+      await _pumpScreen(tester);
+      final rect = mascot(tester);
+
+      expect(rect.left, greaterThanOrEqualTo(0));
+      expect(rect.top, greaterThanOrEqualTo(0));
+      expect(rect.right, lessThanOrEqualTo(400));
+      expect(rect.bottom, lessThanOrEqualTo(800));
+    });
+  });
+}
+
+void _buttonTests() {
+  testWidgets('reports a press on the endless game card', (tester) async {
+    var endless = 0;
+    var tutorial = 0;
+    await _pumpScreen(
+      tester,
+      onStart: () => endless++,
+      onStartTutorial: () => tutorial++,
+    );
+
+    await tester.tap(find.text('Endlosspiel'));
+
+    expect(endless, 1);
+    expect(tutorial, 0);
+  });
+
+  testWidgets('reports a press on the tutorial button as tutorial start', (
+    tester,
+  ) async {
+    var endless = 0;
+    var tutorial = 0;
+    await _pumpScreen(
+      tester,
+      onStart: () => endless++,
+      onStartTutorial: () => tutorial++,
+    );
+
+    await tester.tap(find.text('Tutorial'));
+
+    expect(tutorial, 1);
+    expect(endless, 0);
+  });
+}
+
+void _highScoreTests() {
+  group('high score of the endless game', () {
+    testWidgets('is loaded from the database service', (tester) async {
+      final service = InMemoryDatabaseService();
+      await service.saveHighscoreIfHigher(GameModeName.endless, 4711);
+
+      await _pumpScreen(tester, databaseService: service);
+
+      expect(find.text('4.711'), findsOneWidget);
+    });
+
+    testWidgets('stays 0 when nothing was saved yet', (tester) async {
+      await _pumpScreen(tester, databaseService: InMemoryDatabaseService());
+
+      expect(find.text('0'), findsOneWidget);
+    });
+
+    testWidgets('stays 0 when the database can not be read', (tester) async {
+      await _pumpScreen(tester, databaseService: _FailingDatabaseService());
+
+      expect(find.text('0'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('is 0 without a given database service', (tester) async {
+      await _pumpScreen(tester);
+
+      expect(find.text('0'), findsOneWidget);
+    });
+  });
+}
+
+void _musicTests() {
+  group('music', () {
+    testWidgets('starts when the screen appears', (tester) async {
+      final music = RecordingMusicPlayer();
+
+      await _pumpScreen(tester, musicPlayer: music);
+
+      expect(music.played, [WelcomeScreen.musicFile]);
+    });
+
+    testWidgets('stops when the screen disappears', (tester) async {
+      final music = RecordingMusicPlayer();
+      await _pumpScreen(tester, musicPlayer: music);
+
+      await tester.pumpWidget(const SizedBox());
+
+      expect(music.isSilent, isTrue);
+    });
+
+    testWidgets('does not disturb the screen when the audio is broken', (
+      tester,
+    ) async {
+      await _pumpScreen(
+        tester,
+        musicPlayer: RecordingMusicPlayer(failing: true),
+      );
+      await tester.pumpWidget(const SizedBox());
+
+      expect(tester.takeException(), isNull);
     });
   });
 }

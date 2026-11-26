@@ -1,4 +1,4 @@
-import 'package:calc_tetris/util/int_vector_2.dart';
+import 'package:magic_blocks/util/int_vector_2.dart';
 
 class GridPositionOccupiedException implements Exception {
   late String _message;

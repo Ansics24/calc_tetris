@@ -1,7 +1,7 @@
 import 'dart:ui';
 
-import 'package:calc_tetris/screens/welcome/sky_background.dart';
-import 'package:calc_tetris/theme/welcome_palette.dart';
+import 'package:magic_blocks/screens/welcome/sky_background.dart';
+import 'package:magic_blocks/theme/welcome_palette.dart';
 import 'package:flame/components.dart';
 import 'package:test/test.dart';
 

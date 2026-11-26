@@ -1,6 +1,6 @@
-import 'package:calc_tetris/layout/header/hud/hud_panel.dart';
-import 'package:calc_tetris/layout/header/next_block_display_style.dart';
-import 'package:calc_tetris/theme/light_theme.dart';
+import 'package:magic_blocks/layout/header/hud/hud_panel.dart';
+import 'package:magic_blocks/layout/header/next_block_display_style.dart';
+import 'package:magic_blocks/theme/light_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:test/test.dart';
 

@@ -1,6 +1,6 @@
-import 'package:calc_tetris/grid/grid.dart';
-import 'package:calc_tetris/grid/model/grid_model.dart';
-import 'package:calc_tetris/util/int_vector_2.dart';
+import 'package:magic_blocks/grid/grid.dart';
+import 'package:magic_blocks/grid/model/grid_model.dart';
+import 'package:magic_blocks/util/int_vector_2.dart';
 
 /// What the outside of a grid asks its controller to do. The game mode decides
 /// which controller a grid gets, so every mode can bring its own rules.

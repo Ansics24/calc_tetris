@@ -1,9 +1,9 @@
 import 'dart:typed_data';
 import 'dart:ui';
 
-import 'package:calc_tetris/layout/footer/cannon_button.dart';
-import 'package:calc_tetris/layout/footer/powerup_button.dart';
-import 'package:calc_tetris/theme/light_theme.dart';
+import 'package:magic_blocks/layout/footer/cannon_button.dart';
+import 'package:magic_blocks/layout/footer/powerup_button.dart';
+import 'package:magic_blocks/theme/light_theme.dart';
 import 'package:flame/components.dart';
 import 'package:test/test.dart';
 

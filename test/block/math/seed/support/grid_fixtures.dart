@@ -1,5 +1,5 @@
-import 'package:calc_tetris/block/math/model/math_single_block.dart';
-import 'package:calc_tetris/block/math/seed/block_tokens.dart';
+import 'package:magic_blocks/block/math/model/math_single_block.dart';
+import 'package:magic_blocks/block/math/seed/block_tokens.dart';
 
 /// Builds a grid snapshot (indexed `[x][y]`, y grows downwards) from rows of
 /// text. A `.` is an empty cell, every other character is a block token.

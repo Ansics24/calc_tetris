@@ -1,13 +1,13 @@
 import 'dart:math';
 
-import 'package:calc_tetris/block/math/model/math_equals_block.dart';
-import 'package:calc_tetris/block/math/model/math_number_block.dart';
-import 'package:calc_tetris/block/math/model/math_operant_block.dart';
-import 'package:calc_tetris/block/math/model/math_operant_type.dart';
-import 'package:calc_tetris/block/math/model/math_single_block.dart';
-import 'package:calc_tetris/block/math/seed/compoundblock_model_generator.dart';
-import 'package:calc_tetris/block/model/single_block.dart';
-import 'package:calc_tetris/block/shapes/shape_chooser.dart';
+import 'package:magic_blocks/block/math/model/math_equals_block.dart';
+import 'package:magic_blocks/block/math/model/math_number_block.dart';
+import 'package:magic_blocks/block/math/model/math_operant_block.dart';
+import 'package:magic_blocks/block/math/model/math_operant_type.dart';
+import 'package:magic_blocks/block/math/model/math_single_block.dart';
+import 'package:magic_blocks/block/math/seed/compoundblock_model_generator.dart';
+import 'package:magic_blocks/block/model/single_block.dart';
+import 'package:magic_blocks/block/shapes/shape_chooser.dart';
 
 class RandomCompoundblockModelGenerator implements CompoundblockModelGenerator {
   final ShapeChooser _shapeChooser = ShapeChooser();

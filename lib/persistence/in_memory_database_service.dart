@@ -1,6 +1,6 @@
-import 'package:calc_tetris/persistence/database_service.dart';
-import 'package:calc_tetris/persistence/model/game_mode.dart';
-import 'package:calc_tetris/persistence/model/game_mode_name.dart';
+import 'package:magic_blocks/persistence/database_service.dart';
+import 'package:magic_blocks/persistence/model/game_mode.dart';
+import 'package:magic_blocks/persistence/model/game_mode_name.dart';
 
 /// Keeps the data only for the lifetime of the app.
 class InMemoryDatabaseService implements DatabaseService {

@@ -1,7 +1,7 @@
-import 'package:calc_tetris/block/math/seed/compoundblock_model_generator.dart';
-import 'package:calc_tetris/block/model/null_block.dart';
-import 'package:calc_tetris/block/model/single_block.dart';
-import 'package:calc_tetris/screens/tutorial/block_rows.dart';
+import 'package:magic_blocks/block/math/seed/compoundblock_model_generator.dart';
+import 'package:magic_blocks/block/model/null_block.dart';
+import 'package:magic_blocks/block/model/single_block.dart';
+import 'package:magic_blocks/screens/tutorial/block_rows.dart';
 
 /// Always generates the same prepared block, described by rows of text (see
 /// [blocksFromRows]). Every call returns a fresh copy with new ids.

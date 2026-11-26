@@ -1,8 +1,8 @@
 import 'dart:math';
 import 'dart:ui';
 
-import 'package:calc_tetris/theme/light_theme.dart';
-import 'package:calc_tetris/theme/text_theme.dart';
+import 'package:magic_blocks/theme/light_theme.dart';
+import 'package:magic_blocks/theme/text_theme.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 

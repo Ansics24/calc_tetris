@@ -2,14 +2,14 @@ import 'dart:async';
 import 'dart:developer' as dev;
 import 'dart:math';
 
-import 'package:calc_tetris/block/model/single_block.dart';
-import 'package:calc_tetris/block/single_block_component_factory.dart';
-import 'package:calc_tetris/grid/grid_controller.dart';
-import 'package:calc_tetris/grid/model/grid_model.dart';
-import 'package:calc_tetris/grid/queries/grid_content_holder.dart';
-import 'package:calc_tetris/grid/visuals/grid_frame.dart';
-import 'package:calc_tetris/grid/visuals/grid_line.dart';
-import 'package:calc_tetris/util/int_vector_2.dart';
+import 'package:magic_blocks/block/model/single_block.dart';
+import 'package:magic_blocks/block/single_block_component_factory.dart';
+import 'package:magic_blocks/grid/grid_controller.dart';
+import 'package:magic_blocks/grid/model/grid_model.dart';
+import 'package:magic_blocks/grid/queries/grid_content_holder.dart';
+import 'package:magic_blocks/grid/visuals/grid_frame.dart';
+import 'package:magic_blocks/grid/visuals/grid_line.dart';
+import 'package:magic_blocks/util/int_vector_2.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 

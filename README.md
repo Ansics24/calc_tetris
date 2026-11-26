@@ -1,4 +1,4 @@
-# calc_tetris
+# Magic Blocks
 
 A new Flutter project.
 

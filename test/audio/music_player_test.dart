@@ -1,4 +1,4 @@
-import 'package:calc_tetris/audio/music_player.dart';
+import 'package:magic_blocks/audio/music_player.dart';
 import 'package:test/test.dart';
 
 void main() {

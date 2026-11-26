@@ -1,7 +1,7 @@
 import 'dart:math';
 
-import 'package:calc_tetris/block/math/seed/spawn_position_chooser.dart';
-import 'package:calc_tetris/util/int_vector_2.dart';
+import 'package:magic_blocks/block/math/seed/spawn_position_chooser.dart';
+import 'package:magic_blocks/util/int_vector_2.dart';
 import 'package:test/test.dart';
 
 /// Returns the scripted values and records the bounds it was asked for.

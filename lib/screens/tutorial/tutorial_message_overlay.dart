@@ -1,9 +1,9 @@
 import 'dart:math';
 import 'dart:ui';
 
-import 'package:calc_tetris/screens/stopgame/dialog_button.dart';
-import 'package:calc_tetris/theme/light_theme.dart';
-import 'package:calc_tetris/theme/text_theme.dart';
+import 'package:magic_blocks/screens/stopgame/dialog_button.dart';
+import 'package:magic_blocks/theme/light_theme.dart';
+import 'package:magic_blocks/theme/text_theme.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flutter/painting.dart';

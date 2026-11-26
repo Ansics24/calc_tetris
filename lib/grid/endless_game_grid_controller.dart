@@ -1,30 +1,31 @@
 import 'dart:developer' as dev;
 import 'dart:math';
 
-import 'package:calc_tetris/block/block_component.dart';
-import 'package:calc_tetris/block/compound_block_component.dart';
-import 'package:calc_tetris/block/math/scoring/score_keeper.dart';
-import 'package:calc_tetris/block/math/seed/free_spawn_positions.dart';
-import 'package:calc_tetris/block/math/seed/next_block_planner.dart';
-import 'package:calc_tetris/block/math/seed/spawn_origin.dart';
-import 'package:calc_tetris/block/math/seed/spawn_position_chooser.dart';
-import 'package:calc_tetris/block/shatter_animation.dart';
-import 'package:calc_tetris/block/single_block_component_factory.dart';
-import 'package:calc_tetris/block/solution_strategy.dart';
-import 'package:calc_tetris/block/solution_strategy_executor.dart';
-import 'package:calc_tetris/block/solution_strategy_singlerun_result.dart';
-import 'package:calc_tetris/grid/grid.dart';
-import 'package:calc_tetris/grid/grid_behaviour_settings.dart';
-import 'package:calc_tetris/grid/grid_controller.dart';
-import 'package:calc_tetris/grid/grid_round_listener.dart';
-import 'package:calc_tetris/grid/model/grid_model.dart';
-import 'package:calc_tetris/grid/model/grid_single_block_model.dart';
-import 'package:calc_tetris/grid/play_mode.dart';
-import 'package:calc_tetris/grid/power_up_found_listener.dart';
-import 'package:calc_tetris/grid/power_up_used_listener.dart';
-import 'package:calc_tetris/grid/queries/position_in_grid_aware.dart';
-import 'package:calc_tetris/screens/gameover/game_over_listener.dart';
-import 'package:calc_tetris/util/int_vector_2.dart';
+import 'package:magic_blocks/block/active_block_outline.dart';
+import 'package:magic_blocks/block/block_component.dart';
+import 'package:magic_blocks/block/compound_block_component.dart';
+import 'package:magic_blocks/block/math/scoring/score_keeper.dart';
+import 'package:magic_blocks/block/math/seed/free_spawn_positions.dart';
+import 'package:magic_blocks/block/math/seed/next_block_planner.dart';
+import 'package:magic_blocks/block/math/seed/spawn_origin.dart';
+import 'package:magic_blocks/block/math/seed/spawn_position_chooser.dart';
+import 'package:magic_blocks/block/shatter_animation.dart';
+import 'package:magic_blocks/block/single_block_component_factory.dart';
+import 'package:magic_blocks/block/solution_strategy.dart';
+import 'package:magic_blocks/block/solution_strategy_executor.dart';
+import 'package:magic_blocks/block/solution_strategy_singlerun_result.dart';
+import 'package:magic_blocks/grid/grid.dart';
+import 'package:magic_blocks/grid/grid_behaviour_settings.dart';
+import 'package:magic_blocks/grid/grid_controller.dart';
+import 'package:magic_blocks/grid/grid_round_listener.dart';
+import 'package:magic_blocks/grid/model/grid_model.dart';
+import 'package:magic_blocks/grid/model/grid_single_block_model.dart';
+import 'package:magic_blocks/grid/play_mode.dart';
+import 'package:magic_blocks/grid/power_up_found_listener.dart';
+import 'package:magic_blocks/grid/power_up_used_listener.dart';
+import 'package:magic_blocks/grid/queries/position_in_grid_aware.dart';
+import 'package:magic_blocks/screens/gameover/game_over_listener.dart';
+import 'package:magic_blocks/util/int_vector_2.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flutter/animation.dart';
@@ -158,6 +159,10 @@ class EndlessGameGridController implements GridController, PositionInGridAware {
       return false;
     }
     _landing = true;
+    // the block can not be moved anymore
+    currentBlock!.children.whereType<ActiveBlockOutline>().toList().forEach(
+      (outline) => outline.removeFromParent(),
+    );
     currentBlock!.add(
       ScaleEffect.by(
         Vector2.all(1.3),
@@ -267,6 +272,7 @@ class EndlessGameGridController implements GridController, PositionInGridAware {
     currentBlock = block;
     currentBlockGridPosition = startPosition;
     _applyPlayMode();
+    block.add(ActiveBlockOutline());
 
     final targetPosition = _gridModel.gridPositionToAbsolutePosition(
       startPosition,

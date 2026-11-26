@@ -1,9 +1,9 @@
 import 'dart:io';
 
-import 'package:calc_tetris/persistence/database_service.dart';
-import 'package:calc_tetris/persistence/model/game_mode_name.dart';
-import 'package:calc_tetris/persistence/sql/game_mode.sql.dart';
-import 'package:calc_tetris/persistence/sqlite_database_service.dart';
+import 'package:magic_blocks/persistence/database_service.dart';
+import 'package:magic_blocks/persistence/model/game_mode_name.dart';
+import 'package:magic_blocks/persistence/sql/game_mode.sql.dart';
+import 'package:magic_blocks/persistence/sqlite_database_service.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:test/test.dart';
@@ -47,7 +47,7 @@ void main() {
     late String path;
 
     setUp(() {
-      directory = Directory.systemTemp.createTempSync('calc_tetris_db');
+      directory = Directory.systemTemp.createTempSync('magic_blocks_db');
       path = p.join(directory.path, 'test.db');
     });
 

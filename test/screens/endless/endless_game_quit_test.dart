@@ -1,13 +1,13 @@
 import 'dart:async';
 
-import 'package:calc_tetris/block/math/scoring/score_keeper.dart';
-import 'package:calc_tetris/layout/header/stop_button.dart';
-import 'package:calc_tetris/persistence/database_service.dart';
-import 'package:calc_tetris/persistence/in_memory_database_service.dart';
-import 'package:calc_tetris/persistence/model/game_mode.dart';
-import 'package:calc_tetris/persistence/model/game_mode_name.dart';
-import 'package:calc_tetris/screens/endless/endless_game.dart';
-import 'package:calc_tetris/screens/stopgame/stop_game_dialog.dart';
+import 'package:magic_blocks/block/math/scoring/score_keeper.dart';
+import 'package:magic_blocks/layout/header/stop_button.dart';
+import 'package:magic_blocks/persistence/database_service.dart';
+import 'package:magic_blocks/persistence/in_memory_database_service.dart';
+import 'package:magic_blocks/persistence/model/game_mode.dart';
+import 'package:magic_blocks/persistence/model/game_mode_name.dart';
+import 'package:magic_blocks/screens/endless/endless_game.dart';
+import 'package:magic_blocks/screens/stopgame/stop_game_dialog.dart';
 import 'package:flame/game.dart';
 import 'package:flutter_test/flutter_test.dart';
 

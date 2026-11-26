@@ -1,63 +1,57 @@
-import 'package:calc_tetris/theme/light_theme.dart';
-import 'package:calc_tetris/theme/text_theme.dart';
-import 'package:flame/components.dart';
-import 'package:flame/events.dart';
-import 'package:flutter/painting.dart';
+import 'package:magic_blocks/theme/light_theme.dart';
+import 'package:magic_blocks/theme/text_theme.dart';
+import 'package:flutter/widgets.dart';
 
 /// Small rounded button inside a game mode card. Handles its taps itself, so
 /// the card below does not react to them.
-class CardButton extends PositionComponent with TapCallbacks {
+class CardButton extends StatefulWidget {
+  static const Key surfaceKey = Key('card-button-surface');
+  static const double height = 38;
+
   final String label;
   final void Function()? onPressed;
+
+  const CardButton({super.key, required this.label, this.onPressed});
+
+  @override
+  State<CardButton> createState() => _CardButtonState();
+}
+
+class _CardButtonState extends State<CardButton> {
   bool _pressed = false;
 
-  CardButton({
-    required this.label,
-    this.onPressed,
-    super.size,
-    super.position,
-  });
-
-  void press() => onPressed?.call();
+  void _setPressed(bool pressed) => setState(() => _pressed = pressed);
 
   @override
-  void onTapDown(TapDownEvent event) {
-    _pressed = true;
-  }
-
-  @override
-  void onTapUp(TapUpEvent event) {
-    _pressed = false;
-    press();
-  }
-
-  @override
-  void onTapCancel(TapCancelEvent event) {
-    _pressed = false;
-  }
-
-  @override
-  void render(Canvas canvas) {
-    final shape = RRect.fromRectAndRadius(
-      Rect.fromLTWH(0, 0, size.x, size.y),
-      Radius.circular(size.y / 2),
-    );
-    canvas.drawRRect(
-      shape,
-      Paint()
-        ..color = _pressed ? colorScheme.primary : colorScheme.primaryContainer,
-    );
-    canvas.drawRRect(
-      shape.deflate(1),
-      Paint()
-        ..color = colorScheme.primary
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 2,
-    );
-    TextPaint(
-      style: textTheme.labelLarge!.copyWith(
-        color: colorScheme.onPrimaryContainer,
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTapDown: (_) => _setPressed(true),
+      onTapUp: (_) => _setPressed(false),
+      onTapCancel: () => _setPressed(false),
+      // always claims the tap, even without a callback
+      onTap: () => widget.onPressed?.call(),
+      child: DecoratedBox(
+        key: CardButton.surfaceKey,
+        decoration: BoxDecoration(
+          color: _pressed ? colorScheme.primary : colorScheme.primaryContainer,
+          border: Border.all(color: colorScheme.primary, width: 2),
+          borderRadius: BorderRadius.circular(CardButton.height / 2),
+        ),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: CardButton.height),
+          child: Center(
+            heightFactor: 1,
+            child: Text(
+              widget.label,
+              style: textTheme.labelLarge!.copyWith(
+                inherit: false,
+                color: colorScheme.onPrimaryContainer,
+              ),
+            ),
+          ),
+        ),
       ),
-    ).render(canvas, label, size / 2, anchor: Anchor.center);
+    );
   }
 }

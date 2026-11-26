@@ -1,5 +1,5 @@
-import 'package:calc_tetris/persistence/model/game_mode.dart';
-import 'package:calc_tetris/persistence/model/game_mode_name.dart';
+import 'package:magic_blocks/persistence/model/game_mode.dart';
+import 'package:magic_blocks/persistence/model/game_mode_name.dart';
 
 /// The single entry point of the game for reading and writing persistent data.
 abstract interface class DatabaseService {

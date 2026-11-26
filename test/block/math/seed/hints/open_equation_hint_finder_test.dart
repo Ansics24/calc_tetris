@@ -1,7 +1,7 @@
-import 'package:calc_tetris/block/math/model/equation.dart';
-import 'package:calc_tetris/block/math/scoring/score_calculator.dart';
-import 'package:calc_tetris/block/math/seed/hints/open_equation_hint_finder.dart';
-import 'package:calc_tetris/block/math/seed/hints/open_equation_hints.dart';
+import 'package:magic_blocks/block/math/model/equation.dart';
+import 'package:magic_blocks/block/math/scoring/score_calculator.dart';
+import 'package:magic_blocks/block/math/seed/hints/open_equation_hint_finder.dart';
+import 'package:magic_blocks/block/math/seed/hints/open_equation_hints.dart';
 import 'package:test/test.dart';
 
 import '../support/grid_fixtures.dart';
@@ -43,18 +43,60 @@ void main() {
       expect(hints.completions, {'='});
     });
 
-    test('finds the token that completes a column on top of its stack', () {
+    test('finds the token that completes a column above its blocks', () {
       final hints = finder.find(gridFromRows(['.', '+', '2', '=', '3']));
 
       expect(hints.completions, {'1'});
     });
 
-    test('ignores column cells the falling block could not rest on', () {
+    test('finds the token that completes a column below its blocks, '
+        'with free cells underneath', () {
       final hints = finder.find(
         gridFromRows(['1', '+', '2', '=', '.', '.']),
       );
 
+      expect(hints.completions, {'3'});
+      expect(hints.completionPoints, {'3': 6});
+    });
+
+    test('completes a column floating in the middle of the grid', () {
+      final hints = finder.find(
+        gridFromRows([
+          '.....',
+          '..1..',
+          '..+..',
+          '..2..',
+          '..=..',
+          '.....',
+          '.....',
+        ]),
+      );
+
+      expect(hints.completions, {'3'});
+    });
+
+    test('completes an equation inside a longer floating column', () {
+      final hints = finder.find(
+        gridFromRows(['=', '8', '+', '1', '=', '.', '.']),
+      );
+
+      expect(hints.partialCompletions, contains('9'));
+    });
+
+    test('offers extensions below a floating column', () {
+      final hints = finder.find(gridFromRows(['1', '+', '.', '.']));
+
+      expect(hints.extensions, containsAll(['0', '5', '9']));
+    });
+
+    test('ignores empty cells that touch no block', () {
+      final hints = finder.find(
+        gridFromRows(['1', '+', '.', '.', '.']),
+      );
+
+      // only the cell right below the plus counts, nothing further down
       expect(hints.completions, isEmpty);
+      expect(hints.extensions, isNot(contains('=')));
     });
 
     test('offers the same token for every possible completion', () {

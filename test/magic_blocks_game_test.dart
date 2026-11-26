@@ -1,38 +1,40 @@
-import 'package:calc_tetris/audio/music_player.dart';
-import 'package:calc_tetris/audio/sound_effect_player.dart';
-import 'package:calc_tetris/audio/sound_files.dart';
-import 'package:calc_tetris/block/solution_strategy_singlerun_result.dart';
-import 'package:calc_tetris/grid/grid.dart';
-import 'package:calc_tetris/layout/footer/cannon_button.dart';
-import 'package:calc_tetris/layout/header/confirm_button.dart';
-import 'package:calc_tetris/layout/header/stop_button.dart';
-import 'package:calc_tetris/persistence/database_service.dart';
-import 'package:calc_tetris/persistence/in_memory_database_service.dart';
-import 'package:calc_tetris/persistence/model/game_mode_name.dart';
-import 'package:calc_tetris/screens/endless/endless_game.dart';
-import 'package:calc_tetris/screens/stopgame/stop_game_dialog.dart';
-import 'package:calc_tetris/screens/welcome/welcome_screen.dart';
-import 'package:calc_tetris/tetris_game.dart';
-import 'package:calc_tetris/theme/welcome_palette.dart';
+import 'package:magic_blocks/audio/music_player.dart';
+import 'package:magic_blocks/audio/sound_effect_player.dart';
+import 'package:magic_blocks/audio/sound_files.dart';
+import 'package:magic_blocks/block/solution_strategy_singlerun_result.dart';
+import 'package:magic_blocks/magic_blocks_app.dart';
+import 'package:magic_blocks/grid/grid.dart';
+import 'package:magic_blocks/layout/footer/cannon_button.dart';
+import 'package:magic_blocks/layout/header/confirm_button.dart';
+import 'package:magic_blocks/layout/header/stop_button.dart';
+import 'package:magic_blocks/persistence/database_service.dart';
+import 'package:magic_blocks/persistence/in_memory_database_service.dart';
+import 'package:magic_blocks/persistence/model/game_mode_name.dart';
+import 'package:magic_blocks/screens/endless/endless_game.dart';
+import 'package:magic_blocks/screens/stopgame/stop_game_dialog.dart';
+import 'package:magic_blocks/screens/welcome/welcome_screen.dart';
+import 'package:magic_blocks/magic_blocks_game.dart';
+import 'package:magic_blocks/theme/welcome_palette.dart';
 import 'package:flame/game.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'support/load_game_font.dart';
 import 'support/recording_music_player.dart';
 import 'support/recording_sound_effect_player.dart';
 import 'support/test_grid.dart';
 
-Future<TetrisGame> _pumpGame(
+Future<MagicBlocksGame> _pumpGame(
   WidgetTester tester, {
   DatabaseService? databaseService,
   MusicPlayer? musicPlayer,
   SoundEffectPlayer? soundEffectPlayer,
 }) async {
-  final game = TetrisGame(
+  final game = MagicBlocksGame(
     databaseService: databaseService,
     musicPlayer: musicPlayer,
     soundEffectPlayer: soundEffectPlayer,
   );
-  await tester.pumpWidget(GameWidget(game: game));
+  await tester.pumpWidget(MagicBlocksApp(game: game));
   await tester.pump();
   await _settle(tester);
   // Text boxes redraw delayed; let those timers run out.
@@ -40,13 +42,16 @@ Future<TetrisGame> _pumpGame(
   return game;
 }
 
-WelcomeScreen _welcomeScreen(TetrisGame game) =>
-    game.descendants().whereType<WelcomeScreen>().first;
+Future<void> _tapEndlessCard(WidgetTester tester) =>
+    tester.tap(find.text('Endlosspiel'));
 
-EndlessGame _endlessGame(TetrisGame game) =>
+Future<void> _tapTutorialButton(WidgetTester tester) =>
+    tester.tap(find.text('Tutorial'));
+
+EndlessGame _endlessGame(MagicBlocksGame game) =>
     game.descendants().whereType<EndlessGame>().first;
 
-StopGameDialog? _stopDialog(TetrisGame game) =>
+StopGameDialog? _stopDialog(MagicBlocksGame game) =>
     game.descendants().whereType<StopGameDialog>().firstOrNull;
 
 /// Lets the loading of images (e.g. the mascot) finish.
@@ -62,37 +67,39 @@ Future<void> _settle(WidgetTester tester) async {
   }
 }
 
-Future<TetrisGame> _pumpEndlessGame(
+Future<MagicBlocksGame> _pumpEndlessGame(
   WidgetTester tester, {
   DatabaseService? databaseService,
 }) async {
   final game = await _pumpGame(tester, databaseService: databaseService);
-  _welcomeScreen(game).cards.first.press();
+  await _tapEndlessCard(tester);
   await _settle(tester);
   return game;
 }
 
-Future<TetrisGame> _pumpEndlessGameWith(
+Future<MagicBlocksGame> _pumpEndlessGameWith(
   WidgetTester tester,
   MusicPlayer musicPlayer,
 ) async {
   final game = await _pumpGame(tester, musicPlayer: musicPlayer);
-  _welcomeScreen(game).cards.first.press();
+  await _tapEndlessCard(tester);
   await _settle(tester);
   return game;
 }
 
-Future<void> _pressStop(WidgetTester tester, TetrisGame game) async {
+Future<void> _pressStop(WidgetTester tester, MagicBlocksGame game) async {
   game.descendants().whereType<StopButton>().first.press();
   await tester.pump();
 }
 
 void main() {
+  setUpAll(loadGameFont);
+
   testWidgets('starts on the welcome route', (tester) async {
     final game = await _pumpGame(tester);
 
-    expect(game.router.currentRoute.name, TetrisGame.welcomeRoute);
-    expect(game.descendants().whereType<WelcomeScreen>(), hasLength(1));
+    expect(game.router.currentRoute.name, MagicBlocksGame.welcomeRoute);
+    expect(find.byType(WelcomeScreen), findsOneWidget);
   });
 
   testWidgets('replaces the welcome route by the endless game route', (
@@ -100,11 +107,11 @@ void main() {
   ) async {
     final game = await _pumpGame(tester);
 
-    _welcomeScreen(game).cards.first.press();
+    await _tapEndlessCard(tester);
     await tester.pump();
 
-    expect(game.router.currentRoute.name, TetrisGame.endlessRoute);
-    expect(game.descendants().whereType<WelcomeScreen>(), isEmpty);
+    expect(game.router.currentRoute.name, MagicBlocksGame.endlessRoute);
+    expect(find.byType(WelcomeScreen), findsNothing);
   });
 
   testWidgets('replaces the welcome route by the tutorial route', (
@@ -112,14 +119,14 @@ void main() {
   ) async {
     final game = await _pumpGame(tester);
 
-    _welcomeScreen(game).cards.first.secondaryButton!.press();
+    await _tapTutorialButton(tester);
     await tester.pump();
     // Text boxes redraw delayed; let those timers run out.
     await tester.pump(const Duration(seconds: 1));
     await tester.pump(const Duration(seconds: 1));
 
-    expect(game.router.currentRoute.name, TetrisGame.tutorialRoute);
-    expect(game.descendants().whereType<WelcomeScreen>(), isEmpty);
+    expect(game.router.currentRoute.name, MagicBlocksGame.tutorialRoute);
+    expect(find.byType(WelcomeScreen), findsNothing);
   });
 
   group('footer of the endless game', () {
@@ -147,12 +154,12 @@ void main() {
   });
 
   group('sound of a solved equation in the endless game', () {
-    Future<TetrisGame> pumpWith(
+    Future<MagicBlocksGame> pumpWith(
       WidgetTester tester,
       RecordingSoundEffectPlayer sounds,
     ) async {
       final game = await _pumpGame(tester, soundEffectPlayer: sounds);
-      _welcomeScreen(game).cards.first.press();
+      await _tapEndlessCard(tester);
       await _settle(tester);
       await tester.pump(const Duration(seconds: 1));
       return game;
@@ -228,7 +235,7 @@ void main() {
     ) async {
       final sounds = RecordingSoundEffectPlayer();
       final game = await _pumpGame(tester, soundEffectPlayer: sounds);
-      _welcomeScreen(game).cards.first.press();
+      await _tapEndlessCard(tester);
       await _settle(tester);
       await tester.pump(const Duration(seconds: 1));
 
@@ -241,7 +248,7 @@ void main() {
     testWidgets('plays only once while the block is landing', (tester) async {
       final sounds = RecordingSoundEffectPlayer();
       final game = await _pumpGame(tester, soundEffectPlayer: sounds);
-      _welcomeScreen(game).cards.first.press();
+      await _tapEndlessCard(tester);
       await _settle(tester);
       await tester.pump(const Duration(seconds: 1));
       final button = game.descendants().whereType<ConfirmButton>().first;
@@ -258,7 +265,7 @@ void main() {
     ) async {
       final sounds = RecordingSoundEffectPlayer();
       final game = await _pumpGame(tester, soundEffectPlayer: sounds);
-      _welcomeScreen(game).cards.first.press();
+      await _tapEndlessCard(tester);
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 50));
 
@@ -284,9 +291,9 @@ void main() {
 
     testWidgets('stops when the endless game starts', (tester) async {
       final music = RecordingMusicPlayer();
-      final game = await _pumpGame(tester, musicPlayer: music);
+      await _pumpGame(tester, musicPlayer: music);
 
-      _welcomeScreen(game).cards.first.press();
+      await _tapEndlessCard(tester);
       await _settle(tester);
 
       expect(music.isSilent, isTrue);
@@ -294,9 +301,9 @@ void main() {
 
     testWidgets('stops when the tutorial starts', (tester) async {
       final music = RecordingMusicPlayer();
-      final game = await _pumpGame(tester, musicPlayer: music);
+      await _pumpGame(tester, musicPlayer: music);
 
-      _welcomeScreen(game).cards.first.secondaryButton!.press();
+      await _tapTutorialButton(tester);
       await _settle(tester);
 
       expect(music.isSilent, isTrue);
@@ -324,17 +331,17 @@ void main() {
         musicPlayer: RecordingMusicPlayer(failing: true),
       );
 
-      expect(game.descendants().whereType<WelcomeScreen>(), hasLength(1));
-      _welcomeScreen(game).cards.first.press();
+      expect(find.byType(WelcomeScreen), findsOneWidget);
+      await _tapEndlessCard(tester);
       await _settle(tester);
 
-      expect(game.router.currentRoute.name, TetrisGame.endlessRoute);
+      expect(game.router.currentRoute.name, MagicBlocksGame.endlessRoute);
     });
 
     testWidgets('is silent when no music player is given', (tester) async {
-      final game = await _pumpGame(tester);
+      await _pumpGame(tester);
 
-      expect(game.descendants().whereType<WelcomeScreen>(), hasLength(1));
+      expect(find.byType(WelcomeScreen), findsOneWidget);
     });
   });
 
@@ -345,9 +352,9 @@ void main() {
       final service = InMemoryDatabaseService();
       await service.saveHighscoreIfHigher(GameModeName.endless, 4711);
 
-      final game = await _pumpGame(tester, databaseService: service);
+      await _pumpGame(tester, databaseService: service);
 
-      expect(_welcomeScreen(game).cards.first.highScoreValue.text, '4.711');
+      expect(find.text('4.711'), findsOneWidget);
     });
 
     testWidgets('shows a new high score after coming back from the game', (
@@ -361,7 +368,7 @@ void main() {
       _stopDialog(game)!.yesButton.press();
       await _settle(tester);
 
-      expect(_welcomeScreen(game).cards.first.highScoreValue.text, '80');
+      expect(find.text('80'), findsOneWidget);
     });
   });
 
@@ -375,7 +382,7 @@ void main() {
       await _pressStop(tester, game);
 
       expect(_stopDialog(game), isNotNull);
-      expect(game.router.currentRoute.name, TetrisGame.endlessRoute);
+      expect(game.router.currentRoute.name, MagicBlocksGame.endlessRoute);
     });
 
     testWidgets('closes the question and goes on playing on Nein', (
@@ -388,7 +395,7 @@ void main() {
       await tester.pump();
 
       expect(_stopDialog(game), isNull);
-      expect(game.router.currentRoute.name, TetrisGame.endlessRoute);
+      expect(game.router.currentRoute.name, MagicBlocksGame.endlessRoute);
     });
 
     testWidgets('can ask again after Nein', (tester) async {
@@ -409,9 +416,9 @@ void main() {
       _stopDialog(game)!.yesButton.press();
       await _settle(tester);
 
-      expect(game.router.currentRoute.name, TetrisGame.welcomeRoute);
+      expect(game.router.currentRoute.name, MagicBlocksGame.welcomeRoute);
       expect(game.descendants().whereType<EndlessGame>(), isEmpty);
-      expect(game.descendants().whereType<WelcomeScreen>(), hasLength(1));
+      expect(find.byType(WelcomeScreen), findsOneWidget);
     });
 
     testWidgets('starts a fresh game after coming back', (tester) async {
@@ -421,7 +428,7 @@ void main() {
       _stopDialog(game)!.yesButton.press();
       await _settle(tester);
 
-      _welcomeScreen(game).cards.first.press();
+      await _tapEndlessCard(tester);
       await _settle(tester);
 
       expect(_endlessGame(game), isNot(same(firstGame)));
@@ -431,7 +438,7 @@ void main() {
 
   group('confirming the current block', () {
     /// Grid positions of the single blocks that landed in the grid.
-    List<Vector2> landedPositions(TetrisGame game) {
+    List<Vector2> landedPositions(MagicBlocksGame game) {
       final content = game
           .descendants()
           .whereType<EndlessGame>()
@@ -444,7 +451,7 @@ void main() {
       ];
     }
 
-    Future<void> pressConfirm(WidgetTester tester, TetrisGame game) async {
+    Future<void> pressConfirm(WidgetTester tester, MagicBlocksGame game) async {
       game.descendants().whereType<ConfirmButton>().first.press();
       // landing animation, then the strategy runs and the next block spawns
       await tester.pump();
@@ -563,7 +570,7 @@ void main() {
 
 /// Pumps the endless game and waits until the first block has flown in from
 /// the preview, as it can not be used before.
-Future<TetrisGame> _pumpGameWithArrivedBlock(WidgetTester tester) async {
+Future<MagicBlocksGame> _pumpGameWithArrivedBlock(WidgetTester tester) async {
   final game = await _pumpEndlessGame(tester);
   await tester.pump(const Duration(seconds: 1));
   return game;

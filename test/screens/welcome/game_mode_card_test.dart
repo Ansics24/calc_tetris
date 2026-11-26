@@ -1,249 +1,362 @@
-import 'dart:ui';
+import 'package:magic_blocks/screens/welcome/card_button.dart';
+import 'package:magic_blocks/screens/welcome/game_mode_card.dart';
+import 'package:magic_blocks/theme/light_theme.dart';
+import 'package:magic_blocks/theme/welcome_palette.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
 
-import 'package:calc_tetris/screens/welcome/game_mode_card.dart';
-import 'package:calc_tetris/theme/welcome_palette.dart';
-import 'package:flame/components.dart';
-import 'package:flutter/painting.dart' show TextStyle;
-import 'package:test/test.dart';
+import '../../support/load_game_font.dart';
 
-GameModeCard _card({
+const _description = 'Lorem ipsum dolor sit amet';
+
+Future<void> _pumpCard(
+  WidgetTester tester, {
+  String description = _description,
   int highScore = 0,
+  double width = 360,
   void Function()? onTap,
   String? secondaryLabel,
   void Function()? onSecondaryTap,
-}) => GameModeCard(
-  title: 'Endlosspiel',
-  description: 'Lorem ipsum dolor sit amet',
-  highScore: highScore,
-  size: Vector2(360, 150),
-  onTap: onTap,
-  secondaryLabel: secondaryLabel,
-  onSecondaryTap: onSecondaryTap,
+}) => tester.pumpWidget(
+  MaterialApp(
+    home: Scaffold(
+      body: Align(
+        alignment: Alignment.topLeft,
+        child: SizedBox(
+          width: width,
+          child: GameModeCard(
+            title: 'Endlosspiel',
+            description: description,
+            highScore: highScore,
+            onTap: onTap,
+            secondaryLabel: secondaryLabel,
+            onSecondaryTap: onSecondaryTap,
+          ),
+        ),
+      ),
+    ),
+  ),
 );
 
+Rect _card(WidgetTester tester) => tester.getRect(find.byType(GameModeCard));
+
+Rect _text(WidgetTester tester, String text) => tester.getRect(find.text(text));
+
+Rect _image(WidgetTester tester) =>
+    tester.getRect(find.byKey(GameModeCard.imageKey));
+
+/// The style a text is really drawn with, including everything it inherits.
+TextStyle _styleOf(WidgetTester tester, String text) => tester
+    .widget<RichText>(
+      find.descendant(of: find.text(text), matching: find.byType(RichText)),
+    )
+    .text
+    .style!;
+
+BoxDecoration _decoration(WidgetTester tester, Key key) =>
+    tester.widget<DecoratedBox>(find.byKey(key)).decoration as BoxDecoration;
+
 void main() {
-  _verticalLayoutTests();
+  setUpAll(loadGameFont);
+
+  _contentTests();
+  _heightTests();
+  _layoutTests();
   _secondaryButtonTests();
   _friendlyLookTests();
+}
 
-  test('shows title and description', () {
-    final card = _card();
+void _contentTests() {
+  testWidgets('shows title and description', (tester) async {
+    await _pumpCard(tester);
 
-    expect(card.titleText.text, 'Endlosspiel');
-    expect(card.descriptionText.text, 'Lorem ipsum dolor sit amet');
+    expect(find.text('Endlosspiel'), findsOneWidget);
+    expect(find.text(_description), findsOneWidget);
   });
 
-  test('has an image placeholder on the left of the texts', () {
-    final card = _card();
+  testWidgets('shows the high score with german thousands separator', (
+    tester,
+  ) async {
+    await _pumpCard(tester, highScore: 12540);
 
-    expect(card.image.x, lessThan(card.titleText.x));
+    expect(find.text('Höchstpunktzahl'), findsOneWidget);
+    expect(find.text('12.540'), findsOneWidget);
   });
 
-  test('shows the high score with german thousands separator', () {
-    final card = _card(highScore: 12540);
-
-    expect(card.highScoreLabel.text, 'Höchstpunktzahl');
-    expect(card.highScoreValue.text, '12.540');
-  });
-
-  test('shows a new high score after it was updated', () {
-    final card = _card(highScore: 7);
-
-    card.updateHighScore(12540);
-
-    expect(card.highScoreValue.text, '12.540');
-  });
-
-  test('stays centered below its label after the high score was updated', () {
-    final card = _card(highScore: 7);
-    final x = card.highScoreValue.x;
-
-    card.updateHighScore(12540);
-
-    expect(card.highScoreValue.x, x);
-  });
-
-  test('shows the high score on the right of the title', () {
-    final card = _card(highScore: 7);
-
-    expect(card.highScoreValue.x, greaterThan(card.titleText.x));
-  });
-
-  test('calls onTap when pressed', () {
+  testWidgets('calls onTap when pressed', (tester) async {
     var taps = 0;
-    final card = _card(onTap: () => taps++);
+    await _pumpCard(tester, onTap: () => taps++);
 
-    card.press();
+    await tester.tap(find.text(_description));
 
     expect(taps, 1);
   });
 
-  test('can be pressed without a tap callback', () {
-    expect(() => _card().press(), returnsNormally);
+  testWidgets('can be pressed without a tap callback', (tester) async {
+    await _pumpCard(tester);
+
+    await tester.tap(find.byType(GameModeCard));
+
+    expect(tester.takeException(), isNull);
+  });
+}
+
+void _heightTests() {
+  group('height', () {
+    final longDescription = List.filled(12, 'Löse Gleichungen.').join(' ');
+
+    testWidgets('has a minimum for a short description', (tester) async {
+      await _pumpCard(tester, description: 'Kurz.');
+
+      expect(_card(tester).height, GameModeCard.minHeight);
+    });
+
+    testWidgets('grows with a long description', (tester) async {
+      await _pumpCard(tester, description: longDescription);
+
+      expect(_card(tester).height, greaterThan(GameModeCard.minHeight));
+      expect(
+        _text(tester, longDescription).bottom,
+        lessThanOrEqualTo(_card(tester).bottom),
+      );
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('keeps the button at the bottom when it grows', (
+      tester,
+    ) async {
+      await _pumpCard(
+        tester,
+        description: longDescription,
+        secondaryLabel: 'Tutorial',
+      );
+
+      final button = tester.getRect(find.byType(CardButton));
+      expect(_card(tester).bottom - button.bottom, lessThanOrEqualTo(24));
+    });
+  });
+}
+
+void _layoutTests() {
+  group('layout', () {
+    testWidgets('keeps the title on one line on a narrow phone', (
+      tester,
+    ) async {
+      // card width on a 360 wide screen
+      await _pumpCard(tester, width: 328);
+      final title = _text(tester, 'Endlosspiel');
+
+      expect(title.height, lessThan(40));
+      expect(
+        title.right,
+        lessThanOrEqualTo(_text(tester, 'Höchstpunktzahl').left),
+      );
+    });
+
+    testWidgets('has the image on the left of the texts', (tester) async {
+      await _pumpCard(tester);
+
+      expect(
+        _image(tester).right,
+        lessThanOrEqualTo(_text(tester, 'Endlosspiel').left),
+      );
+    });
+
+    testWidgets('centers the image vertically', (tester) async {
+      await _pumpCard(tester);
+
+      expect(
+        _image(tester).center.dy,
+        closeTo(_card(tester).center.dy, 0.5),
+      );
+    });
+
+    testWidgets('shows the high score on the right of the title', (
+      tester,
+    ) async {
+      await _pumpCard(tester);
+
+      expect(
+        _text(tester, '0').left,
+        greaterThan(_text(tester, 'Endlosspiel').left),
+      );
+    });
+
+    testWidgets('puts the high score below its label, both centered', (
+      tester,
+    ) async {
+      await _pumpCard(tester, highScore: 12540);
+      final label = _text(tester, 'Höchstpunktzahl');
+      final value = _text(tester, '12.540');
+
+      expect(value.top, greaterThanOrEqualTo(label.bottom));
+      expect(value.center.dx, closeTo(label.center.dx, 0.5));
+    });
   });
 }
 
 void _secondaryButtonTests() {
   group('secondary button', () {
-    test('is missing without a label', () {
-      expect(_card().secondaryButton, isNull);
+    testWidgets('is missing without a label', (tester) async {
+      await _pumpCard(tester);
+
+      expect(find.byType(CardButton), findsNothing);
     });
 
-    test('shows the label', () {
+    testWidgets('shows the label', (tester) async {
+      await _pumpCard(tester, secondaryLabel: 'Tutorial');
+
       expect(
-        _card(secondaryLabel: 'Tutorial').secondaryButton!.label,
-        'Tutorial',
+        find.descendant(
+          of: find.byType(CardButton),
+          matching: find.text('Tutorial'),
+        ),
+        findsOneWidget,
       );
     });
 
-    test('calls its own callback and not the one of the card', () {
+    testWidgets('calls its own callback and not the one of the card', (
+      tester,
+    ) async {
       var card = 0;
       var button = 0;
-      final c = _card(
+      await _pumpCard(
+        tester,
         secondaryLabel: 'Tutorial',
         onTap: () => card++,
         onSecondaryTap: () => button++,
       );
 
-      c.secondaryButton!.press();
+      await tester.tap(find.byType(CardButton));
 
       expect(button, 1);
       expect(card, 0);
     });
 
-    test('can be pressed without a callback', () {
-      final c = _card(secondaryLabel: 'Tutorial');
+    testWidgets('does not start the card without its own callback', (
+      tester,
+    ) async {
+      var card = 0;
+      await _pumpCard(
+        tester,
+        secondaryLabel: 'Tutorial',
+        onTap: () => card++,
+      );
 
-      expect(c.secondaryButton!.press, returnsNormally);
+      await tester.tap(find.byType(CardButton));
+
+      expect(card, 0);
     });
 
-    test('sits below the high score on the right side of the card', () {
-      final c = _card(highScore: 12540, secondaryLabel: 'Tutorial');
-      final button = c.secondaryButton!;
+    testWidgets('sits below the high score, inside the card', (tester) async {
+      await _pumpCard(tester, highScore: 12540, secondaryLabel: 'Tutorial');
+      final button = tester.getRect(find.byType(CardButton));
 
       expect(
-        button.y,
-        greaterThanOrEqualTo(c.highScoreValue.y + c.highScoreValue.height),
+        button.top,
+        greaterThanOrEqualTo(_text(tester, '12.540').bottom),
       );
-      expect(button.x, greaterThan(c.titleText.x));
-      expect(button.x + button.width, lessThanOrEqualTo(c.width));
+      expect(button.right, lessThanOrEqualTo(_card(tester).right));
+      expect(button.bottom, lessThanOrEqualTo(_card(tester).bottom));
     });
 
-    test('does not overlap the description', () {
-      final c = _card(secondaryLabel: 'Tutorial');
+    testWidgets('does not overlap the description', (tester) async {
+      await _pumpCard(tester, width: 300, secondaryLabel: 'Tutorial');
 
-      // the box wraps its text at maxWidth, so it ends before the button
       expect(
-        c.descriptionText.x + c.descriptionText.boxConfig.maxWidth,
-        lessThanOrEqualTo(c.secondaryButton!.x),
+        _text(tester, _description).right,
+        lessThanOrEqualTo(tester.getRect(find.byType(CardButton)).left),
       );
     });
 
-    test('stays inside the card, also after a resize', () {
-      final c = _card(secondaryLabel: 'Tutorial')..resizeTo(Vector2(300, 150));
-      final button = c.secondaryButton!;
+    testWidgets('is a big button that is easy to hit', (tester) async {
+      await _pumpCard(tester, secondaryLabel: 'Tutorial');
 
-      expect(button.x + button.width, lessThanOrEqualTo(300));
-      expect(button.y + button.height, lessThanOrEqualTo(150));
+      expect(
+        tester.getSize(find.byType(CardButton)).height,
+        greaterThanOrEqualTo(36),
+      );
     });
 
-    test('is a big button that is easy to hit', () {
-      final button = _card(secondaryLabel: 'Tutorial').secondaryButton!;
+    testWidgets('changes its color while it is held down', (tester) async {
+      await _pumpCard(tester, secondaryLabel: 'Tutorial');
+      Color? color() => _decoration(tester, CardButton.surfaceKey).color;
+      expect(color(), colorScheme.primaryContainer);
 
-      expect(button.height, greaterThanOrEqualTo(36));
+      final gesture = await tester.press(find.byType(CardButton));
+      await tester.pump(const Duration(milliseconds: 200));
+      expect(color(), colorScheme.primary);
+
+      await gesture.up();
+      await tester.pump();
+      expect(color(), colorScheme.primaryContainer);
     });
   });
 }
-
-void _verticalLayoutTests() {
-  group('vertical layout', () {
-    test('centers the image placeholder vertically', () {
-      final card = _card();
-      final image = card.image;
-
-      expect(image.y + image.height / 2, card.height / 2);
-    });
-
-    test('aligns the high score label at the top of the card', () {
-      final card = _card(highScore: 12540);
-
-      expect(card.highScoreLabel.y, card.titleText.y);
-    });
-
-    test('places the high score value below its label', () {
-      final card = _card(highScore: 12540);
-
-      expect(
-        card.highScoreValue.y,
-        greaterThanOrEqualTo(
-          card.highScoreLabel.y + card.highScoreLabel.height,
-        ),
-      );
-    });
-
-    test('centers the high score value horizontally below its label', () {
-      final card = _card(highScore: 12540);
-      final labelCenter = card.highScoreLabel.x - card.highScoreLabel.width / 2;
-
-      expect(card.highScoreValue.anchor, Anchor.topCenter);
-      expect(card.highScoreValue.x, closeTo(labelCenter, 0.5));
-    });
-
-    test('shows the high score value larger than before', () {
-      final style = (_card().highScoreValue.textRenderer as TextPaint).style;
-
-      expect(style.fontSize, greaterThan(22));
-    });
-  });
-}
-
-TextStyle _styleOf(TextComponent text) =>
-    (text.textRenderer as TextPaint).style;
 
 void _friendlyLookTests() {
   group('friendly look', () {
-    test('uses the colors of the welcome palette for the texts', () {
-      final card = _card();
+    testWidgets('uses the colors of the welcome palette for the texts', (
+      tester,
+    ) async {
+      await _pumpCard(tester, highScore: 7);
 
-      expect(_styleOf(card.titleText).color, WelcomePalette.cardTitle);
-      expect(_styleOf(card.descriptionText).color, WelcomePalette.cardText);
       expect(
-        _styleOf(card.highScoreLabel).color,
+        _styleOf(tester, 'Endlosspiel').color,
+        WelcomePalette.cardTitle,
+      );
+      expect(_styleOf(tester, _description).color, WelcomePalette.cardText);
+      expect(
+        _styleOf(tester, 'Höchstpunktzahl').color,
         WelcomePalette.cardTextMuted,
       );
-      expect(_styleOf(card.highScoreValue).color, WelcomePalette.scoreValue);
+      expect(_styleOf(tester, '7').color, WelcomePalette.scoreValue);
     });
 
-    test('uses big, easy to read letters', () {
-      final card = _card();
+    testWidgets('uses big, easy to read letters', (tester) async {
+      await _pumpCard(tester, highScore: 7);
 
-      expect(_styleOf(card.titleText).fontSize, greaterThanOrEqualTo(26));
+      expect(_styleOf(tester, 'Endlosspiel').fontSize, 26);
+      expect(_styleOf(tester, _description).fontSize, 15);
+      expect(_styleOf(tester, 'Höchstpunktzahl').fontSize, 13);
+      expect(_styleOf(tester, '7').fontSize, 30);
+    });
+
+    testWidgets('does not take over spacing from the material theme', (
+      tester,
+    ) async {
+      await _pumpCard(tester);
+
+      for (final text in ['Endlosspiel', _description, 'Höchstpunktzahl']) {
+        expect(_styleOf(tester, text).letterSpacing, anyOf(isNull, 0));
+        expect(_styleOf(tester, text).height, isNull);
+      }
+    });
+
+    testWidgets('is a white card with an orange border and a shadow', (
+      tester,
+    ) async {
+      await _pumpCard(tester);
+      final decoration = _decoration(tester, GameModeCard.surfaceKey);
+
+      expect(decoration.color, WelcomePalette.cardFill);
       expect(
-        _styleOf(card.descriptionText).fontSize,
-        greaterThanOrEqualTo(15),
+        decoration.border,
+        Border.all(color: WelcomePalette.cardBorder, width: 3),
       );
-      expect(_styleOf(card.highScoreLabel).fontSize, greaterThanOrEqualTo(13));
+      expect(decoration.boxShadow, const [
+        BoxShadow(color: WelcomePalette.cardShadow, offset: Offset(0, 4)),
+      ]);
     });
 
-    test('has strongly rounded corners', () {
+    testWidgets('has strongly rounded corners', (tester) async {
+      await _pumpCard(tester);
+
       expect(GameModeCard.cornerRadius, greaterThanOrEqualTo(20));
-    });
-
-    test('paints a light card', () async {
-      final recorder = PictureRecorder();
-      _card().render(Canvas(recorder));
-      final image = await recorder.endRecording().toImage(360, 150);
-      final bytes = (await image.toByteData())!;
-      // pixel inside the card, left of the image placeholder
-      final offset = (75 * 360 + 6) * 4;
-      final pixel = Color.fromARGB(
-        bytes.getUint8(offset + 3),
-        bytes.getUint8(offset),
-        bytes.getUint8(offset + 1),
-        bytes.getUint8(offset + 2),
+      expect(
+        _decoration(tester, GameModeCard.surfaceKey).borderRadius,
+        BorderRadius.circular(GameModeCard.cornerRadius),
       );
-
-      expect(pixel, WelcomePalette.cardFill);
     });
   });
 }

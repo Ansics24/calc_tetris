@@ -1,4 +1,4 @@
-import 'package:calc_tetris/block/shapes/shape_chooser.dart';
+import 'package:magic_blocks/block/shapes/shape_chooser.dart';
 import 'package:test/test.dart';
 
 void main() {

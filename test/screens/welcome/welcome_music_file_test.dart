@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:calc_tetris/screens/welcome/welcome_screen.dart';
+import 'package:magic_blocks/screens/welcome/welcome_screen.dart';
 import 'package:test/test.dart';
 
 void main() {

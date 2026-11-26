@@ -17,7 +17,7 @@ void main() {
   test('the grid does not depend on math blocks', () {
     final offending = <String>[];
     final importPattern = RegExp(
-      r"import 'package:calc_tetris/block/math/([^']+)'",
+      r"import 'package:magic_blocks/block/math/([^']+)'",
     );
     for (final file in Directory('lib/grid').listSync(recursive: true)) {
       if (file is! File || !file.path.endsWith('.dart')) continue;

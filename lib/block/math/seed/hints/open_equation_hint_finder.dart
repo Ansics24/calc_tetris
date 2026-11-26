@@ -1,11 +1,11 @@
 import 'dart:math';
 
-import 'package:calc_tetris/block/math/model/equation.dart';
-import 'package:calc_tetris/block/math/scoring/digit_multiplier_score_calculator.dart';
-import 'package:calc_tetris/block/math/scoring/score_calculator.dart';
-import 'package:calc_tetris/block/math/seed/block_tokens.dart';
-import 'package:calc_tetris/block/math/seed/hints/open_equation_hints.dart';
-import 'package:calc_tetris/block/model/single_block.dart';
+import 'package:magic_blocks/block/math/model/equation.dart';
+import 'package:magic_blocks/block/math/scoring/digit_multiplier_score_calculator.dart';
+import 'package:magic_blocks/block/math/scoring/score_calculator.dart';
+import 'package:magic_blocks/block/math/seed/block_tokens.dart';
+import 'package:magic_blocks/block/math/seed/hints/open_equation_hints.dart';
+import 'package:magic_blocks/block/model/single_block.dart';
 
 /// Looks for empty cells next to existing blocks and finds out which tokens
 /// would help to finish an equation there.
@@ -23,11 +23,9 @@ class OpenEquationHintFinder {
     if (grid.isEmpty) {
       return OpenEquationHints(completions: {}, extensions: extensions);
     }
-    for (final row in _rows(grid)) {
-      _scan(row, requireSupport: false, completions, partials, extensions);
-    }
-    for (final column in grid) {
-      _scan(column, requireSupport: true, completions, partials, extensions);
+    // rows are read from left to right, columns from top to bottom
+    for (final line in [..._rows(grid), ...grid]) {
+      _scan(line, completions, partials, extensions);
     }
     return OpenEquationHints(
       completions: completions.keys.toSet(),
@@ -49,15 +47,10 @@ class OpenEquationHintFinder {
     List<SingleBlock?> line,
     Map<String, int> completions,
     Map<String, int> partialCompletions,
-    Set<String> extensions, {
-    required bool requireSupport,
-  }) {
+    Set<String> extensions,
+  ) {
     for (var i = 0; i < line.length; i++) {
       if (line[i] != null || !_touchesBlock(line, i)) {
-        continue;
-      }
-      // falling blocks only rest on the floor or on another block
-      if (requireSupport && i + 1 < line.length && line[i + 1] == null) {
         continue;
       }
       for (final token in BlockTokens.all) {

@@ -1,4 +1,4 @@
-import 'package:calc_tetris/grid/power_up_found_listener.dart';
+import 'package:magic_blocks/grid/power_up_found_listener.dart';
 
 /// The kinds of modes a game can be in.
 enum PlayModeKind { defaultMode, powerUpInUse }

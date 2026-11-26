@@ -1,18 +1,18 @@
 import 'dart:async';
 
-import 'package:calc_tetris/audio/music_player.dart';
-import 'package:calc_tetris/audio/sound_effect_player.dart';
-import 'package:calc_tetris/persistence/database_service.dart';
-import 'package:calc_tetris/persistence/in_memory_database_service.dart';
-import 'package:calc_tetris/screens/endless/endless_game.dart';
-import 'package:calc_tetris/screens/tutorial/tutorial_game.dart';
-import 'package:calc_tetris/screens/welcome/welcome_screen.dart';
-import 'package:calc_tetris/theme/welcome_palette.dart';
+import 'package:magic_blocks/audio/music_player.dart';
+import 'package:magic_blocks/audio/sound_effect_player.dart';
+import 'package:magic_blocks/persistence/database_service.dart';
+import 'package:magic_blocks/persistence/in_memory_database_service.dart';
+import 'package:magic_blocks/screens/endless/endless_game.dart';
+import 'package:magic_blocks/screens/tutorial/tutorial_game.dart';
+import 'package:magic_blocks/screens/welcome/welcome_screen.dart';
+import 'package:magic_blocks/theme/welcome_palette.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart';
 
-class TetrisGame extends FlameGame {
+class MagicBlocksGame extends FlameGame {
   static const String welcomeRoute = 'welcome';
   static const String endlessRoute = 'endless';
   static const String tutorialRoute = 'tutorial';
@@ -34,7 +34,7 @@ class TetrisGame extends FlameGame {
   final MusicPlayer _musicPlayer;
   final SoundEffectPlayer _soundEffectPlayer;
 
-  TetrisGame({
+  MagicBlocksGame({
     DatabaseService? databaseService,
     MusicPlayer? musicPlayer,
     SoundEffectPlayer? soundEffectPlayer,
@@ -45,8 +45,8 @@ class TetrisGame extends FlameGame {
   late final RouterComponent router = RouterComponent(
     initialRoute: welcomeRoute,
     routes: {
-      welcomeRoute: Route(
-        () => WelcomeScreen(
+      welcomeRoute: OverlayRoute(
+        (context, game) => WelcomeScreen(
           databaseService: _databaseService,
           musicPlayer: _musicPlayer,
           onStartEndless: () {
@@ -58,7 +58,6 @@ class TetrisGame extends FlameGame {
             router.pushReplacementNamed(tutorialRoute);
           },
         ),
-        maintainState: false,
       ),
       endlessRoute: Route(
         () => EndlessGame(

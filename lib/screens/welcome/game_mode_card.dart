@@ -1,174 +1,160 @@
-import 'dart:math';
-
-import 'package:calc_tetris/screens/welcome/card_button.dart';
-import 'package:calc_tetris/theme/text_theme.dart';
-import 'package:calc_tetris/theme/welcome_palette.dart';
-import 'package:calc_tetris/util/german_number_format.dart';
-import 'package:flame/components.dart';
-import 'package:flame/events.dart';
-import 'package:flutter/painting.dart';
+import 'package:magic_blocks/screens/welcome/card_button.dart';
+import 'package:magic_blocks/theme/text_theme.dart';
+import 'package:magic_blocks/theme/welcome_palette.dart';
+import 'package:magic_blocks/util/german_number_format.dart';
+import 'package:flutter/widgets.dart';
 
 /// Card presenting one game mode with its image, description and high score.
-class GameModeCard extends PositionComponent with TapCallbacks {
+/// It is as high as its content needs, but at least [minHeight].
+class GameModeCard extends StatelessWidget {
+  static const Key surfaceKey = Key('game-mode-card-surface');
+  static const Key imageKey = Key('game-mode-card-image');
   static const double cornerRadius = 24;
+  static const double minHeight = 170;
   static const double _borderWidth = 3;
   static const double _padding = 14;
   static const double _imageSize = 72;
   static const double _scoreColumnWidth = 110;
-  static const double _minDescriptionWidth = 40;
+  static const double _titleHeight = 44;
+  static const double _descriptionMargin = 8;
   static const double _scoreGap = 2;
-  static const double _descriptionTop = 44;
-  static const double _buttonHeight = 38;
 
   final String title;
   final String description;
 
   /// Name of the image in the image assets, e.g. `trophy.png`.
   final String? imageName;
-  int highScore;
+  final int highScore;
   final void Function()? onTap;
 
-  /// Optional button inside the card, e.g. to start a tutorial.
-  final CardButton? secondaryButton;
+  /// Label of an optional button inside the card, e.g. to start a tutorial.
+  final String? secondaryLabel;
+  final void Function()? onSecondaryTap;
 
-  GameModeCard({
+  const GameModeCard({
+    super.key,
     required this.title,
     required this.description,
     required this.highScore,
     this.imageName,
-    required Vector2 size,
     this.onTap,
-    String? secondaryLabel,
-    void Function()? onSecondaryTap,
-  }) : secondaryButton = secondaryLabel == null
-           ? null
-           : CardButton(label: secondaryLabel, onPressed: onSecondaryTap),
-       super(size: size) {
-    _layout();
-  }
-
-  /// The picture of the game mode, shown once [imageName] is loaded.
-  late final SpriteComponent image = SpriteComponent(
-    size: Vector2.all(_imageSize),
-  );
-
-  late final TextComponent titleText = TextComponent(
-    text: title,
-    textRenderer: TextPaint(
-      style: textTheme.headlineMedium!.copyWith(
-        color: WelcomePalette.cardTitle,
-      ),
-    ),
-  );
-
-  late final TextBoxComponent descriptionText = TextBoxComponent(
-    text: description,
-    textRenderer: TextPaint(
-      style: textTheme.bodyMedium!.copyWith(color: WelcomePalette.cardText),
-    ),
-    boxConfig: const TextBoxConfig(),
-  );
-
-  late final TextComponent highScoreLabel = TextComponent(
-    text: 'Höchstpunktzahl',
-    anchor: Anchor.topRight,
-    textRenderer: TextPaint(
-      style: textTheme.labelMedium!.copyWith(
-        color: WelcomePalette.cardTextMuted,
-      ),
-    ),
-  );
-
-  late final TextComponent highScoreValue = TextComponent(
-    text: formatGermanNumber(highScore),
-    anchor: Anchor.topCenter,
-    textRenderer: TextPaint(
-      style: textTheme.displaySmall!.copyWith(color: WelcomePalette.scoreValue),
-    ),
-  );
-
-  /// Resizes the card and arranges its content for the new [newSize].
-  void resizeTo(Vector2 newSize) {
-    size = newSize;
-    _layout();
-  }
-
-  /// Shows a new high score.
-  void updateHighScore(int newHighScore) {
-    highScore = newHighScore;
-    highScoreValue.text = formatGermanNumber(newHighScore);
-    _layout();
-  }
-
-  /// Reports that the player chose this game mode.
-  void press() => onTap?.call();
-
-  void _layout() {
-    final textX = _padding * 2 + _imageSize;
-    final scoreRight = width - _padding;
-    image.position = Vector2(_padding, (height - _imageSize) / 2);
-    titleText.position = Vector2(textX, _padding);
-    descriptionText.position = Vector2(textX, _padding + _descriptionTop);
-    descriptionText.boxConfig = TextBoxConfig(
-      maxWidth: max(
-        _minDescriptionWidth,
-        width - textX - _scoreColumnWidth - _padding,
-      ),
-    );
-    highScoreLabel.position = Vector2(scoreRight, _padding);
-    highScoreValue.position = Vector2(
-      scoreRight - highScoreLabel.width / 2,
-      _padding + highScoreLabel.height + _scoreGap,
-    );
-    final button = secondaryButton;
-    if (button != null) {
-      final buttonWidth = _scoreColumnWidth - _padding / 2;
-      button
-        ..size = Vector2(buttonWidth, _buttonHeight)
-        ..position = Vector2(
-          scoreRight - buttonWidth,
-          height - _padding - _buttonHeight,
-        );
-    }
-  }
+    this.secondaryLabel,
+    this.onSecondaryTap,
+  });
 
   @override
-  Future<void> onLoad() async {
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: onTap,
+      child: DecoratedBox(
+        key: surfaceKey,
+        decoration: BoxDecoration(
+          color: WelcomePalette.cardFill,
+          border: Border.all(
+            color: WelcomePalette.cardBorder,
+            width: _borderWidth,
+          ),
+          borderRadius: BorderRadius.circular(cornerRadius),
+          boxShadow: const [
+            BoxShadow(color: WelcomePalette.cardShadow, offset: Offset(0, 4)),
+          ],
+        ),
+        // lets the columns share the height of the highest one
+        child: IntrinsicHeight(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: minHeight),
+            child: Padding(
+              padding: const EdgeInsets.all(_padding),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Center(child: _image()),
+                  const SizedBox(width: _padding),
+                  Expanded(child: _texts()),
+                  SizedBox(width: _scoreColumnWidth, child: _scoreColumn()),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _image() {
     final name = imageName;
-    if (name != null) {
-      image.sprite = await Sprite.load(name);
-    }
-    await addAll([
-      image,
-      titleText,
-      descriptionText,
-      highScoreLabel,
-      highScoreValue,
-      ?secondaryButton,
-    ]);
+    return SizedBox.square(
+      key: imageKey,
+      dimension: _imageSize,
+      child: name == null
+          ? null
+          : Image.asset('assets/images/$name', fit: BoxFit.fill),
+    );
   }
 
-  @override
-  void render(Canvas canvas) {
-    final shape = RRect.fromRectAndRadius(
-      Rect.fromLTWH(0, 0, size.x, size.y),
-      const Radius.circular(cornerRadius),
+  Widget _texts() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: _titleHeight),
+          // shrinks the title instead of wrapping it on narrow screens
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.topLeft,
+            child: _text(
+              title,
+              textTheme.headlineMedium!,
+              WelcomePalette.cardTitle,
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(_descriptionMargin),
+          child: _text(
+            description,
+            textTheme.bodyMedium!,
+            WelcomePalette.cardText,
+          ),
+        ),
+      ],
     );
-    canvas.drawRRect(
-      shape.shift(const Offset(0, 4)),
-      Paint()..color = WelcomePalette.cardShadow,
-    );
-    canvas.drawRRect(shape, Paint()..color = WelcomePalette.cardFill);
-    canvas.drawRRect(
-      shape.deflate(_borderWidth / 2),
-      Paint()
-        ..color = WelcomePalette.cardBorder
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = _borderWidth,
-    );
-    super.render(canvas);
   }
 
-  @override
-  void onTapUp(TapUpEvent event) => press();
+  /// High score at the top, the secondary button at the bottom.
+  Widget _scoreColumn() {
+    final label = secondaryLabel;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _text(
+              'Höchstpunktzahl',
+              textTheme.labelMedium!,
+              WelcomePalette.cardTextMuted,
+            ),
+            const SizedBox(height: _scoreGap),
+            _text(
+              formatGermanNumber(highScore),
+              textTheme.displaySmall!,
+              WelcomePalette.scoreValue,
+            ),
+          ],
+        ),
+        if (label != null)
+          SizedBox(
+            width: _scoreColumnWidth - _padding / 2,
+            child: CardButton(label: label, onPressed: onSecondaryTap),
+          ),
+      ],
+    );
+  }
+
+  /// Text without the spacing the surrounding material theme would add.
+  Widget _text(String text, TextStyle style, Color color) =>
+      Text(text, style: style.copyWith(inherit: false, color: color));
 }

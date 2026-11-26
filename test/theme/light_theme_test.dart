@@ -1,5 +1,5 @@
-import 'package:calc_tetris/theme/light_theme.dart';
-import 'package:calc_tetris/theme/welcome_palette.dart';
+import 'package:magic_blocks/theme/light_theme.dart';
+import 'package:magic_blocks/theme/welcome_palette.dart';
 import 'package:flutter/material.dart';
 import 'package:test/test.dart';
 

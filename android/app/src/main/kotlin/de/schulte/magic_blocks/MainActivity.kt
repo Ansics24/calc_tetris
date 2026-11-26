@@ -1,4 +1,4 @@
-package com.example.calc_tetris
+package de.schulte.magic_blocks
 
 import io.flutter.embedding.android.FlutterActivity
 
